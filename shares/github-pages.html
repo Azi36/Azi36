@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>在 GitHub 上免费部署静态网站 · Azi36</title>
-  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/style.css?v=6">
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
   <script src="../assets/site.js" defer></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
@@ -36,7 +36,7 @@
     <div class="article-layout">
     <article class="article">
       <a class="back-link" href="./">← 返回分享</a>
-      <div class="kicker">教程</div>
+      <div class="kicker">保姆级教程</div>
       <h1>在 GitHub 上免费部署静态网站</h1>
       <div class="article-meta">2026-08-15 · 大约 5 分钟</div>
 
@@ -170,6 +170,26 @@ git push -u origin main</code></pre>
       <blockquote>
         你现在看到的这个网站，从第一行代码到上线，用的就是上面这套流程。
       </blockquote>
+
+      <!-- 阅读统计 + 点赞（数据来自 api.azi36.com） -->
+      <div class="page-stats" id="pageStats" data-page="github-pages" hidden>
+        <span class="ps-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="psReads"></span>
+        </span>
+        <button class="page-like" id="pageLike">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          有用 <i>0</i>
+        </button>
+      </div>
+
+      <!-- 文章留言区 -->
+      <div class="md-title msg-title"><span>##</span>留言</div>
+      <!-- 留言后端已就位（api.azi36.com/msgs），前端暂时关闭：
+           开放姿势没想好 + 防赛博牛皮癣。开放时恢复表单即可 -->
+      <div class="msg-board closed" data-page="github-pages">
+        <p class="msg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>留言功能装修中——门装好了，还没想好怎么开。</p>
+      </div>
     </article>
 
     <!-- 右侧粘性栏：目录由 site.js 自动生成 -->
