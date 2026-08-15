@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游戏 · Azi36</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-purple">
+
+  <!-- 极光装饰背景 -->
+  <div class="bg-decor">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="dots"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="../shares/">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="./" class="active">游戏</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><i></i>慢慢更新中</span>
+        <a class="nav-gh" href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="kicker">Games</div>
+    <h1>游戏</h1>
+    <p class="page-desc">打游戏也是正经事。</p>
+
+    <!-- ===== 在玩什么（示例内容，换成你自己的游戏） ===== -->
+    <div class="section-title"><svg class="t-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>在玩什么 <span class="count">3</span></div>
+    <div class="card-grid">
+
+      <!-- 封面图引用自 Steam 商店（cdn.akamai.steamstatic.com/steam/apps/<appid>/header.jpg），
+           换游戏时改 appid 即可 -->
+      <a class="card game-card" href="https://store.steampowered.com/app/2507950/" target="_blank" rel="noopener">
+        <div class="card-demo">
+          <img src="https://cdn.akamai.steamstatic.com/steam/apps/2507950/header.jpg" alt="三角洲行动" loading="lazy">
+        </div>
+        <div class="card-head">
+          <h3>三角洲行动</h3>
+          <span class="en">Delta Force · PC</span>
+        </div>
+        <div class="card-tagline">摸金一把富，一把回到解放前。</div>
+        <div class="game-bar"><i style="width: 60%;"></i></div>
+        <div class="card-meta"><span class="tag tag-orange">🔥 在玩</span><span class="date">隔三差五上线</span></div>
+      </a>
+
+      <a class="card game-card" href="https://www.rockstargames.com/VI" target="_blank" rel="noopener">
+        <div class="card-demo">
+          <!-- 官方宣传图（已下载压缩到本地，避免每次刷新重新加载） -->
+          <img src="../assets/img/gta6.jpg" alt="GTA VI 宣传图" loading="lazy">
+        </div>
+        <div class="card-head">
+          <h3>GTA6</h3>
+          <span class="en">Rockstar Games</span>
+        </div>
+        <div class="card-tagline">预告片看了八百遍，钱包已经准备好了。</div>
+        <div class="game-bar"><i style="width: 0%;"></i></div>
+        <div class="card-meta"><span class="tag tag-purple">⏳ 期待中</span><span class="date">进度 0%</span></div>
+      </a>
+
+      <a class="card game-card" href="https://claude.com/claude-code" target="_blank" rel="noopener">
+        <div class="card-demo">
+          <!-- Claude 的自画像：星芒小脸，本人认证 -->
+          <svg viewBox="0 0 460 215" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="460" height="215" fill="#1c1d22"/>
+            <!-- 内容都留在中央安全区，避免 slice 裁切吃掉边缘 -->
+            <text x="64" y="46" font-family="ui-monospace,Consolas,monospace" font-size="15" fill="#7ea2ff">$ claude</text>
+            <g transform="translate(230,92)">
+              <g stroke="#d97757" stroke-width="13" stroke-linecap="round">
+                <line x1="0" y1="-22" x2="0" y2="-42"/>
+                <line x1="0" y1="22" x2="0" y2="42"/>
+                <line x1="-22" y1="0" x2="-42" y2="0"/>
+                <line x1="22" y1="0" x2="42" y2="0"/>
+                <line x1="-16" y1="-16" x2="-30" y2="-30"/>
+                <line x1="16" y1="-16" x2="30" y2="-30"/>
+                <line x1="-16" y1="16" x2="-30" y2="30"/>
+                <line x1="16" y1="16" x2="30" y2="30"/>
+              </g>
+              <circle r="15" fill="#d97757"/>
+              <circle cx="-5" cy="-2.5" r="2.6" fill="#1c1d22"/>
+              <circle cx="5" cy="-2.5" r="2.6" fill="#1c1d22"/>
+              <path d="M-5.5 4.5 Q0 9 5.5 4.5" fill="none" stroke="#1c1d22" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <text x="230" y="180" text-anchor="middle" font-family="-apple-system,'Segoe UI',sans-serif" font-size="18" font-weight="700" letter-spacing="5" fill="#fff">CLAUDE CODE</text>
+          </svg>
+        </div>
+        <div class="card-head">
+          <h3>Claude Code</h3>
+          <span class="en">Terminal</span>
+        </div>
+        <div class="card-tagline">谁说编程不算游戏？这是最上头的开放世界。</div>
+        <div class="game-bar"><i style="width: 88%;"></i></div>
+        <div class="card-meta"><span class="tag tag-green">🕹️ 天天在玩</span><span class="date">时长 ∞</span></div>
+      </a>
+
+    </div>
+
+    <!-- ===== 站内小游戏 ===== -->
+    <div class="section-title"><svg class="t-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 17a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2Z"/><path d="M6 15v-2"/><path d="M12 15V9"/><circle cx="12" cy="6" r="3"/></svg>站内小游戏 <span class="count">1</span><span class="hint">● 上头指数</span></div>
+    <div class="rec-list">
+
+      <a class="rec" href="#" id="playGhost">
+        <span class="rec-icon">👻</span>
+        <span class="rec-main">
+          <span class="rec-name">抓幽灵 <em>№ 001 · 点击开玩</em></span>
+          <span class="rec-note">它会瞬移逃跑，抓满 5 次通关。本站自研，纯手搓。</span>
+        </span>
+        <span class="rec-badges"><span class="plat">手速挑战</span></span>
+        <span class="rec-score">●●●<b>○○</b></span>
+        <span class="rec-arrow">▶</span>
+      </a>
+
+    </div>
+
+    <div class="rec-cta">
+      下一款小游戏正在构思中……有想玩的点子？<a href="https://github.com/Azi36/Azi36/issues" target="_blank" rel="noopener">告诉我 →</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="site-logo" href="../">
+          <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+          <span class="wordmark">Azi<b>36</b></span>
+        </a>
+        <p class="footer-tag">把喜欢的东西，慢慢做出来。</p>
+        <div class="footer-social">
+          <a href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          </a>
+          <a href="#" data-say="这个没有" aria-label="Bilibili">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386z"/></svg>
+          </a>
+          <a href="#" data-say="这个也没有" aria-label="小红书">
+            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><mask id="xhsM"><rect x="2" y="2" width="20" height="20" rx="6" fill="#fff"/><text x="12" y="16.6" text-anchor="middle" font-size="12" font-weight="700" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" fill="#000">红</text></mask><rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#xhsM)"/></svg>
+          </a>
+          <a href="#" data-say="这个真没有" aria-label="X">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col mystery">
+          <a href="../">首页</a>
+          <a href="../shares/">分享</a>
+          <a href="../links/">推荐</a>
+          <a href="./">游戏</a>
+        </div>      </div>
+    </div>
+    <div class="container footer-meta">
+      <span>© 2026 Azi36 · 用纯 HTML 手搓的小站</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+    <div class="footer-ghost" aria-hidden="true">AZI36</div>
+  </footer>
+
+  <!-- 抓幽灵：弹窗游戏厅 -->
+  <dialog class="game-modal" id="ghostModal">
+    <div class="game-modal-head">
+      <strong>👻 抓幽灵</strong>
+      <span class="en">№ 001 · 手速挑战</span>
+      <button class="game-close" id="ghostClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="ghost-zone" id="ghostZone">
+      <button class="ghost" id="ghost" aria-label="抓住它">👻</button>
+    </div>
+    <div class="ghost-score" id="ghostScore">它会躲！抓住它 5 次（0/5）</div>
+  </dialog>
+
+  <script>
+    (function () {
+      var modal = document.getElementById('ghostModal');
+      var opener = document.getElementById('playGhost');
+      var closeBtn = document.getElementById('ghostClose');
+      var ghost = document.getElementById('ghost');
+      var scoreEl = document.getElementById('ghostScore');
+      if (!modal || !opener || !ghost) return;
+
+      var score = 0, TARGET = 5, done = false;
+
+      function emojiFix(el) {
+        if (window.twemoji) twemoji.parse(el, { folder: 'svg', ext: '.svg' });
+      }
+
+      function teleport() {
+        ghost.style.left = (6 + Math.random() * 80) + '%';
+        ghost.style.top = (8 + Math.random() * 66) + '%';
+      }
+
+      function reset() {
+        score = 0;
+        done = false;
+        ghost.textContent = '👻';
+        emojiFix(ghost);
+        ghost.style.left = '45%';
+        ghost.style.top = '35%';
+        scoreEl.textContent = '它会躲！抓住它 5 次（0/5）';
+      }
+
+      ghost.addEventListener('mouseenter', function () {
+        if (!done && Math.random() < 0.6) teleport();
+      });
+
+      ghost.addEventListener('click', function (e) {
+        if (done) {
+          if (window.aziConfetti) window.aziConfetti(e.clientX, e.clientY);
+          return;
+        }
+        score++;
+        if (window.aziConfetti) window.aziConfetti(e.clientX, e.clientY);
+        if (score >= TARGET) {
+          done = true;
+          ghost.textContent = '🎉';
+          emojiFix(ghost);
+          ghost.style.left = '45%';
+          ghost.style.top = '35%';
+          scoreEl.textContent = '全抓住了！彩蛋：404 页面还藏着它的孪生兄弟';
+        } else {
+          scoreEl.textContent = '手速不错！继续（' + score + '/' + TARGET + '）';
+          teleport();
+        }
+      });
+
+      opener.addEventListener('click', function (e) {
+        e.preventDefault();
+        reset();
+        modal.showModal();
+      });
+
+      closeBtn.addEventListener('click', function () { modal.close(); });
+
+      // 点遮罩空白处关闭
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) modal.close();
+      });
+    })();
+  </script>
+
+</body>
+</html>

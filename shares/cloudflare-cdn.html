@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用 Cloudflare 免费加速 GitHub Pages · Azi36</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-orange">
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="./" class="active">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="../games/">游戏</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><i></i>慢慢更新中</span>
+        <a class="nav-gh" href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="article-layout">
+    <article class="article">
+      <a class="back-link" href="./">← 返回分享</a>
+      <div class="kicker">教程</div>
+      <h1>用 Cloudflare 免费加速 GitHub Pages</h1>
+      <div class="article-meta">2026-08-15 · 大约 6 分钟 · 前置阅读：<a href="github-pages.html">在 GitHub 上免费部署静态网站</a></div>
+
+      <p>
+        GitHub Pages 部署省心，但服务器在境外，国内访问时快时慢，
+        有时甚至打不开。解决办法也是免费的：把域名解析托管到
+        Cloudflare，套一层它的全球 CDN——访客会就近访问缓存节点，
+        而不是每次都跨洋去 GitHub 取文件。
+      </p>
+
+      <h2>原理一句话</h2>
+      <p>
+        没有 CDN 时：<code>访客 → GitHub 服务器（境外）</code>，路远且挤。<br>
+        有了 CDN 后：<code>访客 → 就近的 Cloudflare 节点（缓存副本）</code>，
+        只有缓存过期时 Cloudflare 才回 GitHub 取一次新文件。
+        对静态网站来说命中率极高，效果立竿见影。
+      </p>
+
+      <h2>第一步：注册 Cloudflare 并添加站点</h2>
+      <ol>
+        <li>注册 <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare</a> 账号</li>
+        <li>点 <strong>Add a site</strong>，输入你的域名（比如 <code>azi36.com</code>）</li>
+        <li>套餐选最下面的 <strong>Free（免费）</strong>——个人网站完全够用，
+          流量不限量</li>
+      </ol>
+      <p>
+        Cloudflare 会自动扫描你现有的 DNS 记录（之前配的 A 记录和
+        CNAME 都会被识别出来），确认无误即可。
+      </p>
+
+      <h2>第二步：把域名的 NS 改成 Cloudflare 的</h2>
+      <p>
+        添加完站点，Cloudflare 会分配给你两个 NS（域名服务器）地址，
+        长这样：
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>值（以你面板上显示的为准）</th></tr>
+          <tr><td>NS</td><td><code>xxx.ns.cloudflare.com</code></td></tr>
+          <tr><td>NS</td><td><code>yyy.ns.cloudflare.com</code></td></tr>
+        </table>
+      </div>
+
+      <p>
+        回到你<strong>购买域名的注册商</strong>后台，找到"DNS 服务器 / NS 设置"，
+        把默认的两条换成 Cloudflare 给的这两条。生效需要几分钟到 24 小时，
+        生效后 Cloudflare 面板会显示 <strong>Active</strong>。
+      </p>
+      <p>
+        注意：换 NS 之后，DNS 记录就全部在 Cloudflare 面板里管理了，
+        注册商那边原来的解析设置不再生效。
+      </p>
+
+      <h2>第三步：打开橙色云朵（关键）</h2>
+      <p>
+        在 Cloudflare 的 <strong>DNS</strong> 面板确认这几条记录存在，
+        并把 Proxy status 切换成 <strong>Proxied（橙色云朵）</strong>——
+        这就是"套 CDN"的开关：
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Cloudflare / DNS / Records</div>
+          <div class="mock-body">
+            <div class="mock-sub">A 记录（4 条，指向 GitHub Pages）</div>
+            <span class="mock-select">A · @ · 185.199.108.153</span>
+            <span class="mock-select" style="color:#f38020; border-color:#f6c093; background:#fff4ea;">☁️ Proxied</span>
+            <div class="mock-sub">CNAME 记录</div>
+            <span class="mock-select">CNAME · www · 你的用户名.github.io</span>
+            <span class="mock-select" style="color:#f38020; border-color:#f6c093; background:#fff4ea;">☁️ Proxied</span>
+            <div class="mock-ok">✓ 橙色云朵 = 流量经过 Cloudflare CDN</div>
+          </div>
+        </div>
+        <figcaption>DNS 面板：每条记录右侧的云朵点成橙色（Proxied）</figcaption>
+      </figure>
+
+      <p>
+        灰色云朵（DNS only）表示只解析不加速；橙色才会走 CDN。
+        四条 A 记录和 www 的 CNAME 都点亮。
+      </p>
+
+      <h2>第四步：SSL/TLS 选 Full（严格）</h2>
+      <p>
+        进入 <strong>SSL/TLS → Overview</strong>，加密模式选
+        <strong>Full (strict)</strong>。这一步很重要：
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Cloudflare / SSL/TLS / Overview</div>
+          <div class="mock-body">
+            <div class="mock-label">SSL/TLS encryption mode</div>
+            <div class="mock-sub">访客 ⇆ Cloudflare ⇆ GitHub Pages 全程加密</div>
+            <span class="mock-select">Off</span>
+            <span class="mock-select">Flexible</span>
+            <span class="mock-select">Full</span>
+            <span class="mock-select" style="color:#1a7f37; border-color:#9fd7ae; background:#eefaf1; font-weight:600;">✓ Full (strict)</span>
+          </div>
+        </div>
+        <figcaption>选 Full (strict)——GitHub Pages 本身有合法证书，可以全程严格加密</figcaption>
+      </figure>
+
+      <ul>
+        <li>选 <strong>Flexible</strong> 会和 GitHub 的强制 HTTPS 打架，
+          造成"重定向次数过多"的死循环——很多人翻车在这里</li>
+        <li>GitHub Pages 自带合法证书，所以放心选最严格的 Full (strict)</li>
+      </ul>
+
+      <h2>第五步：顺手开几个免费优化</h2>
+      <ul>
+        <li><strong>SSL/TLS → Edge Certificates → Always Use HTTPS</strong>：
+          所有 http 访问自动跳转 https</li>
+        <li><strong>Speed → Optimization</strong>：Brotli 压缩默认开启，确认即可</li>
+        <li><strong>Caching → Configuration</strong>：Browser Cache TTL
+          按默认即可；改版后如果看到旧页面，来这里点
+          <strong>Purge Everything</strong> 清一次缓存</li>
+      </ul>
+
+      <h2>验证是否生效</h2>
+      <p>等 NS 生效后，随便找个终端执行：</p>
+      <pre><code>curl -I https://你的域名.com
+
+# 响应头里看到这行就说明成功了：
+server: cloudflare</code></pre>
+      <p>
+        响应头里还有个 <code>cf-cache-status</code>：<code>HIT</code>
+        表示这次访问命中了节点缓存，根本没去 GitHub——这就是加速的来源。
+      </p>
+
+      <h2>注意事项</h2>
+      <ul>
+        <li>DNS 记录本身不用改——还是指向 GitHub 的那 4 个 IP，
+          只是"管理的地方"从注册商搬到了 Cloudflare</li>
+        <li>GitHub 仓库里的 <code>CNAME</code> 文件和 Pages 设置保持原样</li>
+        <li>之前做过的 TXT 域名验证记录也一并保留在 Cloudflare 里</li>
+        <li>免费版完全够个人网站用，不需要买任何付费功能</li>
+      </ul>
+
+      <blockquote>
+        部署在 GitHub，加速靠 Cloudflare，域名一年几十块——
+        一个全球可访问的个人网站，成本基本就是一杯奶茶。
+      </blockquote>
+    </article>
+
+    <!-- 右侧粘性栏：目录由 site.js 自动生成 -->
+    <aside class="article-aside">
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>本文目录</div>
+        <nav class="toc-list"></nav>
+      </div>
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
+        <a class="aside-link" href="github-pages.html">上一篇：部署 GitHub Pages</a>
+        <a class="aside-link" href="./">← 更多分享</a>
+        <a class="aside-link" href="../links/">好用的网站推荐</a>
+      </div>
+    </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="site-logo" href="../">
+          <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+          <span class="wordmark">Azi<b>36</b></span>
+        </a>
+        <p class="footer-tag">把喜欢的东西，慢慢做出来。</p>
+        <div class="footer-social">
+          <a href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          </a>
+          <a href="#" data-say="这个没有" aria-label="Bilibili">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386z"/></svg>
+          </a>
+          <a href="#" data-say="这个也没有" aria-label="小红书">
+            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><mask id="xhsM"><rect x="2" y="2" width="20" height="20" rx="6" fill="#fff"/><text x="12" y="16.6" text-anchor="middle" font-size="12" font-weight="700" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" fill="#000">红</text></mask><rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#xhsM)"/></svg>
+          </a>
+          <a href="#" data-say="这个真没有" aria-label="X">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col mystery">
+          <a href="../">首页</a>
+          <a href="./">分享</a>
+          <a href="../links/">推荐</a>
+          <a href="../games/">游戏</a>
+        </div>      </div>
+    </div>
+    <div class="container footer-meta">
+      <span>© 2026 Azi36 · 用纯 HTML 手搓的小站</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+    <div class="footer-ghost" aria-hidden="true">AZI36</div>
+  </footer>
+
+</body>
+</html>

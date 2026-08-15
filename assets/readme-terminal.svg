@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="234" viewBox="0 0 680 234" font-family="ui-monospace,SFMono-Regular,Consolas,Menlo,monospace" font-size="14">
+  <!-- 终端窗体 -->
+  <rect width="679" height="233" x=".5" y=".5" rx="12" fill="#14161c" stroke="#2a2f3a"/>
+  <circle cx="22" cy="19" r="5.5" fill="#ff5f57"/>
+  <circle cx="42" cy="19" r="5.5" fill="#febc2e"/>
+  <circle cx="62" cy="19" r="5.5" fill="#28c840"/>
+  <text x="340" y="24" text-anchor="middle" fill="#5b6270" font-size="12">azi36 — 灵感终端</text>
+  <line x1="1" y1="38" x2="679" y2="38" stroke="#232833"/>
+
+  <!-- 逐行播放，13 秒一轮循环 -->
+  <g fill="#d7dbe3">
+    <text x="24" y="66" opacity="0"><tspan fill="#8f7bff">$</tspan> whoami
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.04;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="90" opacity="0">Azi36 —— 读作「矮子」
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.10;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="118" opacity="0"><tspan fill="#8f7bff">$</tspan> npm run 灵感
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.20;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="142" opacity="0" fill="#ff6b6b">Error: 灵感余额不足
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.28;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="170" opacity="0"><tspan fill="#8f7bff">$</tspan> npm run 灵感 <tspan fill="#febc2e">--force</tspan>
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.42;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="194" opacity="0"><tspan fill="#4cd97b">✓</tspan> 强行执行成功，网站已上线 → <tspan fill="#6ea8ff">https://azi36.com</tspan>
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.54;0.96;1" values="0;1;0;0"/>
+    </text>
+    <text x="24" y="218" opacity="0"><tspan fill="#8f7bff">$</tspan> <tspan fill="#d7dbe3">▊<animate attributeName="opacity" dur="1s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.5" values="1;0"/></tspan>
+      <animate attributeName="opacity" dur="13s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.64;0.96;1" values="0;1;0;0"/>
+    </text>
+  </g>
+</svg>

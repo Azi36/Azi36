@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在 GitHub 上免费部署静态网站 · Azi36</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-orange">
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="./" class="active">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="../games/">游戏</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><i></i>慢慢更新中</span>
+        <a class="nav-gh" href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="article-layout">
+    <article class="article">
+      <a class="back-link" href="./">← 返回分享</a>
+      <div class="kicker">教程</div>
+      <h1>在 GitHub 上免费部署静态网站</h1>
+      <div class="article-meta">2026-08-15 · 大约 5 分钟</div>
+
+      <p>
+        不用买服务器、不用花一分钱，就能把一个网站放到公网上——
+        这就是 GitHub Pages。本站（azi36.com）就是这么部署的，
+        整个流程走下来大概十分钟，这篇把每一步都写清楚。
+      </p>
+
+      <h2>第一步：新建项目并上传网站文件</h2>
+      <p>
+        登录 GitHub 新建一个仓库（设为 <strong>Public</strong>），
+        把网站文件传上去。最少只需要一个 <code>index.html</code> 作为入口，
+        用 git 推送或者在网页上 <strong>Add file → Upload files</strong> 拖进去都行：
+      </p>
+      <pre><code>git init
+git add .
+git commit -m "我的第一个网站"
+git branch -M main
+git remote add origin https://github.com/你的用户名/仓库名.git
+git push -u origin main</code></pre>
+
+      <h2>第二步：开启 Pages，分支选 main</h2>
+      <p>
+        进入项目管理面板的 <strong>Settings → Pages</strong>，
+        把部署分支修改为 <code>main</code>：
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Settings / Pages</div>
+          <div class="mock-body">
+            <div class="mock-label">Build and deployment</div>
+            <div class="mock-sub">Source</div>
+            <span class="mock-select">Deploy from a branch ▾</span>
+            <div class="mock-sub">Branch</div>
+            <span class="mock-select">🌿 main ▾</span>
+            <span class="mock-select">/ (root) ▾</span>
+            <span class="mock-btn">Save</span>
+          </div>
+        </div>
+        <figcaption>仓库 Settings → Pages：Source 选 Deploy from a branch，分支选 main</figcaption>
+      </figure>
+
+      <p>
+        保存后等一两分钟，页面上方会出现网址。
+        <strong>如果不配置自己的域名，默认地址就是
+        <code>你的用户名.github.io/项目名</code></strong>，到这里网站已经上线了。
+      </p>
+
+      <h2>第三步：设置 Custom domain（自定义域名）</h2>
+      <p>
+        有自己的域名的话，在同一个页面的 <strong>Custom domain</strong>
+        填入域名并保存，GitHub 会自动在仓库根目录生成一个
+        <code>CNAME</code> 文件，内容就是你的域名：
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Settings / Pages</div>
+          <div class="mock-body">
+            <div class="mock-label">Custom domain</div>
+            <div class="mock-sub">Custom domains allow you to serve your site from a domain other than github.io</div>
+            <span class="mock-input">azi36.com</span>
+            <span class="mock-btn">Save</span>
+            <div class="mock-ok">✓ DNS check successful</div>
+            <div class="mock-check">☑ Enforce HTTPS</div>
+          </div>
+        </div>
+        <figcaption>Custom domain 填入你的域名，DNS 生效后勾选 Enforce HTTPS</figcaption>
+      </figure>
+
+      <h2>第四步：域名 DNS 配置</h2>
+      <p>
+        到你的<strong>域名注册商</strong>的 DNS 设置里，
+        先添加 4 条 A 记录（这些 IP 是 GitHub Pages 的固定地址）：
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.108.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.109.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.110.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.111.153</code></td></tr>
+        </table>
+      </div>
+
+      <p>再添加一条 CNAME 记录，把 <code>yourusername</code> 换成你的 GitHub 用户名：</p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>CNAME</td><td>www</td><td><code>yourusername.github.io</code></td></tr>
+        </table>
+      </div>
+
+      <h2>第五步：对域名做 DNS 归属验证</h2>
+      <p>
+        为了防止别人抢绑你的域名，建议再做一次验证：
+        打开 <strong>GitHub 个人设置</strong>（不是仓库设置）里的
+        <strong>Settings → Pages</strong>，点 <strong>Add a domain</strong>，
+        GitHub 会给你一串验证内容，回到 DNS 设置里加一条 TXT 记录：
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>TXT</td><td><code>_github-pages-challenge-你的用户名</code></td><td>GitHub 给出的验证内容</td></tr>
+        </table>
+      </div>
+
+      <p>解析生效后回到 GitHub 点 Verify，看到绿色对勾就完成了。</p>
+
+      <h2>关于 SSL 证书（可忽略）</h2>
+      <p>
+        GitHub Pages 勾选 <strong>Enforce HTTPS</strong> 后会自动签发证书，
+        不需要自己申请。如果以后要给其他服务配 HTTPS，
+        可以在 <a href="https://console.cloud.tencent.com/ssl" target="_blank" rel="noopener">腾讯云</a>
+        等平台申请免费证书。
+      </p>
+
+      <h2>几个小贴士</h2>
+      <ul>
+        <li>在根目录放一个空的 <code>.nojekyll</code> 文件，
+          告诉 GitHub 跳过 Jekyll 处理，纯 HTML 站部署更快更省心</li>
+        <li>放一个 <code>404.html</code>，访客走错路时能看到你的自定义页面</li>
+        <li>之后改完代码只管 push，大约一分钟内自动生效</li>
+      </ul>
+
+      <blockquote>
+        你现在看到的这个网站，从第一行代码到上线，用的就是上面这套流程。
+      </blockquote>
+    </article>
+
+    <!-- 右侧粘性栏：目录由 site.js 自动生成 -->
+    <aside class="article-aside">
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>本文目录</div>
+        <nav class="toc-list"></nav>
+      </div>
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
+        <a class="aside-link" href="cloudflare-cdn.html">下一篇：Cloudflare 免费加速 →</a>
+        <a class="aside-link" href="./">← 更多分享</a>
+        <a class="aside-link" href="../links/">好用的网站推荐</a>
+      </div>
+    </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="site-logo" href="../">
+          <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+          <span class="wordmark">Azi<b>36</b></span>
+        </a>
+        <p class="footer-tag">把喜欢的东西，慢慢做出来。</p>
+        <div class="footer-social">
+          <a href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          </a>
+          <a href="#" data-say="这个没有" aria-label="Bilibili">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386z"/></svg>
+          </a>
+          <a href="#" data-say="这个也没有" aria-label="小红书">
+            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><mask id="xhsM"><rect x="2" y="2" width="20" height="20" rx="6" fill="#fff"/><text x="12" y="16.6" text-anchor="middle" font-size="12" font-weight="700" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" fill="#000">红</text></mask><rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#xhsM)"/></svg>
+          </a>
+          <a href="#" data-say="这个真没有" aria-label="X">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col mystery">
+          <a href="../">首页</a>
+          <a href="./">分享</a>
+          <a href="../links/">推荐</a>
+          <a href="../games/">游戏</a>
+        </div>      </div>
+    </div>
+    <div class="container footer-meta">
+      <span>© 2026 Azi36 · 用纯 HTML 手搓的小站</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+    <div class="footer-ghost" aria-hidden="true">AZI36</div>
+  </footer>
+
+</body>
+</html>
