@@ -265,22 +265,136 @@
     fetch(API + path).then(r => r.json()).then(d => {
       if (typeof d.total !== 'number') return;
       sessionStorage.setItem('azi-counted', '1');
-      visitEl.textContent = ' · 你是第 ' + d.total.toLocaleString() + ' 位路过的朋友';
+      visitEl.textContent = ' · 第 ' + d.total.toLocaleString() + ' 次到访'
+        + (typeof d.people === 'number' ? ' · 你是第 ' + d.people.toLocaleString() + ' 位路过的朋友' : '');
       visitEl.hidden = false;
     }).catch(() => { /* 后端未就绪时保持隐藏 */ });
   }
 
+  /* ---------- 6.9 文章阅读统计 + 点赞 ----------
+     每篇文章一个 slug（data-page）；阅读同一会话只计一次 */
+  const pageStats = document.getElementById('pageStats');
+  if (pageStats) {
+    const API = 'https://api.azi36.com';
+    const slug = pageStats.dataset.page;
+    const likeBtn = document.getElementById('pageLike');
+
+    const renderStats = (d) => {
+      if (typeof d.reads !== 'number') return;
+      document.getElementById('psReads').textContent =
+        `读过 ${d.reads.toLocaleString()} 次 · ${d.readers.toLocaleString()} 人`;
+      likeBtn.querySelector('i').textContent = d.likes;
+      if (d.liked) likeBtn.classList.add('on');
+      pageStats.hidden = false;
+    };
+
+    const readKey = 'azi-read-' + slug;
+    const method = sessionStorage.getItem(readKey) ? 'GET' : 'POST';
+    fetch(`${API}/pages/${slug}/hit`, { method })
+      .then(r => r.json()).then(d => {
+        sessionStorage.setItem(readKey, '1');
+        renderStats(d);
+      }).catch(() => {});
+
+    likeBtn.addEventListener('click', () => {
+      if (likeBtn.classList.contains('on')) return;
+      likeBtn.classList.add('on');
+      fetch(`${API}/pages/${slug}/like`, { method: 'POST' })
+        .then(r => r.json()).then(d => {
+          if (typeof d.likes === 'number') likeBtn.querySelector('i').textContent = d.likes;
+        }).catch(() => {});
+    });
+  }
+
+  /* ---------- 6.10 文章留言板 ----------
+     留言与点赞走后端（PG 落库，按 data-page 归属文章）；点过赞的 id 记在本地防手滑 */
+  const msgList = document.getElementById('msgList');
+  if (msgList) {
+    const API = 'https://api.azi36.com';
+    const msgPage = msgList.closest('.msg-board').dataset.page || 'home';
+    const escMsg = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const likedSet = new Set(JSON.parse(localStorage.getItem('azi-liked') || '[]'));
+
+    const msgRow = (m) => `
+      <div class="msg">
+        <div class="msg-head"><b>${escMsg(m.name)}</b><time>${escMsg(m.date || '')}</time></div>
+        <p>${escMsg(m.text)}</p>
+        <button class="msg-like${likedSet.has(String(m.id)) ? ' on' : ''}" data-like="${m.id}" aria-label="点赞">
+          ♥ <i>${m.likes || 0}</i>
+        </button>
+      </div>`;
+
+    const renderMsgs = (msgs) => {
+      msgList.innerHTML = msgs.length
+        ? msgs.map(msgRow).join('')
+        : '<p class="msg-empty">留言本还空着——第一页留给你。</p>';
+    };
+
+    fetch(`${API}/msgs?page=${msgPage}`).then(r => r.json())
+      .then(d => renderMsgs(d.msgs || []))
+      .catch(() => { msgList.innerHTML = '<p class="msg-empty">留言本暂时打不开，回头再来。</p>'; });
+
+    document.getElementById('msgSend').addEventListener('click', () => {
+      const name = document.getElementById('msgName').value.trim();
+      const text = document.getElementById('msgText').value.trim();
+      if (!text) { document.getElementById('msgText').focus(); return; }
+      const btn = document.getElementById('msgSend');
+      btn.disabled = true; btn.textContent = '寄出中…';
+      fetch(API + '/msgs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, text, page: msgPage }),
+      }).then(r => r.json()).then(d => {
+        btn.disabled = false; btn.textContent = '留下';
+        if (!d.ok) { btn.textContent = d.error || '没发出去'; setTimeout(() => { btn.textContent = '留下'; }, 2000); return; }
+        document.getElementById('msgText').value = '';
+        const empty = msgList.querySelector('.msg-empty');
+        if (empty) empty.remove();
+        msgList.insertAdjacentHTML('afterbegin', msgRow(d.msg));
+      }).catch(() => { btn.disabled = false; btn.textContent = '网络开小差了'; setTimeout(() => { btn.textContent = '留下'; }, 2000); });
+    });
+
+    msgList.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-like]');
+      if (!btn) return;
+      const id = btn.dataset.like;
+      if (likedSet.has(id)) return;
+      likedSet.add(id);
+      localStorage.setItem('azi-liked', JSON.stringify([...likedSet]));
+      btn.classList.add('on');
+      fetch(`${API}/msgs/${id}/like`, { method: 'POST' }).then(r => r.json()).then(d => {
+        if (typeof d.likes === 'number') btn.querySelector('i').textContent = d.likes;
+      }).catch(() => {});
+    });
+  }
+
   /* ---------- 7. 撒花特效（全站可用） ----------
-     用法：window.aziConfetti(x, y) —— 在屏幕坐标处炸开一片 emoji */
+     用法：window.aziConfetti(x, y) —— 在屏幕坐标处炸开一片 emoji。
+     粒子放在 popover 宿主里：popover 与 dialog 同属顶层（top layer），
+     每次爆炸前重新 show 一次即可压在最晚打开的弹窗之上 */
   window.aziConfetti = function (x, y) {
     if (reduceMotion) return;
+    let layer = document.getElementById('aziConfettiLayer');
+    if (!layer) {
+      layer = document.createElement('div');
+      layer.id = 'aziConfettiLayer';
+      layer.setAttribute('popover', 'manual');
+      layer.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;' +
+        'background:none;border:0;margin:0;padding:0;pointer-events:none;overflow:hidden;';
+      document.body.appendChild(layer);
+    }
+    try {
+      if (layer.matches(':popover-open')) layer.hidePopover();
+      layer.showPopover();
+    } catch (e) { /* 老浏览器没有 Popover API：粒子仍会落在 body 层 */ }
+    const host = layer.isConnected && layer.matches(':popover-open') ? layer : document.body;
     const EMO = ['🎉', '✨', '🎊', '⭐', '💙'];
     for (let i = 0; i < 26; i++) {
       const s = document.createElement('span');
       s.textContent = EMO[i % EMO.length];
       s.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y +
         'px;font-size:' + (12 + Math.random() * 14) + 'px;pointer-events:none;z-index:9999;';
-      document.body.appendChild(s);
+      host.appendChild(s);
       const ang = Math.random() * Math.PI * 2;
       const dist = 60 + Math.random() * 140;
       s.animate([

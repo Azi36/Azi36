@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Great Fusion · Azi36</title>
+  <meta name="description" content="15 / 30 / 60 天，从一身高利贷到暴富或暴毙——2019 年易语言原作的 Web 复刻版。">
+  <link rel="stylesheet" href="../../assets/style.css?v=6">
+  <link rel="stylesheet" href="tgf.css?v=2">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../../assets/site.js" defer></script>
+  <script src="tgf.js" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-purple">
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../../">首页</a>
+        <a href="../../shares/">分享</a>
+        <a href="../../links/">推荐</a>
+        <a href="../" class="active">游戏</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><i></i>慢慢更新中</span>
+        <a class="nav-gh" href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="../">← 返回游戏频道</a>
+    <div class="kicker">站内小游戏 · № 001</div>
+    <h1>The Great Fusion</h1>
+    <p class="page-desc">
+      一身高利贷，一座物价疯狂的城市，限定天数内暴富或暴毙。
+      2019 年易语言原作的 Web 复刻版——祝你比当年的尼古拉斯·狗蛋走运。
+    </p>
+
+    <!-- ===== 游戏主窗口 ===== -->
+    <div class="tgf-window">
+      <div class="tgf-bar">
+        🪙 The Great Fusion <span class="en" id="barDays">TRADE · SURVIVE</span>
+        <button class="bar-rank" id="rankBtn">🏆 排行榜</button>
+        <span class="tgf-player" id="barName"></span>
+      </div>
+
+      <!-- HUD：天数 / 钱包四格 / 状态条 -->
+      <div class="tgf-hud">
+        <div class="hud-day">
+          <b id="statDay">1</b>
+          <span>/ <span id="statDayMax">30</span> 天</span>
+        </div>
+        <div class="hud-tiles">
+          <div class="tile"><span>现金</span><b id="statCash">0</b></div>
+          <div class="tile"><span>存款 <button class="tile-btn" id="bankBtn">银行</button></span><b id="statDeposit">0</b></div>
+          <div class="tile"><span>欠债 <button class="tile-btn warn" id="repayBtn">还债</button></span><b id="statDebt">0</b></div>
+          <div class="tile worth"><span>净资产（含存货折现）</span><b id="statWorth">0</b></div>
+        </div>
+        <div class="hud-bars">
+          <div class="bar-row">
+            <span>健康</span>
+            <div class="hbar"><i id="healthBar"></i></div>
+            <em id="statHealth">100</em>
+            <button class="tile-btn" id="healBtn">治疗</button>
+          </div>
+          <div class="bar-row">
+            <span>仓储</span>
+            <div class="hbar cap"><i id="capBar"></i></div>
+            <em id="statCap">0/100</em>
+            <button class="tile-btn" id="whBtn">租仓</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 开局面板：选难度、报名号 -->
+      <section class="tgf-start" id="startPanel">
+        <h3>🪙 开始闯荡</h3>
+        <p class="sub">选一种活法，报上名号。高利贷日息 10%，债主的耐心和天数一样长。</p>
+        <p class="start-stats" id="startStats" hidden></p>
+        <div class="name-row">
+          <input type="text" id="playerName" maxlength="12" placeholder="你的江湖名号">
+          <button id="randomName">🎲 随机狗蛋</button>
+        </div>
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="15">
+            <b>快闪局</b><i>15 天</i>
+            <span>现金 8,000<br>欠债 10,000<br>高压快节奏</span>
+          </button>
+          <button class="mode-card on" data-mode="30">
+            <b>经典局</b><i>30 天</i>
+            <span>现金 2,000<br>欠债 5,000<br>原味浮生</span>
+          </button>
+          <button class="mode-card" data-mode="60">
+            <b>马拉松</b><i>60 天</i>
+            <span>现金 500<br>欠债 8,000<br>赤贫开局</span>
+          </button>
+        </div>
+        <button id="startBtn" class="gate-btn">开始闯荡 →</button>
+      </section>
+
+      <!-- 智能提醒条 -->
+      <div class="tgf-notice" id="noticeBar" hidden></div>
+
+      <!-- 页签：致敬 2019 原版的栏目结构 -->
+      <nav class="tgf-tabs">
+        <button class="tgf-tab on" data-tab="market">交易市场</button>
+        <button class="tgf-tab" data-tab="black">地下黑市</button>
+        <button class="tgf-tab" data-tab="casino">澳门皇家</button>
+        <button class="tgf-tab" data-tab="community">社区服务</button>
+      </nav>
+
+      <!-- 交易市场 -->
+      <section class="tgf-panel" id="tab-market">
+        <table class="tgf-market">
+          <thead><tr><th>商品</th><th class="num">现价</th><th class="num">货源</th><th class="num">持仓</th><th class="ops">交易</th></tr></thead>
+          <tbody id="marketBody"></tbody>
+        </table>
+      </section>
+
+      <!-- 地下黑市 -->
+      <section class="tgf-panel" id="tab-black" hidden>
+        <!-- 验资拦截：通过后本局永久放行 -->
+        <div class="tgf-gate" id="blackGate">
+          <p>🌑 一个戴金链子的门房横在巷口：<br>「生面孔？黑市只做有头有脸的人的生意——<b>净资产 50,000</b> 起步。」</p>
+          <p class="gate-msg" id="blackGateMsg"></p>
+          <button class="gate-btn" id="blackVerify">🪙 亮出家底（验资）</button>
+        </div>
+        <div id="blackFloor" hidden>
+          <!-- 风声条：每天一掷，决定被抓概率；可花钱打点压一级 -->
+          <div class="heat-strip" id="heatStrip">
+            <span class="heat-label">今夜风声</span>
+            <b id="heatState">…</b>
+            <span class="heat-odds" id="heatOdds"></span>
+            <button id="bribeBtn">🥃 打点治安队</button>
+          </div>
+          <table class="tgf-market">
+            <thead><tr><th>黑货</th><th class="num">现价</th><th class="num">货源</th><th class="num">持仓</th><th class="ops">交易</th></tr></thead>
+            <tbody id="blackBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 澳门皇家 -->
+      <section class="tgf-panel" id="tab-casino" hidden>
+        <div class="tgf-gate" id="casinoGate">
+          <p>🎰 穿西装的门卫抱着手臂打量你：<br>「本店只接待<b>资产为正</b>的客人，穷鬼与倒霉蛋恕不招待。」</p>
+          <p class="gate-msg" id="casinoGateMsg"></p>
+          <button class="gate-btn" id="casinoVerify">🎩 验资入场</button>
+        </div>
+        <div id="casinoFloor" hidden>
+          <div class="casino-strip">
+            <span>🎩 贵宾厅战绩</span><span id="casinoPL">未开张</span>
+            <em class="strip-note">十赌九输，第十把梭哈</em>
+          </div>
+          <div class="casino-grid">
+            <div class="casino-card c-race">
+              <h4><i>🏇</i>皇家马场 <em class="pay">按赔率</em></h4>
+              <div id="horseList"></div>
+              <p class="dim">上局冠军：<span id="raceLast">—</span></p>
+              <div class="bet-row"><input id="raceBet" type="number" min="1" placeholder="下注额"><button id="raceGo" class="primary">开跑</button></div>
+            </div>
+            <div class="casino-card c-dice">
+              <h4><i>🎲</i>比大小 <em class="pay">1.95×</em></h4>
+              <p>1-3 为小，4-6 为大。近十把路子：</p>
+              <div class="beads" id="diceHist"></div>
+              <div class="bet-row"><input id="diceBet" type="number" min="1" placeholder="下注额"><button id="diceSmall">押小</button><button id="diceBig">押大</button></div>
+            </div>
+            <div class="casino-card c-num">
+              <h4><i>🔢</i>猜数字 <em class="pay">9×</em></h4>
+              <p>猜中 0-9 任意一个数字。近十把开出：</p>
+              <div class="beads" id="numHist"></div>
+              <div class="bet-row"><input id="numGuess" type="number" min="0" max="9" placeholder="0-9"><input id="numBet" type="number" min="1" placeholder="下注额"><button id="numGo" class="primary">开</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 社区服务 -->
+      <section class="tgf-panel" id="tab-community" hidden>
+        <div class="casino-strip">
+          <span>🏘️ 社区服务中心</span>
+          <em class="strip-note">游戏人间，也要记得做个好人</em>
+        </div>
+        <div class="casino-grid">
+          <div class="casino-card c-scratch">
+            <h4><i>🎫</i>刮刮乐 <em class="pay">20/张</em></h4>
+            <p>最高奖 100,000，概率感人。刮的不是奖，是心跳。</p>
+            <div class="bet-row"><button id="scratchBtn" class="primary">刮一张</button></div>
+          </div>
+          <div class="casino-card c-lotto">
+            <h4><i>🎟️</i>幸运彩票 <em class="pay">2/注</em></h4>
+            <p>选三位数（000-999）次日开奖，猜中赢 2,000/注。</p>
+            <p class="dim">已购：<span id="lottoHeld">无</span> · 昨日开奖：<span id="lottoLast">—</span></p>
+            <div class="bet-row">
+              <input id="lottoNum" type="text" maxlength="3" placeholder="号码" inputmode="numeric">
+              <input id="lottoQty" type="number" min="1" max="50" value="1" placeholder="注数">
+              <button id="lottoBuy" class="primary">购买</button>
+            </div>
+          </div>
+          <div class="casino-card c-tea">
+            <h4><i>☕</i>茶馆 · 包打听 <em class="pay">500/次</em></h4>
+            <p>请茶博士透个明日行情的口风，灵验率七成五，每天限一次。</p>
+            <p class="dim">今日：<span id="teaNote">未买</span></p>
+            <div class="bet-row"><button id="teaBtn" class="primary">买消息</button></div>
+          </div>
+          <div class="casino-card c-blood">
+            <h4><i>🩸</i>献血站 <em class="pay">+800</em></h4>
+            <p>献血 400cc 领营养补贴，健康 -12。护士说一天只能来一次。</p>
+            <div class="bet-row"><button id="bloodBtn" class="primary">挽起袖子</button></div>
+          </div>
+          <div class="casino-card c-donate">
+            <h4><i>❤️</i>慈善捐款 <em class="pay">积德</em></h4>
+            <p>江湖传闻：善人被抓时，罚单都开得客气些（每 1 万善心罚款减 10%，至多减半）。</p>
+            <p class="dim">累计善心：<span id="karmaVal">0</span></p>
+            <div class="bet-row"><input id="donateAmt" type="number" min="1" placeholder="金额"><button id="donateBtn" class="primary">捐</button></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="tgf-actions">
+        <button id="nextDayBtn" class="primary">睡一觉，下一天 →</button>
+      </div>
+
+      <div class="tgf-log" id="gameLog"></div>
+    </div>
+  </main>
+
+  <!-- 银行弹窗 -->
+  <dialog class="tgf-dialog" id="bankModal">
+    <h3>🏦 城郊互助社</h3>
+    <p>存款日息 <b class="good">+0.5%</b> · 高利贷日息 <b class="bad">+10%</b>（先还债，再理财）</p>
+    <p>现金 <b id="bankCash">0</b> · 存款 <b id="bankSaved">0</b></p>
+    <input type="number" id="bankAmount" min="1" placeholder="金额">
+    <div class="row">
+      <button id="bankAllIn">全存</button>
+      <button id="bankAllOut">全取</button>
+      <button id="bankIn">存入</button>
+      <button id="bankOut">取出</button>
+      <button class="tgf-close primary">完事</button>
+    </div>
+  </dialog>
+
+  <!-- 仓库弹窗 -->
+  <dialog class="tgf-dialog" id="whModal">
+    <h3>🏪 仓库租赁处</h3>
+    <p>租金每天从现金里扣，付不起会记进欠债（利滚利，慎租）。</p>
+    <div id="whList"></div>
+    <div class="row"><button class="tgf-close">关闭</button></div>
+  </dialog>
+
+  <!-- 交易 Popover（就地弹出，不糊全屏） -->
+  <div class="trade-pop" id="tradePop" hidden>
+    <h4 id="popTitle">交易</h4>
+    <div class="pop-meta" id="popMeta"></div>
+    <div class="pop-qty">
+      <input type="number" id="popQty" min="1" value="1">
+      <button id="popMax">最大</button>
+    </div>
+    <div class="pop-total" id="popTotal"></div>
+    <div class="row">
+      <button id="popCancel">算了</button>
+      <button id="popOk" class="primary">成交</button>
+    </div>
+  </div>
+
+  <!-- 排行榜弹窗：分难度全球榜 + 本机记录 -->
+  <dialog class="tgf-dialog rank-dialog" id="rankModal">
+    <h3>🏆 排行榜 <span class="rank-sub">同一 IP 只计最高战绩 · 前 50 名</span></h3>
+    <nav class="rank-tabs">
+      <button data-rank="15">快闪 15 天</button>
+      <button data-rank="30" class="on">经典 30 天</button>
+      <button data-rank="60">马拉松 60 天</button>
+      <button data-rank="local">💾 本机</button>
+    </nav>
+    <div class="rank-scroll">
+      <table class="rank-table">
+        <thead><tr><th class="r-no">名次</th><th>名号</th><th class="num">身家</th><th class="num">天数</th><th class="num">日期</th></tr></thead>
+        <tbody id="rankBody"></tbody>
+      </table>
+    </div>
+    <div class="row"><button class="tgf-close">关闭</button></div>
+  </dialog>
+
+  <!-- 结算弹窗 -->
+  <dialog class="tgf-dialog" id="endModal">
+    <h3 id="endTitle"></h3>
+    <p id="endDetail"></p>
+    <p id="endRankNote" class="tgf-ranknote"></p>
+    <ol id="endRank"></ol>
+    <div class="row">
+      <button class="tgf-close">离开</button>
+      <button id="restartBtn" class="primary">再来一轮</button>
+    </div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-meta" style="padding-top: 20px;">
+      <span>© 2026 Azi36 · 原作 Carlo（2019 · 易语言）· 谨以复刻纪念那些年的地摊经济学</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+</body>
+</html>
