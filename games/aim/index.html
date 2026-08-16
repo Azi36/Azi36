@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幽灵靶场 · Azi36</title>
+  <meta name="description" content="网页版 Aim Lab——爆点、追踪、微操三张靶皮，靶子换成会飘的幽灵。">
+  <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="../../assets/style.css?v=26">
+  <link rel="stylesheet" href="aim.css?v=6">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../../assets/site.js?v=13" defer></script>
+  <script src="aim.js?v=6" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-purple">
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../../">首页</a>
+        <a href="../../shares/">分享</a>
+        <a href="../../links/">推荐</a>
+        <a href="../" class="active">游戏</a>
+        <a href="../../music/">音乐</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="../../assets/img/avatar.png" alt="Azi36"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="../">← 返回游戏频道</a>
+    <div class="kicker">站内小游戏 · № 003 · 定位练习 · 测试中</div>
+    <h1>幽灵靶场</h1>
+    <p class="page-desc">
+      网页版 Aim Lab，靶子换成了会飘的幽灵。五张靶皮覆盖甩枪、跟枪、速射，
+      支持鼠标锁定和各游戏灵敏度换算——№ 000 那只幽灵的正式复仇局。
+    </p>
+
+    <!-- ===== 游戏主窗口 ===== -->
+    <div class="aim-window">
+      <div class="aim-bar">
+        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>
+        幽灵靶场 <span class="en">GHOST RANGE · AIM TRAINER</span>
+        <span class="snd-wrap">
+          <button class="bar-pill" id="sndBtn"></button>
+          <div class="snd-pop">
+            <div class="snd-pop-in">
+              <label>音效 <input type="range" id="volSfx" min="0" max="100" step="5"></label>
+              <label>音乐 <input type="range" id="volBgm" min="0" max="100" step="5"></label>
+            </div>
+          </div>
+        </span>
+        <button class="bar-pill" id="rankBtn">排行榜</button>
+        <button class="bar-pill" id="quitBtn" hidden>收枪</button>
+      </div>
+
+      <!-- 开始面板 -->
+      <section class="aim-start" id="startPanel">
+        <h3>热身完毕，选一张靶皮</h3>
+        <p class="start-stats" id="startStats" hidden></p>
+        <div class="name-row">
+          <input type="text" id="playerName" maxlength="12" placeholder="靶场绰号">
+          <button id="randomName"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg> 随机</button>
+        </div>
+        <div class="aim-modes" id="modeGrid">
+          <button class="aim-mode on" data-mode="1">
+            <b>爆点连打</b><i>60 秒 · 甩枪</i>
+            <span>三个靶常驻场上，打掉一个立刻补一个——练目标切换和甩枪落点。</span>
+          </button>
+          <button class="aim-mode" data-mode="2">
+            <b>曲线追踪</b><i>30 秒 · 跟枪</i>
+            <span>靶子曲线乱飘、忽快忽慢，准星贴住就计分——练平滑跟枪。</span>
+          </button>
+          <button class="aim-mode" data-mode="4">
+            <b>直线追踪</b><i>30 秒 · 拉枪线</i>
+            <span>靶子左右直线平移，随时急停反向——模拟 A/D 侧移，练拉枪线。</span>
+          </button>
+          <button class="aim-mode" data-mode="3">
+            <b>瞬影微操</b><i>45 秒 · 精准</i>
+            <span>小靶一次一个，1.5 秒不打中就跑——练小幅修正和精细定位。</span>
+          </button>
+          <button class="aim-mode" data-mode="5">
+            <b>瞬闪点射</b><i>45 秒 · 反应</i>
+            <span>靶子只亮 0.9 秒就瞬移，出现即击——练反应速射，手比脑快。</span>
+          </button>
+          <button class="aim-mode" data-mode="6">
+            <b>无尽热身</b><i>不限时 · 调枪</i>
+            <span>三靶常驻、不计时不上榜——专门用来调灵敏度、试手感、找状态。</span>
+          </button>
+        </div>
+        <div class="aim-opts">
+          <label>靶子
+            <select id="optTarget">
+              <option value="ghost">幽灵</option>
+              <option value="dot">小圆点</option>
+            </select>
+          </label>
+          <label>鼠标
+            <select id="optLock">
+              <option value="1">锁定模式（可调灵敏度）</option>
+              <option value="0">系统指针</option>
+            </select>
+          </label>
+          <label>灵敏度
+            <select id="optGame">
+              <option value="gen">通用</option>
+              <option value="cs2">CS2</option>
+              <option value="val">无畏契约</option>
+              <option value="apex">Apex</option>
+              <option value="ow">守望先锋</option>
+            </select>
+            <input type="number" id="optSens" step="0.05" min="0.05" max="10" value="1">
+          </label>
+        </div>
+        <p class="opts-note">锁定模式下鼠标交给靶场接管（Esc 随时退出），灵敏度按所选游戏的手感换算；触屏设备自动用手指。</p>
+        <button class="aim-go" id="startBtn">开打 →</button>
+      </section>
+
+      <!-- 靶场 -->
+      <section class="aim-range" id="rangeView" hidden>
+        <div class="aim-hud">
+          <span class="hud-cell"><i>剩余</i><b id="hudTime">60</b></span>
+          <span class="hud-cell"><i>得分</i><b id="hudScore">0</b></span>
+          <span class="hud-cell"><i>连击</i><b id="hudCombo">0</b></span>
+          <span class="hud-cell"><i>命中率</i><b id="hudAcc">—</b></span>
+        </div>
+        <div class="aim-field" id="field">
+          <div class="xhair" id="xhair" hidden></div>
+          <span class="field-keys" aria-hidden="true">空格 / P 暂停 · Esc 解锁鼠标</span>
+          <div class="pause-ov" id="pauseOv" hidden>
+            <b>已暂停</b>
+            <span class="pv-tip">空格 / P 继续 · 锁定模式下按 Esc 就会停在这里</span>
+            <!-- 调枪台：改了立刻生效，继续开打直接体验 -->
+            <div class="pv-tune">
+              <label>灵敏度
+                <select id="povGame">
+                  <option value="gen">通用</option>
+                  <option value="cs2">CS2</option>
+                  <option value="val">无畏契约</option>
+                  <option value="apex">Apex</option>
+                  <option value="ow">守望先锋</option>
+                </select>
+                <input type="number" id="povSens" step="0.05" min="0.05" max="10">
+              </label>
+              <label>靶子
+                <select id="povTarget">
+                  <option value="ghost">幽灵</option>
+                  <option value="dot">小圆点</option>
+                </select>
+              </label>
+            </div>
+            <div class="pv-row">
+              <button id="resumeBtn" class="primary">继续</button>
+              <button id="pauseQuit">收枪</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 结算 -->
+      <section class="aim-end" id="endPanel" hidden>
+        <h3 id="endTitle"></h3>
+        <div class="aim-stats" id="endStats"></div>
+        <p class="end-note" id="endNote"></p>
+        <div class="row">
+          <button id="backBtn">换张靶皮</button>
+          <button id="againBtn" class="primary">再来一轮</button>
+        </div>
+      </section>
+    </div>
+
+    <p class="aim-tip">键鼠玩家用鼠标，触屏玩家用手指——都算修行。成绩打满一轮才会上传排行榜。</p>
+  </main>
+
+  <!-- 排行榜 -->
+  <dialog class="aim-modal" id="rankModal">
+    <h3><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> 靶场排行榜 <span class="dim-note">同 IP 只记最高</span></h3>
+    <div class="rank-tabs" id="rankTabs">
+      <button class="on" data-mode="1">爆点连打</button>
+      <button data-mode="2">曲线追踪</button>
+      <button data-mode="4">直线追踪</button>
+      <button data-mode="3">瞬影微操</button>
+      <button data-mode="5">瞬闪点射</button>
+    </div>
+    <ol class="aim-rank" id="rankList"></ol>
+    <div class="row"><button class="aim-close" id="rankClose">关闭</button></div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-meta" style="padding-top: 20px;">
+      <span>© 2026 Azi36 · 靶场只打幽灵，不打人</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+</body>
+</html>

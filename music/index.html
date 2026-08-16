@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音乐 · Azi36</title>
+  <meta name="description" content="Azi36 电台——自产曲目先扛大梁，全网聚合歌单在路上。">
+  <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/style.css?v=26">
+  <link rel="stylesheet" href="music.css?v=8">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js?v=13" defer></script>
+  <script src="music.js?v=10" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%222447e6%22/><stop offset=%221%22 stop-color=%227c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body class="ch-pink">
+
+  <!-- 极光装饰背景 -->
+  <div class="bg-decor">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="dots"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="../shares/">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="../games/">游戏</a>
+        <a href="./" class="active">音乐</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="../assets/img/avatar.png" alt="Azi36"></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 律动背景：随音频起伏的线条（不播放时慢慢呼吸） -->
+  <canvas class="mu-viz" id="viz" aria-hidden="true"></canvas>
+
+  <main class="container mu-main">
+    <!-- ===== 电台主窗口（进门即播放器，标题不啰嗦） ===== -->
+    <div class="mu-window">
+      <div class="mu-bar">
+        <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        音乐电台 <span class="en">AZI36 RADIO</span>
+        <span class="mu-count" id="muCount"></span>
+        <button class="mu-set" id="setBtn" aria-label="设置"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <div class="mu-layout">
+
+        <!-- 播放台 -->
+        <div class="mu-now">
+          <div class="mu-views">
+            <button id="viewDisc" class="on">碟片</button>
+            <button id="viewLrc">歌词</button>
+          </div>
+          <div class="mu-disc" id="disc">
+            <span class="mu-cover" id="coverBox"></span>
+          </div>
+          <div class="mu-lyrics" id="lyricsBox" hidden></div>
+          <b class="mu-title" id="nowTitle">—</b>
+          <span class="mu-sub" id="nowSub">选一首开始</span>
+          <div class="mu-progress" id="progWrap"><i id="progBar"></i></div>
+          <div class="mu-time"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+          <div class="mu-ctrl">
+            <button id="prevBtn" aria-label="上一首"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" x2="5" y1="19" y2="5"/></svg></button>
+            <button id="playBtn" class="big" aria-label="播放/暂停"></button>
+            <button id="nextBtn" aria-label="下一首"><svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg></button>
+          </div>
+          <!-- 次级控制：循环模式和音量一排，别去挤主按钮的居中 -->
+          <div class="mu-extra">
+            <button id="loopBtn" aria-label="循环模式"></button>
+            <label class="mu-vol">
+              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <input type="range" id="vol" min="0" max="100" step="5">
+            </label>
+          </div>
+        </div>
+
+        <!-- 歌单 + 播放列表 -->
+        <div class="mu-side">
+          <div class="mu-tabs" id="plTabs"></div>
+          <div class="mu-search" id="muSearch" hidden>
+            <input type="search" id="qInput" placeholder="搜歌 / 搜歌手，全网 30 秒试听" maxlength="40">
+            <button id="qBtn">搜</button>
+          </div>
+          <div class="mu-import" id="muImport" hidden>
+            <button id="impBtn">选文件导入</button>
+            <input type="file" id="impFile" multiple hidden accept="audio/*,.flac,.ogg,.oga,.opus,.m4a,.aac,.wav,.webm,.ape,.wma,.wv,.aiff,.dsf">
+            <span class="imp-note" id="impNote">MP3 / FLAC / OGG / OPUS / M4A / WAV 通吃 · 存进浏览器仓库，关页不丢</span>
+          </div>
+          <ol class="mu-list" id="trackList"></ol>
+          <div class="mu-pager" id="muPager" hidden>
+            <button id="pgPrev">上一页</button>
+            <span id="pgInfo"></span>
+            <button id="pgNext">下一页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 全网歌单：占位 ===== -->
+    <div class="section-title"><svg class="t-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15V6"/><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>全网歌单 <span class="count">施工中</span></div>
+    <div class="mu-teaser">
+      免费能拿的先拿：热门试听走 iTunes 官方接口，正版 30 秒管饱。
+      整首解锁靠登录自己的账号、用自己的 VIP——网关在路上，公家饭一口不吃。
+    </div>
+  </main>
+
+  <!-- 设置：音源接管（分段切换，选谁配谁） -->
+  <dialog class="mu-modal" id="setModal">
+    <h3>设置 · 音源接管</h3>
+    <div class="src-seg" id="srcSeg">
+      <button data-src="itunes" class="on">iTunes 试听</button>
+      <button data-src="qq">QQ 音乐</button>
+      <button data-src="ncm">网易云</button>
+    </div>
+
+    <!-- iTunes -->
+    <div class="src-pane" data-pane="itunes">
+      <p class="set-note">默认音源，苹果官方接口——正版、免登录，但每首只有 30 秒试听。想听整首切到 QQ 或网易云。</p>
+    </div>
+
+    <!-- QQ 音乐 -->
+    <div class="src-pane" data-pane="qq" hidden>
+      <label class="set-row">网关地址
+        <input type="text" id="qqUrl" placeholder="你的 QQ 音乐网关地址" autocomplete="off">
+      </label>
+      <label class="set-row">网关口令（部署时定的那串，防外人借你的 VIP）
+        <input type="text" id="qqKeyInput" placeholder="口令" autocomplete="off">
+      </label>
+      <label class="set-row">Cookie（y.qq.com 登录后 → F12 → Network 任意请求 → 复制整个 Cookie 请求头，多脏都行）
+        <textarea id="qqCookie" rows="3" placeholder="pgv_pvid=...; uin=...; qm_keyst=...；直接整段粘"></textarea>
+      </label>
+      <div class="set-actions">
+        <button id="qqSave">保存并登记</button>
+        <span class="set-status" id="qqStatus"></span>
+      </div>
+    </div>
+
+    <!-- 网易云 -->
+    <div class="src-pane" data-pane="ncm" hidden>
+      <label class="set-row">网关地址
+        <input type="text" id="apiUrl" placeholder="你的网易云网关地址" autocomplete="off">
+      </label>
+      <label class="set-row">网关口令（和 QQ 那栏共用一把，防外人蹭）
+        <input type="text" id="ncmKeyInput" placeholder="口令" autocomplete="off">
+      </label>
+      <div class="set-actions">
+        <button id="apiSave">保存并扫码</button>
+        <span class="set-status" id="apiStatus"></span>
+      </div>
+      <div class="set-qr" id="qrArea" hidden>
+        <img id="qrImg" alt="扫码登录">
+        <span id="qrTip">用网易云 App 扫码登录</span>
+      </div>
+    </div>
+
+    <p class="set-note src-foot">凭证只进你自己的网关，站点本身不存任何账号信息。切换生效需刷新页面。</p>
+    <div class="row"><button class="mu-close" id="setClose">关闭</button></div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-meta" style="padding-top: 20px;">
+      <span>© 2026 Azi36 · No Rights Reserved.<span id="visitCount" hidden></span></span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+</body>
+</html>

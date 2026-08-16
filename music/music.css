@@ -1,0 +1,590 @@
+/* ============================================
+   音乐电台 · TimeStudio Radio
+   播放器窗口；通用变量继承全站 style.css
+   ============================================ */
+
+/* 进门即播放器：没有标题三件套，给窗口留出呼吸位 */
+.mu-main { padding-top: 34px; }
+
+/* 律动背景画布：钉在视口最底层，随音频呼吸 */
+.mu-viz {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.mu-window {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+}
+
+.mu-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mu-bar > .icn { width: 15px; height: 15px; }
+
+.mu-bar .en { color: var(--text-3); font-weight: 400; font-size: 12px; letter-spacing: .06em; }
+
+.mu-count { margin-left: auto; color: var(--text-3); font-size: 12px; font-weight: 600; }
+
+.mu-set {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+  display: grid;
+  place-items: center;
+}
+
+.mu-set:hover { color: var(--brand); border-color: var(--brand); }
+
+.mu-set .icn { width: 14px; height: 14px; }
+
+/* ---------- 设置弹窗 ---------- */
+.mu-modal {
+  margin: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px 26px;
+  width: min(460px, 94vw);
+  box-shadow: var(--shadow-float);
+}
+
+.mu-modal::backdrop { background: rgba(15, 18, 26, .45); backdrop-filter: blur(3px); }
+
+.mu-modal h3 { font-size: 16px; margin-bottom: 10px; }
+
+.set-note { color: var(--text-3); font-size: 12.5px; line-height: 1.9; margin-bottom: 16px; }
+
+/* 音源分段切换器 */
+.src-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.src-seg button {
+  flex: 1;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-2);
+  transition: background .18s var(--ease), color .18s;
+}
+
+.src-seg button.on { background: var(--bg); color: var(--brand); box-shadow: var(--shadow-card); }
+
+.src-pane { min-height: 40px; }
+
+.src-foot { margin-top: 14px; }
+
+.set-row { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-2); margin-bottom: 12px; }
+
+.set-row textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  resize: vertical;
+}
+
+.set-row select:focus, .set-row textarea:focus { outline: none; border-color: var(--brand); }
+
+.set-row input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.set-row input:focus { outline: none; border-color: var(--brand); }
+
+.set-actions { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+
+.set-actions button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--grad-brand);
+  color: #fff;
+  white-space: nowrap;   /* 按钮文字永不折行，宽随内容——治那个挤成三行的丑 */
+  flex: none;
+}
+
+.set-status { font-size: 12px; color: var(--text-3); }
+
+.set-qr { text-align: center; padding: 8px 0 4px; }
+
+.set-qr img { width: 168px; height: 168px; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto 8px; }
+
+.set-qr span { font-size: 12px; color: var(--text-3); }
+
+.mu-modal .row { display: flex; justify-content: flex-end; margin-top: 8px; }
+
+.mu-close {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.mu-close:hover { color: var(--brand); border-color: var(--brand); }
+
+.mu-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 380px;
+}
+
+/* ---------- 播放台 ---------- */
+.mu-now {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 26px;
+  border-right: 1px solid var(--border-light);
+  background: var(--bg-soft);
+}
+
+/* 碟片 ⇄ 歌词 视图切换 */
+.mu-views { display: flex; gap: 8px; margin-bottom: 16px; }
+
+.mu-views button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.mu-views button.on { color: var(--brand); border-color: var(--brand); background: var(--brand-light); }
+
+/* 歌词面板：和碟片同一块地皮 */
+.mu-lyrics {
+  width: 100%;
+  height: 180px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 2.2;
+  color: var(--text-3);
+  scrollbar-width: thin;
+}
+
+.mu-lyrics p.on { color: var(--brand); font-weight: 700; font-size: 14px; }
+
+.mu-lyrics .lrc-note { color: var(--brand); font-size: 11.5px; opacity: .8; }
+
+.mu-lyrics .lrc-empty { padding-top: 70px; }
+
+/* 黑胶碟：圆形封面 + 中心孔，播放时旋转 */
+.mu-disc {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, .18), 0 0 0 6px rgba(0, 0, 0, .06);
+  animation: disc-spin 14s linear infinite;
+  animation-play-state: paused;
+  margin-bottom: 20px;
+}
+
+.mu-disc.spin { animation-play-state: running; }
+
+.mu-cover, .mu-cover svg { display: block; width: 100%; height: 100%; }
+
+.mu-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.mu-disc::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border: 5px solid rgba(0, 0, 0, .55);
+  border-radius: 50%;
+}
+
+@keyframes disc-spin { to { transform: rotate(360deg); } }
+
+.mu-title { font-size: 16.5px; margin-bottom: 3px; text-align: center; }
+
+.mu-sub { color: var(--text-3); font-size: 12px; margin-bottom: 18px; text-align: center; }
+
+.mu-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border-light);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mu-progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--grad-brand);
+  transition: width .2s linear;
+}
+
+.mu-time {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-3);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 16px;
+}
+
+.mu-ctrl { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+
+.mu-ctrl button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+  display: grid;
+  place-items: center;
+  transition: color .15s, border-color .15s, transform .15s var(--ease);
+}
+
+.mu-ctrl button:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
+
+.mu-ctrl button .icn { width: 15px; height: 15px; }
+
+.mu-ctrl button.big {
+  width: 54px;
+  height: 54px;
+  border: none;
+  background: var(--grad-brand);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(214, 51, 132, .35);
+}
+
+.mu-ctrl button.big:hover { color: #fff; filter: brightness(1.07); }
+
+.mu-ctrl button.big .icn { width: 20px; height: 20px; }
+
+/* 次级控制排：循环 + 音量，不挤主按钮的居中 */
+.mu-extra { display: flex; align-items: center; gap: 14px; }
+
+.mu-extra > button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+  display: grid;
+  place-items: center;
+}
+
+.mu-extra > button:hover { color: var(--brand); border-color: var(--brand); }
+
+.mu-extra > button.one { color: var(--brand); border-color: var(--brand); background: var(--brand-light); }
+
+.mu-extra > button .icn { width: 13px; height: 13px; }
+
+.mu-vol { display: flex; align-items: center; gap: 8px; color: var(--text-3); }
+
+.mu-vol .icn { width: 15px; height: 15px; }
+
+.mu-vol input[type="range"] { width: 130px; accent-color: var(--brand); }
+
+/* ---------- 歌单页签 + 曲目单 ---------- */
+.mu-side { display: flex; flex-direction: column; min-width: 0; }
+
+.mu-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 4px;
+}
+
+.mu-tabs button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.mu-tabs button i { font-style: normal; margin-left: 5px; font-size: 11px; color: var(--text-3); }
+
+.mu-tabs button.on { color: var(--brand); border-color: var(--brand); background: var(--brand-light); }
+
+.mu-tabs button.on i { color: var(--brand); }
+
+.mu-list {
+  list-style: none;
+  padding: 10px 8px;
+  max-height: 460px;      /* 高度设限，长列表窗内滚动 */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.mu-list::-webkit-scrollbar { width: 8px; }
+
+.mu-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+.mu-list::-webkit-scrollbar-track { background: transparent; }
+
+.mu-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.mu-list li:hover { background: var(--bg-hover); }
+
+.mu-list li.on { background: var(--brand-light); }
+
+.mu-list .no {
+  width: 22px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 播放中的小均衡器：三根跳动的柱子 */
+.mu-eq { display: none; width: 22px; height: 14px; align-items: flex-end; justify-content: center; gap: 2px; }
+
+.mu-list li.on.playing .mu-eq { display: flex; }
+
+.mu-list li.on.playing .no { display: none; }
+
+.mu-eq i {
+  width: 3px;
+  background: var(--brand);
+  border-radius: 2px;
+  animation: eq-bounce .9s ease-in-out infinite;
+}
+
+.mu-eq i:nth-child(1) { height: 60%; animation-delay: 0s; }
+.mu-eq i:nth-child(2) { height: 100%; animation-delay: .25s; }
+.mu-eq i:nth-child(3) { height: 45%; animation-delay: .5s; }
+
+@keyframes eq-bounce { 50% { transform: scaleY(.4); } }
+
+.mu-list .thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex: none;
+}
+
+.mu-list .thumb svg, .mu-list .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.mu-list .mu-empty { justify-content: center; color: var(--text-3); font-size: 12.5px; padding: 48px 0; cursor: default; }
+
+/* 热门试听的搜索条 */
+.mu-search { display: flex; gap: 8px; padding: 10px 16px 0; }
+
+.mu-search input {
+  flex: 1;
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mu-search input:focus { outline: none; border-color: var(--brand); }
+
+.mu-search button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--grad-brand);
+  color: #fff;
+}
+
+.mu-list .meta { flex: 1; min-width: 0; }
+
+.mu-list .meta b { display: block; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.mu-list .meta span { color: var(--text-3); font-size: 12px; }
+
+.mu-list .dur { color: var(--text-3); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* 收藏小心心：默认淡出，悬停行或已收藏时现身 */
+.mu-list .fav {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity .15s, color .15s, transform .15s var(--ease);
+}
+
+.mu-list li:hover .fav { opacity: 1; }
+
+.mu-list .fav.on { opacity: 1; color: var(--brand); }
+
+.mu-list .fav.on svg { fill: currentColor; }
+
+.mu-list .fav:hover { transform: scale(1.2); color: var(--brand); }
+
+.mu-list .fav svg { width: 15px; height: 15px; }
+
+/* 本地曲目的移除键 */
+.mu-list .del {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity .15s, color .15s;
+}
+
+.mu-list li:hover .del { opacity: 1; }
+
+.mu-list .del:hover { color: #d43f3f; }
+
+.mu-list .del svg { width: 14px; height: 14px; }
+
+/* 分页条 */
+.mu-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 8px 16px 14px;
+}
+
+.mu-pager button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.mu-pager button:hover:not(:disabled) { color: var(--brand); border-color: var(--brand); }
+
+.mu-pager button:disabled { opacity: .4; }
+
+.mu-pager span { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+/* 本地导入条 */
+.mu-import {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 0;
+  flex-wrap: wrap;
+}
+
+.mu-import button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--grad-brand);
+  color: #fff;
+  white-space: nowrap;
+  flex: none;
+}
+
+.mu-import .imp-note { font-size: 11.5px; color: var(--text-3); flex: 1; min-width: 200px; }
+
+/* ---------- 全网歌单占位 ---------- */
+.mu-teaser {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px 24px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13.5px;
+  line-height: 1.9;
+  background: var(--bg-soft);
+}
+
+/* ---------- 小屏 ---------- */
+@media (max-width: 720px) {
+  .mu-layout { grid-template-columns: 1fr; }
+  .mu-now { border-right: none; border-bottom: 1px solid var(--border-light); }
+  .mu-bar .en { display: none; }
+}

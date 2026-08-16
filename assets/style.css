@@ -24,9 +24,54 @@
   --radius-lg: 12px;
   --shadow-card: 0 1px 2px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.05);
   --shadow-float: 0 8px 30px rgba(0,0,0,.12);
+  --header-bg: rgba(255,255,255,.82);
+  --nav-bg: rgba(244,244,245,.72);
   --ease: cubic-bezier(.2,.8,.2,1);
   --maxw: 1080px;
 }
+
+/* ---------- 深色模式：跟随系统，或灯泡/手动 data-theme='dark' ---------- */
+/* 深色色板抽成一段，系统深色与显式深色共用 */
+:root[data-theme="dark"],
+:root:not([data-theme="light"]) {
+  --dark-bg: #17181b; --dark-bg-soft: #1d1e22; --dark-bg-hover: #26272d;
+  --dark-text: #e9e9ec; --dark-text-2: #a6a6ae; --dark-text-3: #71717a;
+  --dark-border: #2f3037; --dark-border-light: #26272d; --dark-brand-light: #1c2440;
+  --dark-header-bg: rgba(23,24,27,.82); --dark-nav-bg: rgba(38,39,45,.7);
+}
+
+:root[data-theme="dark"] {
+  --bg: var(--dark-bg); --bg-soft: var(--dark-bg-soft); --bg-hover: var(--dark-bg-hover);
+  --text: var(--dark-text); --text-2: var(--dark-text-2); --text-3: var(--dark-text-3);
+  --border: var(--dark-border); --border-light: var(--dark-border-light); --brand-light: var(--dark-brand-light);
+  --header-bg: var(--dark-header-bg); --nav-bg: var(--dark-nav-bg);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.4);
+  --shadow-float: 0 8px 30px rgba(0,0,0,.55);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--dark-bg); --bg-soft: var(--dark-bg-soft); --bg-hover: var(--dark-bg-hover);
+    --text: var(--dark-text); --text-2: var(--dark-text-2); --text-3: var(--dark-text-3);
+    --border: var(--dark-border); --border-light: var(--dark-border-light); --brand-light: var(--dark-brand-light);
+    --header-bg: var(--dark-header-bg); --nav-bg: var(--dark-nav-bg);
+    --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.4);
+    --shadow-float: 0 8px 30px rgba(0,0,0,.55);
+    color-scheme: dark;
+  }
+}
+
+/* 频道页在深色下把品牌浅底也压暗，不然一块亮斑很出戏 */
+:root[data-theme="dark"] body.ch-orange { --brand-light: #3a2411; }
+:root[data-theme="dark"] body.ch-green { --brand-light: #103021; }
+:root[data-theme="dark"] body.ch-purple { --brand-light: #241a40; }
+:root[data-theme="dark"] body.ch-pink { --brand-light: #3a1730; }
+
+/* 平滑过渡 + 暗色下弱化极光背景，免得糊 */
+html { transition: background .3s var(--ease); }
+
+:root[data-theme="dark"] .bg-decor { opacity: .4; }
 
 /* ============================================
    频道主题：给 <body> 加类即可整页换装
@@ -55,6 +100,16 @@ body.ch-green {
 }
 
 /* 💜 游戏频道：紫红 */
+body.ch-pink {
+  --brand: #d63384;
+  --brand-hover: #b52a6f;
+  --brand-light: #ffe9f4;
+  --grad-brand: linear-gradient(135deg, #e0479b, #8a4fd0);
+  --blob-a: #ffd3ea;
+  --blob-b: #ffe3f1;
+  --blob-c: #e6d9ff;
+}
+
 body.ch-purple {
   --brand: #7257d8;
   --brand-hover: #5d43c4;
@@ -91,13 +146,18 @@ html, body {
   cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M6 3v14.5l3.5-3 2.2 5 2.6-1.1-2.2-5 4.6-.4z' fill='%2318181b' stroke='white' stroke-width='1.6' stroke-linejoin='round'/></svg>") 6 3, auto;
 }
 
+/* 全项目一律继承自定义箭头——不给浏览器默认光标冒头的机会 */
+* { cursor: inherit; }
+
 /* 所有可点元素统一用自定义"手型"指针；
    !important 用于压过零散的 cursor: pointer 声明，避免闪回系统小手 */
-a, button, label, summary, .terminal, [role="button"], .hand .pcard {
+a, button, label, summary, select, .terminal, [role="button"], .hand .pcard,
+input[type="range"], input[type="checkbox"], input[type="radio"], .mu-progress {
   cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M6 3v14.5l3.5-3 2.2 5 2.6-1.1-2.2-5 4.6-.4z' fill='%231e40d8' stroke='white' stroke-width='1.6' stroke-linejoin='round'/><path d='M19.5 3.5l1 2.1 2.1 1-2.1 1-1 2.1-1-2.1-2.1-1 2.1-1z' fill='%23ffb02e'/></svg>") 6 3, pointer !important;
 }
 
-input, textarea, .term-input { cursor: text; }
+/* 只有真正输入文字的地方才配 I 形 */
+input[type="text"], input[type="number"], input[type="search"], input[type="password"], textarea, .term-input { cursor: text; }
 
 /* ---------- 点击涟漪（由 site.js 生成） ---------- */
 .click-ring {
@@ -149,7 +209,7 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255,255,255,.82);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
@@ -183,9 +243,23 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
   transition: transform .25s var(--ease);
 }
 
-.site-logo .logo-mark svg { width: 100%; height: 100%; display: block; }
+.site-logo .logo-mark svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
-.site-logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
+/* hover 生长：^ 的描边从 0 画到 100%，· 的点随后从无到有弹出来 */
+.site-logo .logo-mark svg path { stroke-dasharray: 48; stroke-dashoffset: 0; }
+
+.site-logo .logo-mark svg circle { transform-box: fill-box; transform-origin: center; }
+
+/* 只在 hover「图标」时表演，hover 文字不触发 */
+.logo-mark:hover { transform: rotate(-8deg) scale(1.08); }
+
+.logo-mark:hover svg path { animation: logo-draw .6s var(--ease) both; }
+
+.logo-mark:hover svg circle { animation: logo-dot .5s .34s var(--ease) both; }
+
+@keyframes logo-draw { from { stroke-dashoffset: 48; } to { stroke-dashoffset: 0; } }
+
+@keyframes logo-dot { 0% { transform: scale(0); } 70% { transform: scale(1.35); } 100% { transform: scale(1); } }
 
 .site-logo span.wordmark b { color: var(--brand); font-weight: 700; }
 
@@ -198,7 +272,7 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(244, 244, 245, .72);
+  background: var(--nav-bg);
   border: 1px solid var(--border-light);
   border-radius: 999px;
   padding: 4px;
@@ -242,6 +316,9 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
   animation: status-pulse 2.2s ease-in-out infinite;
 }
 
+/* 状态徽标的轮播表情（由 site.js 定时换脸） */
+.nav-status .nav-emo { font-size: 14px; line-height: 1; }
+
 @keyframes status-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 180, 42, .35); }
   50% { box-shadow: 0 0 0 5px rgba(0, 180, 42, 0); }
@@ -258,6 +335,112 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
 }
 
 .nav-gh:hover { color: var(--text); background: var(--bg-hover); }
+
+/* 站长头像：点了不跳转，就地爆炸（彩蛋见 site.js） */
+.nav-gh img { width: 26px; height: 26px; border-radius: 50%; display: block; }
+
+.nav-gh.boom img { animation: gh-pop .5s var(--ease); }
+
+@keyframes gh-pop {
+  30% { transform: scale(1.4) rotate(-10deg); }
+  60% { transform: scale(.75) rotate(6deg); }
+}
+
+.gh-frag {
+  position: fixed;
+  z-index: 999;
+  font-size: 18px;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* 可点的彩蛋区禁止选中——狂点时别把文字全选了，影响观感 */
+.site-logo, .nav-gh, .nav-emo, .welcome-egg, .name-badge,
+.kicker, .hero-text h1, .marquee, .todo-window {
+  -webkit-user-select: none; user-select: none;
+}
+
+/* 站标「矮子哎呦喂~」蹦迪：整体高频癫抖 + 变色狂闪（Azi36 保持原样不动） */
+.wordmark.wm-disco {
+  display: inline-block;
+  animation: wm-shake .22s steps(2) infinite, wm-color 1s linear infinite;
+}
+
+@keyframes wm-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  25% { transform: translate(-1.5px, 1px) rotate(-3deg) scale(1.03); }
+  50% { transform: translate(1px, -1px) rotate(0) scale(.99); }
+  75% { transform: translate(1.5px, -1px) rotate(3deg) scale(1.03); }
+}
+
+@keyframes wm-color {
+  0%, 100% { color: #e0479b; } 20% { color: #7c5ce0; } 40% { color: #2447e6; }
+  60% { color: #00a32a; } 80% { color: #f5a623; }
+}
+
+/* 头像跟着一起蹦——大幅度平滑摇摆，甩得开 */
+.nav-gh.gh-crazy { animation: gh-crazy .5s var(--ease) infinite; transform-origin: bottom center; }
+
+@keyframes gh-crazy {
+  0%, 100% { transform: rotate(-18deg) translateY(0); }
+  25% { transform: rotate(0deg) translateY(-4px); }
+  50% { transform: rotate(18deg) translateY(0); }
+  75% { transform: rotate(0deg) translateY(-4px); }
+}
+
+/* 全场蹦迪（灵感值 >100 触发）：整页色相无限循环，直到灵感回退到 0 */
+body.discoing { animation: party-hue 3s linear infinite; }
+
+@keyframes party-hue { to { filter: hue-rotate(360deg); } }
+
+/* 草稿行的废纸篓：平时藏，hover 才现身；销毁后换成「撤回」 */
+.excuse-trash {
+  margin-left: 8px; flex: none;
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border: none; background: none; color: var(--text-3);
+  opacity: 0; transition: opacity .15s, color .15s, transform .15s var(--ease);
+}
+
+.todo-line:hover .excuse-trash { opacity: 1; }
+
+.excuse-trash:hover { color: #d43f3f; transform: scale(1.15); }
+
+.excuse-trash svg { width: 15px; height: 15px; }
+
+.todo-line.trashed .excuse-trash { display: none; }
+
+.todo-line.trashed .txt { text-decoration: line-through; color: var(--text-3); }
+
+.excuse-undo {
+  margin-left: 8px; flex: none;
+  font: inherit; font-size: 11px; font-weight: 600;
+  padding: 2px 11px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-2);
+}
+
+.excuse-undo:hover { color: var(--brand); border-color: var(--brand); }
+
+/* 欢迎一下自己：藏在 kicker 里的按钮，虚线下划暗示可点 */
+.welcome-egg {
+  font: inherit; color: inherit; background: none; border: none; padding: 0;
+  cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px;
+  transition: color .15s;
+}
+
+.welcome-egg:hover { color: var(--brand); }
+
+/* 全屏表情雨 + 轻量欢迎条（无黑罩，浮个胶囊即可） */
+.welc-rain { position: fixed; top: -50px; z-index: 9998; pointer-events: none; will-change: transform; }
+
+.welc-banner {
+  position: fixed; left: 50%; top: 42%;
+  z-index: 9999; pointer-events: none;
+  font-size: clamp(20px, 4.5vw, 40px); font-weight: 800; letter-spacing: .04em;
+  color: var(--brand); white-space: nowrap;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 999px; padding: 14px 34px; box-shadow: var(--shadow-float);
+}
 
 /* ---------- 标题体系 ---------- */
 h1 {
@@ -624,6 +807,9 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .tag.tag-green { background: #e8ffea; color: #00a32a; }
 .tag.tag-orange { background: #fff3e8; color: #d96716; }
 .tag.tag-purple { background: #f3efff; color: #7257d8; }
+
+/* 卡片里的「测试中」徽章：跟着前面的分类标签抱团靠左，别被 space-between 拽去中间 */
+.card .card-meta .plat.beta { margin-right: auto; }
 
 /* ---------- 文章页布局：正文 + 右侧粘性栏 ---------- */
 .article-layout {
@@ -1796,6 +1982,29 @@ body { position: relative; }
 }
 
 .rec-score b { color: var(--border); font-weight: 400; }
+
+/* 星星拆成单颗（JS 分割），hover 时实心星从 0 到当前星级一颗颗填充弹大 */
+.rec-score i, .card-meta .date i { display: inline-block; font-style: normal; transform-origin: center; }
+
+.rec:hover .rec-score i.on,
+.card:hover .card-meta .date i.on { animation: star-fill .34s var(--ease) backwards; }
+
+.rec:hover .rec-score i.on:nth-child(1), .card:hover .card-meta .date i.on:nth-child(1) { animation-delay: 0s; }
+.rec:hover .rec-score i.on:nth-child(2), .card:hover .card-meta .date i.on:nth-child(2) { animation-delay: .09s; }
+.rec:hover .rec-score i.on:nth-child(3), .card:hover .card-meta .date i.on:nth-child(3) { animation-delay: .18s; }
+.rec:hover .rec-score i.on:nth-child(4), .card:hover .card-meta .date i.on:nth-child(4) { animation-delay: .27s; }
+.rec:hover .rec-score i.on:nth-child(5), .card:hover .card-meta .date i.on:nth-child(5) { animation-delay: .36s; }
+
+@keyframes star-fill {
+  from { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); opacity: 1; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 头像克隆体（弹弓/乱飞时用它飞，本体留原地占位） */
+.gh-flyer { border-radius: 50%; transform-origin: center; will-change: transform, left, top; }
+
+.gh-flyer img { width: 100%; height: 100%; border-radius: 50%; display: block; }
 
 .rec-arrow {
   flex: none;
