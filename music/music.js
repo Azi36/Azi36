@@ -89,8 +89,9 @@
       + (apiCookie ? '&cookie=' + encodeURIComponent(apiCookie) : ''),
       { headers: { 'X-Azi-Key': qqKey() } })
       .then((r) => r.json());
+  /* 不带 credentials：网关默认用服务端存的 cookie（data/cookie.json），
+     浏览器无需回传凭证。去掉后跨域可用通配 *，file:// 本地也能测。 */
   const qq = (path, opts) => fetch(qqUrl + path, {
-    credentials: 'include',
     ...opts,
     headers: { 'X-Azi-Key': qqKey(), ...(opts && opts.headers) },
   }).then((r) => r.json());
