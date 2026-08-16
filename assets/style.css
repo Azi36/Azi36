@@ -812,6 +812,69 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 /* 卡片里的「测试中」徽章：跟着前面的分类标签抱团靠左，别被 space-between 拽去中间 */
 .card .card-meta .plat.beta { margin-right: auto; }
 
+/* ---------- 文章里的按钮：别被正文链接色染蓝 ---------- */
+.article a.btn-primary { color: #fff; }
+.article a.btn-ghost { color: var(--text); }
+.article a.btn-ghost:hover { color: var(--brand); }
+.article .btn { margin: 6px 12px 0 0; }
+
+/* ---------- 产品横幅：№ 001 通栏异形大卡 ---------- */
+.product-banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 30px;
+  margin: 60px 0 8px; /* 跟其他分区同一节奏 */
+  padding: 30px 34px 26px;
+  border: 1px solid var(--border);
+  border-radius: 26px 26px 26px 6px;  /* 缺一角：异形 */
+  background:
+    radial-gradient(560px 300px at 8% -20%, color-mix(in srgb, var(--blob-a) 55%, transparent), transparent 70%),
+    radial-gradient(520px 320px at 108% 130%, color-mix(in srgb, var(--blob-b) 45%, transparent), transparent 70%),
+    var(--bg);
+  overflow: hidden;
+}
+
+/* 右上角大编号水印 */
+.pb-no {
+  position: absolute; right: 20px; top: -16px;
+  font-size: 96px; font-weight: 800; letter-spacing: .02em; line-height: 1.2;
+  color: color-mix(in srgb, var(--brand) 8%, transparent);
+  pointer-events: none; user-select: none;
+}
+
+.pb-kicker { color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.product-banner h2 { margin: 10px 0 4px; font-size: clamp(24px, 3vw, 30px); line-height: 1.2; }
+.product-banner h2 .grad-text {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pb-tagline { margin: 0 0 20px; color: var(--text-2); font-size: 14.5px; }
+
+/* 终端小窗微微歪着，hover 摆正——活的 */
+.pb-window { max-width: 430px; transform: rotate(-1.6deg); transition: transform .35s var(--ease); }
+.product-banner:hover .pb-window { transform: rotate(0); }
+
+.pb-right { display: flex; flex-direction: column; position: relative; z-index: 1; }
+.pb-features { list-style: none; margin: 6px 0 18px; padding: 0; display: grid; gap: 11px; align-content: start; }
+.pb-features li {
+  display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: baseline;
+  padding-bottom: 11px; border-bottom: 1px dashed var(--border);
+  font-size: 13.5px; color: var(--text-2);
+}
+.pb-features li:last-child { border-bottom: 0; }
+.pb-features b { color: var(--text); font-size: 14.5px; white-space: nowrap; }
+.pb-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; }
+
+@media (max-width: 860px) {
+  .product-banner { grid-template-columns: 1fr; gap: 20px; padding: 22px 18px; }
+  .pb-no { font-size: 64px; right: 12px; top: -10px; }
+  .pb-window { max-width: 100%; }
+  .pb-actions .btn { flex: 1; justify-content: center; }
+}
+
 /* ---------- 文章页布局：正文 + 右侧粘性栏 ---------- */
 .article-layout {
   display: grid;
@@ -1669,7 +1732,7 @@ body { position: relative; }
   font-size: 21px;
   font-weight: 700;
   letter-spacing: -.01em;
-  margin: 52px 0 18px;
+  margin: 60px 0 18px;
 }
 
 .md-title span {
@@ -1687,7 +1750,7 @@ body { position: relative; }
   background: var(--bg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  margin-top: 52px; /* 没有外挂标题，自己扛起分区间距 */
+  margin-top: 60px; /* 没有外挂标题，自己扛起分区间距 */
 }
 
 .todo-bar {

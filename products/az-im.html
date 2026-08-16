@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Az-im 图像工具 · Azi36</title>
+  <meta name="description" content="Az-im：在线图像工具四件套——压缩、抠图、放大、去水印，全在浏览器本地完成，图片不上传。">
+  <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/style.css?v=31">
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js?v=13" defer></script>
+  <script src="../assets/player.js?v=1" defer></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="../shares/">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="../games/">游戏</a>
+        <a href="../music/">音乐</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="../assets/img/avatar.png" alt="Azi36"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="article-layout">
+    <article class="article">
+      <a class="back-link" href="../">← 返回首页</a>
+      <div class="kicker">产品 № 001</div>
+      <h1>Az-im 图像工具</h1>
+      <div class="article-meta">2026-08-17 上线 · 免费 · 开源 MIT · 网址：<a href="https://im.azi36.com" target="_blank" rel="noopener">im.azi36.com</a></div>
+
+      <p>
+        处理图片这件事，网上的工具要么要注册，要么要会员，
+        要么把你的图传到它们的服务器上转一圈。
+        Az-im 一样都不沾：打开就用，用完就走，图片从头到尾待在你的浏览器里。
+      </p>
+
+      <h2>四件套，逐个说</h2>
+
+      <h3>① 图片压缩</h3>
+      <p>
+        主力工具，日常用得最多的就是它。支持 <code>JPEG / PNG / WebP / GIF / SVG / AVIF</code>
+        六种格式，还能吞 iPhone 拍的 <code>HEIC / HEIF</code>。
+        文件、文件夹、拖拽、Ctrl+V 粘贴，怎么进来都行，几百张一起处理也不打怵。
+      </p>
+      <ul>
+        <li><strong>压缩</strong>：每种格式用各自最合适的引擎（JPEG 用 MozJPEG、PNG 用 OxiPNG……），
+          质量、颜色数、抖色系数都能调，还有一个"极限模式"给抠体积的人</li>
+        <li><strong>转换</strong>：JPG、PNG、WebP、AVIF 互转，透明背景转不透明格式时可以自选填充色</li>
+        <li><strong>缩放裁剪</strong>：按宽、高、长短边、百分比缩放；按比例、固定尺寸、打印纸型裁剪；
+          公众号封面、B 站封面这类常用尺寸一键填入</li>
+        <li><strong>交付</strong>：处理前后拖分割线对比画质，逐张下载或整批打包 ZIP</li>
+      </ul>
+      <p>压缩率看图片内容，通常五到九成。一张 32KB 的测试图能压到 4.8KB，肉眼看不出差别。</p>
+
+      <h3>② 背景移除</h3>
+      <p>
+        丢一张图进去，主体留下，背景变透明，出 PNG。模型有两档，按需选：
+      </p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>档位</th><th>模型</th><th>体积</th><th>适合</th></tr>
+          <tr><td><strong>快速</strong></td><td>U2-Netp</td><td>4.4MB</td><td>秒出结果，日常够用</td></tr>
+          <tr><td><strong>高质量</strong></td><td>Silueta</td><td>42MB</td><td>边缘细节更完整，处理慢一点</td></tr>
+        </table>
+      </div>
+      <p>切换模型时如果已经有图，会自动用新模型重跑一遍，不用重新选图。</p>
+
+      <h3>③ 图片放大</h3>
+      <p>
+        AI 超分辨率（Real-ESRGAN），把小图放大 2 倍或 4 倍——细节是神经网络重建出来的，
+        不是硬拉的马赛克。大图会切块推理，进度条一块块走，页面不卡。
+        目前限制长边 2000px 以内（更大的先去压缩页缩一下）。
+      </p>
+
+      <h3>④ 去水印</h3>
+      <p>
+        把水印、logo、路人甲涂红，点「移除」，周围的像素会智能补上。
+        画笔粗细可调，修完不满意接着涂接着修，逐步清干净。
+        用的是经典修复算法（OpenCV），对小面积水印、文字、杂物效果最好；
+        大面积的复杂遮挡，等后续上大模型。
+      </p>
+
+      <h2>快，是因为根本没上传</h2>
+      <p>
+        一般的在线工具：<code>你的图 → 它们的服务器 → 处理 → 传回来</code>，来回两趟运费。<br>
+        Az-im：<code>你的图 → 你的浏览器 → 完事</code>。
+        压缩靠 WebAssembly，AI 靠本地跑的模型，显卡够新还会自动用 WebGPU 加速。
+        没有上传队列，没有服务器留底，关掉页面什么都不剩。
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">im.azi36.com / 网络面板</div>
+          <div class="mock-body">
+            <div class="mock-sub">处理一张 5MB 的照片时</div>
+            <span class="mock-select">上传流量 · 0 KB</span>
+            <span class="mock-select">服务器存储 · 0 份</span>
+            <div class="mock-ok">✓ 图片没离开过你的设备</div>
+          </div>
+        </div>
+        <figcaption>不是"我们承诺不看你的图"，是压根没有上传这一步</figcaption>
+      </figure>
+
+      <h2>AI 在浏览器里跑？</h2>
+      <p>
+        对。神经网络模型会在第一次使用时下载到浏览器缓存，之后再用就不重新下了。
+        推理优先走 WebGPU（用显卡，快），浏览器不支持或者显卡不给力就自动退回 CPU，
+        你不用管，页面右上角的小徽章会告诉你当前在用哪个。
+        全程不需要 API、不需要 key、没有服务器账单——所以它才能一直免费、不限量。
+      </p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>模型</th><th>体积</th><th>干什么</th><th>许可</th></tr>
+          <tr><td>U2-Netp</td><td>4.4MB</td><td>抠图 · 快速档</td><td>Apache-2.0</td></tr>
+          <tr><td>Silueta</td><td>42MB</td><td>抠图 · 高质量档</td><td>Apache-2.0</td></tr>
+          <tr><td>Real-ESRGAN x4v3</td><td>4.7MB</td><td>放大</td><td>BSD-3</td></tr>
+          <tr><td>OpenCV.js（Telea）</td><td>12MB 引擎</td><td>去水印</td><td>Apache-2.0</td></tr>
+        </table>
+      </div>
+
+      <h2>三步上手</h2>
+      <ol>
+        <li><strong>丢图进来</strong>——点选、拖拽、粘贴，随意</li>
+        <li><strong>调一下</strong>——压缩挑参数，抠图挑模型，放大挑倍数，去水印动笔涂</li>
+        <li><strong>带走</strong>——单张下载或打包 ZIP，完事关页面，什么都不留</li>
+      </ol>
+
+      <h2>常见问题</h2>
+      <p><strong>真的不上传吗？</strong><br>
+        真的。不信按 F12 打开网络面板自己盯着：处理图片时没有任何上传请求。
+        代码也开源，欢迎审计。</p>
+      <p><strong>第一次用为什么要等一会儿？</strong><br>
+        在下模型。下完存进浏览器缓存，第二次起秒开。</p>
+      <p><strong>手机能用吗？</strong><br>
+        能，页面是响应式的。AI 功能在低配设备上会慢一些，压缩不受影响。</p>
+      <p><strong>放大提示图片太大？</strong><br>
+        长边超过 2000px 了。先去压缩页把尺寸缩到范围内，再来放大。</p>
+      <p><strong>为什么免费？以后会收费吗？</strong><br>
+        成本上它没有服务器开销（静态托管 + 你的设备出算力），收费没有道理。
+        不收，也不打算收。</p>
+
+      <h2>出身与去向</h2>
+      <p>
+        基于开源项目 <a href="https://github.com/joye61/pic-smaller" target="_blank" rel="noopener">pic-smaller</a>（MIT）二次开发，
+        压缩引擎来自 Squoosh 系 wasm 编解码器。感谢原作者，抄得光明正大，改得理直气壮。
+        Az-im 自己也开着源：<a href="https://github.com/Azi36/Az-image-tools" target="_blank" rel="noopener">Azi36/Az-image-tools</a>，
+        照样 MIT，想自部署或者接着改都请便。
+      </p>
+      <p>
+        后面还会继续进货：大面积水印修复的 AI 模型在候选名单上，
+        新工具也会陆续住进同一个域名。产品有更新会记在主站的站点日志里。
+      </p>
+
+      <blockquote>
+        不用注册，不限次数，图片不出门——
+        工具本来就该长这样。
+      </blockquote>
+
+      <p>
+        <a class="btn btn-primary" href="https://im.azi36.com" target="_blank" rel="noopener">去用用<span class="btn-arrow">→</span></a>
+        <a class="btn btn-ghost" href="https://github.com/Azi36/Az-image-tools" target="_blank" rel="noopener">看源码</a>
+      </p>
+
+      <!-- 阅读统计 + 点赞（数据来自 api.azi36.com） -->
+      <div class="page-stats" id="pageStats" data-page="az-im" hidden>
+        <span class="ps-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="psReads"></span>
+        </span>
+        <button class="page-like" id="pageLike">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          有用 <i>0</i>
+        </button>
+      </div>
+    </article>
+
+    <!-- 右侧粘性栏：目录由 site.js 自动生成 -->
+    <aside class="article-aside">
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>本文目录</div>
+        <nav class="toc-list"></nav>
+      </div>
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
+        <a class="aside-link" href="https://im.azi36.com" target="_blank" rel="noopener">直接去用 im.azi36.com</a>
+        <a class="aside-link" href="https://github.com/Azi36/Az-image-tools" target="_blank" rel="noopener">GitHub 仓库</a>
+        <a class="aside-link" href="../">← 返回首页</a>
+      </div>
+    </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="site-logo" href="../">
+          <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+          <span class="wordmark">Azi<b>36</b></span>
+        </a>
+        <p class="footer-tag">把灵感慢慢掏出来，别急！</p>
+        <div class="footer-social">
+          <a href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          </a>
+          <a href="#" data-say="这个没有" aria-label="Bilibili">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386z"/></svg>
+          </a>
+          <a href="#" data-say="这个也没有" aria-label="小红书">
+            <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><mask id="xhsM"><rect x="2" y="2" width="20" height="20" rx="6" fill="#fff"/><text x="12" y="16.6" text-anchor="middle" font-size="12" font-weight="700" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif" fill="#000">红</text></mask><rect x="2" y="2" width="20" height="20" rx="6" fill="currentColor" mask="url(#xhsM)"/></svg>
+          </a>
+          <a href="#" data-say="这个真没有" aria-label="X">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col mystery">
+          <a href="../">首页</a>
+          <a href="../shares/">分享</a>
+          <a href="../links/">推荐</a>
+          <a href="../games/">游戏</a>
+        <a href="../music/">音乐</a>
+        </div>      </div>
+    </div>
+    <div class="container footer-meta">
+      <span>© 2026 Azi36 · No Rights Reserved.</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+    <div class="footer-ghost" aria-hidden="true">AZI36</div>
+  </footer>
+
+</body>
+</html>
