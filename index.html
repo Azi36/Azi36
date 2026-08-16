@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azi36</title>
   <meta name="description" content="Azi36 的个人小站：分享与产品。">
-  <link rel="stylesheet" href="assets/style.css?v=14">
+  <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="assets/style.css?v=26">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
-  <script src="assets/site.js" defer></script>
+  <script src="assets/site.js?v=13" defer></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
 </head>
 <body>
@@ -32,12 +33,11 @@
         <a href="shares/">分享</a>
         <a href="links/">推荐</a>
         <a href="games/">游戏</a>
+        <a href="music/">音乐</a>
       </nav>
       <div class="nav-side">
-        <span class="nav-status"><i></i>慢慢更新中</span>
-        <a class="nav-gh" href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-        </a>
+        <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="assets/img/avatar.png" alt="Azi36"></a>
       </div>
     </div>
   </header>
@@ -47,7 +47,7 @@
     <!-- ===== Hero：左文右终端 ===== -->
     <section class="hero hero-split">
       <div class="hero-text">
-        <div class="kicker">👋 自己欢迎一下自己</div>
+        <div class="kicker">👋 <button class="welcome-egg" type="button">自己欢迎一下自己</button></div>
         <h1>
           <span class="grad-text">Azi36</span>
           <span class="name-badge">读作「矮子」</span>
@@ -123,17 +123,19 @@
           <span class="txt">搭建这个网站，打磨进度 <b class="pct" id="polishPct">87.30%</b>（永远差一点）</span>
           <span class="todo-meta doing"><i></i>进行中</span>
         </div>
-        <!-- 玩具二：点灯泡充能 -->
+        <!-- 玩具二：点击灯泡加灵感（顺手切深浅色），长按=隐藏线性充能，>100 松手蹦迪回退到 0 -->
         <div class="todo-line">
           <span class="ln">3</span><span class="cb">[ ]</span>
-          <span class="txt">构思第一个正式产品 · 灵感值 <b class="pct" id="sparkCount">0</b>，点灯泡帮我充能 →</span>
-          <button class="bulb-mini" id="bulbBtn" aria-label="点亮灵感灯泡"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></button>
+          <span class="txt">构思第一个正式产品 · 灵感值 <b class="pct" id="sparkCount">0</b>，点击灯泡加灵感 →</span>
+          <button class="bulb-mini" id="bulbBtn" aria-label="点击灯泡加灵感"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></button>
         </div>
-        <!-- 玩具三：借口生成器 -->
+        <!-- 玩具三：借口生成器 + 废纸篓（hover 现身，销毁后换成撤回·撤不回） -->
         <div class="todo-line" id="excuseCard" role="button" tabindex="0">
-          <span class="ln">4</span><span class="cb">[ ]</span>
+          <span class="ln">4</span><span class="cb" id="excuseCb">[ ]</span>
           <span class="txt" id="excuseText">写下一篇分享——题目想好了，正文还在脑子里。（不信点我）</span>
-          <span class="todo-meta">草稿</span>
+          <button class="excuse-trash" id="excuseTrash" aria-label="扔进废纸篓"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+          <button class="excuse-undo" id="excuseUndo" hidden>撤回</button>
+          <span class="todo-meta" id="excuseMeta">草稿</span>
         </div>
       </div>
     </div>
@@ -159,7 +161,7 @@
             </div>
           </div>
         </div>
-        <div class="card-meta"><span class="tag tag-orange">⚡ 加速指南</span><span class="date">2026-08-15</span></div>
+        <div class="card-meta"><span class="tag tag-green">保姆级教程</span><span class="date">2026-08-15</span></div>
       </a>
 
       <a class="card" href="shares/github-pages.html">
@@ -178,7 +180,7 @@
             </div>
           </div>
         </div>
-        <div class="card-meta"><span class="tag tag-green">📦 保姆级教程</span><span class="date">2026-08-15</span></div>
+        <div class="card-meta"><span class="tag tag-green">保姆级教程</span><span class="date">2024-06-18</span></div>
       </a>
 
       <div class="card card-cta">
@@ -193,6 +195,10 @@
     <div class="log-layout">
       <div>
         <ol class="changelog">
+          <li>
+            <div class="log-head"><span class="log-tag">v1.3</span><b>音乐频道开台 · Aim 靶场进场</b><time>2026-08-16</time></div>
+            <p>第 5 频道上线：搜歌试听、滚动歌词、收藏歌单、本地导入，背景还跟着节奏抖——一应俱全（想听整首？自己搭个网关去）。站内游戏 № 003 Aim 靶场同日进驻，多种模式随灵敏度调。顺手给全站上了深色模式，首页埋了一圈彩蛋：灯泡单击切灯、长按冲能、攒满自爆蹦迪。</p>
+          </li>
           <li>
             <div class="log-head"><span class="log-tag">v1.2</span><b>《Lord of the Cards》开桌（测试中）</b><time>2026-08-16</time></div>
             <p>站内游戏 № 002：好友房斗地主——机器人补位、断线重连、明牌、托管、观战、癞子×不洗牌、成就排行榜、背景音乐，一应俱全。顺手上线了某位打工人的日记专栏，全站图标完成去 emoji 化。</p>
@@ -278,10 +284,11 @@
           <a href="shares/">分享</a>
           <a href="links/">推荐</a>
           <a href="games/">游戏</a>
+        <a href="music/">音乐</a>
         </div>      </div>
     </div>
     <div class="container footer-meta">
-      <span>© 2026 TimeStudio · No Rights Reserved.<span id="visitCount" hidden></span></span>
+      <span>© 2026 Azi36 · No Rights Reserved.<span id="visitCount" hidden></span></span>
       <a class="meta-top" href="#">回到顶部 ↑</a>
     </div>
     <div class="footer-ghost" aria-hidden="true">AZI36</div>

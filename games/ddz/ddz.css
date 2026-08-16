@@ -896,12 +896,13 @@ body.ddz-max .trick.mine { top: -190px; }
 .mini-link:hover { color: var(--brand); border-color: var(--brand); transform: translateY(-1px); }
 
 /* ---------- 排行榜 / 档案弹窗 ---------- */
-.ddz-wide { width: min(480px, 94vw); }
+/* 排行榜类弹窗全站统一版式：固定宽 + 固定高列表，一条记录和五十条一个身材 */
+.ddz-wide { width: min(560px, 94vw); }
 
 .dim-note { color: var(--text-3); font-size: 11.5px; font-weight: 400; }
 
 .rank-wrap {
-  max-height: 46vh;
+  height: min(46vh, 430px);
   overflow-y: auto;
   border: 1px solid var(--border-light);
   border-radius: 10px;
