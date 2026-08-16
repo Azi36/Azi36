@@ -699,76 +699,156 @@
         : `<button class="${i === plView ? 'on' : ''}" data-p="${i}">${esc(p.name)}<i>${p.dynamic ? '' : p.tracks.length}</i></button>`).join('');
   };
 
-  /* ---------- 律动背景 ---------- */
-  const canvas = $('viz');
-  const cctx = canvas.getContext('2d');
+  /* ---------- 律动背景：Threads（WebGL 流动丝线，移植自 reactbits），振幅随音乐 ---------- */
+  // 自产/iTunes 能读真频谱；网关曲（QQ/网易云）进 WebAudio 会被静音，故只在非网关时接分析器
   let actx = null, analyser = null, freq = null;
-
   const initViz = () => {
-    if (gwOn()) return;   // 网关曲目无 CORS 头，进图会 taint 静音——频谱让位给音乐本身
+    if (gwOn()) return;
     if (actx) { if (actx.state === 'suspended') actx.resume().catch(() => {}); return; }
     try {
       actx = new (window.AudioContext || window.webkitAudioContext)();
-      const srcNode = actx.createMediaElementSource(audio);
+      const src = actx.createMediaElementSource(audio);
       analyser = actx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.82;
-      srcNode.connect(analyser);
-      analyser.connect(actx.destination);
+      analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
+      src.connect(analyser); analyser.connect(actx.destination);
       freq = new Uint8Array(analyser.frequencyBinCount);
     } catch (e) { analyser = null; }
   };
+  const canvas = $('viz');
+  (() => {
+    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true })
+      || canvas.getContext('experimental-webgl', { alpha: true });
+    if (!gl) { canvas.style.display = 'none'; return; }   // 没 WebGL 就别硬顶，宁可没有
 
-  const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-  window.addEventListener('resize', resize);
-  resize();
-
-  const draw = (now) => {
-    requestAnimationFrame(draw);
-    const w = canvas.width, h = canvas.height;
-    cctx.clearRect(0, 0, w, h);
-    const playing = !audio.paused && cur >= 0;
-    const spectral = analyser && playing;   // 真频谱（自产/本地）
-    if (spectral) analyser.getByteFrequencyData(freq);
-    const N = 72;
-    // 三条波：一条主色描边 + 一条辅色，各自带一层柔和填充，铺在页面底部 1/3
-    const bands = [
-      [0.82, 'rgba(214, 51, 132, .55)', 'rgba(214, 51, 132, .10)', 1],
-      [0.88, 'rgba(138, 79, 208, .42)', 'rgba(138, 79, 208, .08)', -1],
-    ];
-    bands.forEach(([base, stroke, fill, dir], k) => {
-      const pts = [];
-      for (let i = 0; i <= N; i++) {
-        const x = (i / N) * w;
-        let amp;
-        if (spectral) {
-          amp = (freq[Math.floor((i / N) * (freq.length - 1))] / 255) * h * 0.22;
-        } else if (playing) {
-          // 网关模式读不到频谱：合成节拍——多条正弦叠出「在动」的起伏
-          const t = now / 1000;
-          const beat = 0.55 + 0.45 * Math.abs(Math.sin(t * 2.4 + k));
-          amp = (Math.sin(i * 0.5 + t * 3 + k * 2) * 0.5 + Math.sin(i * 0.23 - t * 1.7) * 0.5)
-            * h * 0.085 * beat + h * 0.05;
-        } else {
-          amp = Math.sin(now / 1400 + i * 0.55 + k * 2) * h * 0.02 + h * 0.028;   // 静默：慢呼吸
-        }
-        pts.push([x, h * base - amp * dir]);
+    const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
+    const FRAG = `precision highp float;
+      uniform float iTime; uniform vec2 iResolution; uniform vec3 uColor;
+      uniform float uAmplitude; uniform float uDistance; uniform vec2 uMouse;
+      vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+      vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+      vec2 fade(vec2 t){return t*t*t*(t*(t*6.0-15.0)+10.0);}
+      float perlin(vec2 P){
+        vec4 Pi=floor(P.xyxy)+vec4(0.0,0.0,1.0,1.0);vec4 Pf=fract(P.xyxy)-vec4(0.0,0.0,1.0,1.0);
+        Pi=mod(Pi,289.0);vec4 ix=Pi.xzxz;vec4 iy=Pi.yyww;vec4 fx=Pf.xzxz;vec4 fy=Pf.yyww;
+        vec4 i=permute(permute(ix)+iy);vec4 gx=2.0*fract(i*0.0243902439)-1.0;vec4 gy=abs(gx)-0.5;
+        vec4 tx=floor(gx+0.5);gx=gx-tx;
+        vec2 g00=vec2(gx.x,gy.x);vec2 g10=vec2(gx.y,gy.y);vec2 g01=vec2(gx.z,gy.z);vec2 g11=vec2(gx.w,gy.w);
+        vec4 nrm=1.79284291400159-0.85373472095314*vec4(dot(g00,g00),dot(g01,g01),dot(g10,g10),dot(g11,g11));
+        g00*=nrm.x;g01*=nrm.y;g10*=nrm.z;g11*=nrm.w;
+        float n00=dot(g00,vec2(fx.x,fy.x));float n10=dot(g10,vec2(fx.y,fy.y));
+        float n01=dot(g01,vec2(fx.z,fy.z));float n11=dot(g11,vec2(fx.w,fy.w));
+        vec2 fx2=fade(Pf.xy);vec2 nx=mix(vec2(n00,n01),vec2(n10,n11),fx2.x);
+        return 2.3*mix(nx.x,nx.y,fx2.y);
       }
-      // 填充：波形 → 沿底边闭合
-      cctx.beginPath();
-      pts.forEach(([x, y], i) => (i ? cctx.lineTo(x, y) : cctx.moveTo(x, y)));
-      cctx.lineTo(w, h); cctx.lineTo(0, h); cctx.closePath();
-      cctx.fillStyle = fill;
-      cctx.fill();
-      // 描边
-      cctx.beginPath();
-      pts.forEach(([x, y], i) => (i ? cctx.lineTo(x, y) : cctx.moveTo(x, y)));
-      cctx.strokeStyle = stroke;
-      cctx.lineWidth = 2.5;
-      cctx.stroke();
-    });
-  };
-  requestAnimationFrame(draw);
+      const float LW=3.5; const float LB=8.0;
+      float px(float c){return (1.0/max(iResolution.x,iResolution.y))*c;}
+      float lineFn(vec2 st,float w,float perc,vec2 mo,float t,float amp,float dist){
+        float sp=0.1+perc*0.4;
+        float an=smoothstep(sp,0.7,st.x);
+        float fa=an*0.5*amp*(1.0+(mo.y-0.5)*0.2);
+        float ts=t/10.0+(mo.x-0.5);
+        float bl=smoothstep(sp,sp+0.05,st.x)*perc;
+        float xn=mix(perlin(vec2(ts,st.x+perc)*2.5),perlin(vec2(ts,st.x+ts)*3.5)/1.5,st.x*0.3);
+        float y=0.5+(perc-0.5)*dist+xn/2.0*fa;
+        float ls=smoothstep(y+(w/2.0)+(LB*px(1.0)*bl),y,st.y);
+        float le=smoothstep(y,y-(w/2.0)-(LB*px(1.0)*bl),st.y);
+        return clamp((ls-le)*(1.0-smoothstep(0.0,1.0,pow(perc,0.3))),0.0,1.0);
+      }
+      void main(){
+        vec2 uv=gl_FragCoord.xy/iResolution;
+        float s=1.0;
+        for(int i=0;i<40;i++){ float perc=float(i)/40.0;
+          s*=(1.0-lineFn(uv,LW*px(1.0)*(1.0-perc),perc,uMouse,iTime,uAmplitude,uDistance)); }
+        float c=1.0-s;
+        gl_FragColor=vec4(uColor*c,c);
+      }`;
+
+    const mk = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, mk(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.style.display = 'none'; return; }
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const U = (n) => gl.getUniformLocation(prog, n);
+    const uTime = U('iTime'), uRes = U('iResolution'), uCol = U('uColor'),
+      uAmp = U('uAmplitude'), uDist = U('uDistance'), uMouse = U('uMouse');
+
+    // 颜色跟主题：浅色用频道主色（白底上清晰），深色提亮成淡粉（暗底上发光）
+    const parseHex = (h) => {
+      const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec((h || '').trim());
+      return m ? [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255] : [0.84, 0.20, 0.52];
+    };
+    const isDark = () => {
+      const t = document.documentElement.getAttribute('data-theme');
+      return t === 'dark' ? true : t === 'light' ? false : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+    let col = [0.84, 0.20, 0.52];
+    const updateColor = () => {
+      const b = parseHex(getComputedStyle(document.body).getPropertyValue('--brand'));
+      col = isDark()
+        ? [Math.min(1, b[0] * 0.5 + 0.5), Math.min(1, b[1] * 0.5 + 0.45), Math.min(1, b[2] * 0.5 + 0.5)]
+        : b;
+    };
+    updateColor();
+    try {
+      new MutationObserver(updateColor).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateColor);
+    } catch (e) { /* 老浏览器无所谓 */ }
+
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    const resize = () => {
+      const w = Math.floor(window.innerWidth * DPR), h = Math.floor(window.innerHeight * DPR);
+      canvas.width = w; canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);   // premultiplied
+    gl.clearColor(0, 0, 0, 0);
+
+    let amp = 0.9, level = 0;   // level=当前音乐能量(0-1)，amp=缓动后喂给着色器的振幅
+    const t0 = performance.now();
+    const frame = () => {
+      requestAnimationFrame(frame);
+      if (document.hidden) return;
+      const tt = (performance.now() - t0) / 1000;
+      const playing = !audio.paused && cur >= 0;
+      let target = 0;
+      if (playing) {
+        if (analyser && freq) {                       // 真频谱：取低中频能量
+          analyser.getByteFrequencyData(freq);
+          const n = Math.min(freq.length, 48);
+          let s = 0; for (let i = 0; i < n; i++) s += freq[i];
+          target = Math.min(1, (s / n / 255) * 1.05);
+        } else {                                       // 网关曲读不到谱：缓慢合成节拍顶着（放慢，别鬼畜）
+          target = 0.20 + 0.10 * Math.abs(Math.sin(tt * 0.55)) + 0.07 * Math.abs(Math.sin(tt * 0.9 + 1.0));
+        }
+      }
+      level += (target - level) * 0.05;                // 缓，避免跳
+      amp += ((0.9 + level * 0.5) - amp) * 0.04;        // 振幅回到 ~1（reactbits 的发散形），随乐轻呼吸
+      gl.uniform1f(uTime, tt * 0.6);                   // 流速降一档
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform3f(uCol, col[0], col[1], col[2]);
+      gl.uniform1f(uAmp, amp);
+      gl.uniform1f(uDist, 0.0);                        // 关键：0 → 丝线汇到一点再发散，不再摊成一条带
+      // 没有鼠标：x 极缓自漂防呆板，y 由音乐能量轻推
+      gl.uniform2f(uMouse, 0.5 + 0.07 * Math.sin(tt * 0.08), 0.5 + level * 0.12);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    requestAnimationFrame(frame);
+  })();
 
   /* ---------- 设置：音源选择 + 双网关 ---------- */
   let qrTimer = null;
