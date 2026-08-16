@@ -138,6 +138,21 @@
     heads.forEach(h => spy.observe(h));
   }
 
+  /* ---------- 6.4b 日记目录：静态锚点 + 同款滚动高亮 ---------- */
+  const diaryToc = document.querySelector('.diary-toc');
+  if (diaryToc) {
+    const entries = document.querySelectorAll('.diary-entry[id]');
+    const dspy = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        diaryToc.querySelectorAll('a').forEach(x => x.classList.remove('on'));
+        const link = diaryToc.querySelector('a[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('on');
+      });
+    }, { rootMargin: '-70px 0px -55% 0px' });
+    entries.forEach(el => dspy.observe(el));
+  }
+
   /* ---------- 6.5 推荐列表：分类筛选 + 折叠（统一状态机） ----------
      .rec-list 可选配前置 .filter-row 和 data-collapse="5"；
      · 只在「当前分类的匹配数」超过上限时才显示展开按钮
@@ -288,13 +303,9 @@
       pageStats.hidden = false;
     };
 
-    const readKey = 'azi-read-' + slug;
-    const method = sessionStorage.getItem(readKey) ? 'GET' : 'POST';
-    fetch(`${API}/pages/${slug}/hit`, { method })
-      .then(r => r.json()).then(d => {
-        sessionStorage.setItem(readKey, '1');
-        renderStats(d);
-      }).catch(() => {});
+    // 每次打开都记一次「读过」（人数按 IP 去重由服务端负责；刷子有每日限量兜底）
+    fetch(`${API}/pages/${slug}/hit`, { method: 'POST' })
+      .then(r => r.json()).then(renderStats).catch(() => {});
 
     likeBtn.addEventListener('click', () => {
       if (likeBtn.classList.contains('on')) return;
@@ -450,6 +461,8 @@
       'open 分享': () => { setTimeout(() => location.href = 'shares/', 400); return '正在打开分享…'; },
       'open 推荐': () => { setTimeout(() => location.href = 'links/', 400); return '正在打开推荐…'; },
       'open 游戏': () => { setTimeout(() => location.href = 'games/', 400); return '正在打开游戏…'; },
+      'fable': () => { setTimeout(() => location.href = 'fable/', 600); return '找 C某F 是吧？带你去看它的打工日记…'; },
+      'sudo fable': () => '权限不足：它只听甲方的（甲方也不太听得动）',
     };
     let interacted = false; // 访客碰过终端后，停止循环播放开机剧本
     document.querySelector('.terminal').addEventListener('click', () => {

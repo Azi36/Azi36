@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Great Fusion · Azi36</title>
   <meta name="description" content="15 / 30 / 60 天，从一身高利贷到暴富或暴毙——2019 年易语言原作的 Web 复刻版。">
-  <link rel="stylesheet" href="../../assets/style.css?v=6">
-  <link rel="stylesheet" href="tgf.css?v=2">
+  <link rel="stylesheet" href="../../assets/style.css?v=13">
+  <link rel="stylesheet" href="tgf.css?v=3">
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
   <script src="../../assets/site.js" defer></script>
-  <script src="tgf.js" defer></script>
+  <script src="tgf.js?v=2" defer></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
 </head>
 <body class="ch-purple">
@@ -49,6 +49,15 @@
       <div class="tgf-bar">
         🪙 The Great Fusion <span class="en" id="barDays">TRADE · SURVIVE</span>
         <button class="bar-rank" id="rankBtn">🏆 排行榜</button>
+        <span class="snd-wrap">
+          <button class="bar-rank" id="sndBtn"></button>
+          <div class="snd-pop">
+            <div class="snd-pop-in">
+              <label>音效 <input type="range" id="volSfx" min="0" max="100" step="5"></label>
+              <label>音乐 <input type="range" id="volBgm" min="0" max="100" step="5"></label>
+            </div>
+          </div>
+        </span>
         <span class="tgf-player" id="barName"></span>
       </div>
 
