@@ -1710,6 +1710,13 @@ body { position: relative; }
   white-space: nowrap;
 }
 
+/* 测试中：同款药丸的低声版本——描边提色，不抢戏 */
+.plat.beta {
+  background: none;
+  border: 1px dashed #eab063;
+  color: #b45309;
+}
+
 .rec {
   display: flex;
   align-items: center;
