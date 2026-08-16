@@ -866,7 +866,10 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 }
 .pb-features li:last-child { border-bottom: 0; }
 .pb-features b { color: var(--text); font-size: 14.5px; white-space: nowrap; }
-.pb-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; }
+.pb-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: auto; }
+/* 店主自评五星：星是真的，评分机构是自己 */
+.pb-score { margin-right: auto; display: inline-flex; align-items: baseline; gap: 8px; color: var(--brand); font-size: 13px; letter-spacing: 2.5px; }
+.pb-score small { color: var(--text-3); font-size: 11px; letter-spacing: normal; }
 
 @media (max-width: 860px) {
   .product-banner { grid-template-columns: 1fr; gap: 20px; padding: 22px 18px; }
