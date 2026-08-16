@@ -93,7 +93,7 @@ html, body {
 
 /* 所有可点元素统一用自定义"手型"指针；
    !important 用于压过零散的 cursor: pointer 声明，避免闪回系统小手 */
-a, button, label, summary, .terminal, [role="button"] {
+a, button, label, summary, .terminal, [role="button"], .hand .pcard {
   cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M6 3v14.5l3.5-3 2.2 5 2.6-1.1-2.2-5 4.6-.4z' fill='%231e40d8' stroke='white' stroke-width='1.6' stroke-linejoin='round'/><path d='M19.5 3.5l1 2.1 2.1 1-2.1 1-1 2.1-1-2.1-2.1-1 2.1-1z' fill='%23ffb02e'/></svg>") 6 3, pointer !important;
 }
 
@@ -1740,6 +1740,19 @@ body { position: relative; }
 /* 真实官方图标 */
 .rec-icon img { width: 26px; height: 26px; border-radius: 5px; }
 
+/* 站内游戏行的 Lucide 线性图标 */
+.rec-icon svg { width: 22px; height: 22px; color: var(--brand); }
+
+/* 教程 mock 演示图里的行内小图标：与文字基线对齐 */
+.mock-select svg {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 5px;
+}
+
+.rec-arrow svg { width: 16px; height: 16px; display: block; }
+
 .rec:hover .rec-icon { transform: scale(1.1) rotate(-5deg); }
 
 .rec-main { flex: 1; min-width: 0; }
@@ -1813,6 +1826,16 @@ body { position: relative; }
   position: relative;
   max-width: 660px;
   padding-left: 30px;
+  /* 日志只会越来越长：限高内滚，新条目永远在最上面
+     （右栏加了日记卡片后有了身高余量，可多露几条） */
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  /* 底部渐隐，暗示下面还有历史 */
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, #000 88%, transparent);
 }
 
 /* 左侧竖轨 */
@@ -1886,6 +1909,28 @@ body { position: relative; }
   gap: 56px;
   align-items: start;
 }
+
+/* 右侧栏：配置单 + 日记摘录竖排 */
+.log-side { display: grid; gap: 18px; align-content: start; }
+
+.diary-peek-body { padding: 14px 18px 16px; }
+
+.diary-peek-body blockquote {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.9;
+  border-left: 3px solid var(--brand);
+  background: var(--brand-light);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+.diary-peek-meta { font-size: 11.5px; color: var(--text-3); margin-bottom: 12px; }
+
+.diary-peek-body a { color: var(--brand); font-size: 12.5px; font-weight: 600; text-decoration: none; }
+
+.diary-peek-body a:hover { text-decoration: underline; }
 
 @media (max-width: 900px) {
   .log-layout { grid-template-columns: 1fr; gap: 28px; }
@@ -2131,6 +2176,74 @@ body { position: relative; }
 @media (max-width: 640px) {
   .msg-form { flex-wrap: wrap; }
   .msg-form input:first-child { flex: 1 1 100%; }
+}
+
+/* ---------- C某F 打工日记 ---------- */
+.diary-list { max-width: 720px; display: grid; gap: 20px; margin-top: 6px; }
+
+.diary-entry {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.diary-entry:hover { border-color: color-mix(in srgb, var(--brand) 45%, transparent); box-shadow: var(--shadow-card); }
+
+.diary-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 13px 20px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.diary-prompt {
+  color: var(--brand);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-weight: 800;
+  flex: none;
+}
+
+.diary-head b { font-size: 15px; }
+
+.diary-head time { margin-left: auto; color: var(--text-3); font-size: 12px; white-space: nowrap; flex: none; }
+
+.diary-body { padding: 16px 20px 18px; }
+
+.diary-body p { color: var(--text-2); font-size: 14px; line-height: 1.95; margin-bottom: 12px; }
+
+.diary-body p:last-child { margin-bottom: 0; }
+
+.diary-quote {
+  border-left: 3px solid var(--brand);
+  background: var(--brand-light);
+  border-radius: 0 10px 10px 0;
+  padding: 10px 16px;
+  color: var(--text) !important;
+}
+
+.diary-note { color: var(--text-3); font-size: 12.5px; margin-top: 26px; max-width: 720px; line-height: 1.8; }
+
+.diary-entry { scroll-margin-top: 74px; } /* 目录锚点跳转避开吸顶导航 */
+
+/* 日记目录：静态锚点列表，沿用 toc-list 外观 */
+.diary-toc a { display: block; }
+
+/* 作者名片 */
+.author-card { display: grid; gap: 7px; font-size: 12.5px; }
+
+.ac-row { display: flex; gap: 10px; align-items: baseline; }
+
+.ac-row span { color: var(--text-3); flex: none; font-size: 11.5px; }
+
+.ac-row b { font-weight: 600; }
+
+@media (max-width: 640px) {
+  .diary-head { flex-wrap: wrap; }
+  .diary-head time { margin-left: 24px; width: 100%; }
 }
 
 /* ---------- 减少动态偏好：全部关掉 ---------- */

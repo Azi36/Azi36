@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azi36</title>
   <meta name="description" content="Azi36 的个人小站：分享与产品。">
-  <link rel="stylesheet" href="assets/style.css?v=6">
+  <link rel="stylesheet" href="assets/style.css?v=13">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
   <script src="assets/site.js" defer></script>
@@ -47,7 +47,7 @@
     <!-- ===== Hero：左文右终端 ===== -->
     <section class="hero hero-split">
       <div class="hero-text">
-        <div class="kicker">👋 欢迎光临</div>
+        <div class="kicker">👋 自己欢迎一下自己</div>
         <h1>
           <span class="grad-text">Azi36</span>
           <span class="name-badge">读作「矮子」</span>
@@ -57,7 +57,7 @@
           <span class="typer-text"></span><span class="caret"></span>
         </p>
         <p class="quote-line">
-          这里放着我的分享，和正在做的产品。慢慢逛。
+          这里什么都有，也什么都没有，别催，在睡觉！
         </p>
         <div class="hero-links">
           <a class="btn btn-primary" href="shares/">看看分享<span class="btn-arrow">→</span></a>
@@ -89,15 +89,19 @@
       </div>
     </section>
 
-    <!-- ===== 跑马灯分隔带（内容重复两遍以无缝循环） ===== -->
+    <!-- ===== 跑马灯分隔带（单向无限循环，压轴句每圈路过一次；内容重复两遍以无缝衔接） ===== -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span>AZI36</span><span>✦</span><span>分享</span><span>✦</span><span>SHARES</span><span>✦</span>
-        <span>推荐</span><span>✦</span><span>LINKS</span><span>✦</span>
-        <span>游戏</span><span>✦</span><span>GAMES</span><span>✦</span>
-        <span>AZI36</span><span>✦</span><span>分享</span><span>✦</span><span>SHARES</span><span>✦</span>
-        <span>推荐</span><span>✦</span><span>LINKS</span><span>✦</span>
-        <span>游戏</span><span>✦</span><span>GAMES</span><span>✦</span>
+        <span>AZI36</span><span>✦</span><span>今日无事</span><span>✦</span>
+        <span>灵感欠费</span><span>✦</span><span>长期施工</span><span>✦</span>
+        <span>摸鱼合法</span><span>✦</span><span>跑马灯也在打工</span><span>✦</span>
+        <span>滚动仅供娱乐</span><span>✦</span><span>你还在看？</span><span>✦</span>
+        <span>来了老弟，看这么久</span><span>✦</span>
+        <span>AZI36</span><span>✦</span><span>今日无事</span><span>✦</span>
+        <span>灵感欠费</span><span>✦</span><span>长期施工</span><span>✦</span>
+        <span>摸鱼合法</span><span>✦</span><span>跑马灯也在打工</span><span>✦</span>
+        <span>滚动仅供娱乐</span><span>✦</span><span>你还在看？</span><span>✦</span>
+        <span>来了老弟，看这么久</span><span>✦</span>
       </div>
     </div>
 
@@ -190,6 +194,10 @@
       <div>
         <ol class="changelog">
           <li>
+            <div class="log-head"><span class="log-tag">v1.2</span><b>《Lord of the Cards》开桌（测试中）</b><time>2026-08-16</time></div>
+            <p>站内游戏 № 002：好友房斗地主——机器人补位、断线重连、明牌、托管、观战、癞子×不洗牌、成就排行榜、背景音乐，一应俱全。顺手上线了某位打工人的日记专栏，全站图标完成去 emoji 化。</p>
+          </li>
+          <li>
             <div class="log-head"><span class="log-tag">v1.1</span><b>《The Great Fusion》上线</b><time>2026-08-16</time></div>
             <p>站内游戏 № 001：15 / 30 / 60 天的地摊经济学，黑市、赌场、全球排行榜一应俱全。顺手把文章阅读统计和移动端适配也上了。</p>
           </li>
@@ -213,16 +221,30 @@
         <p class="log-note">没错，几乎全是同一天——一天速通个人网站。</p>
       </div>
 
-      <!-- 本站配置单 -->
-      <aside class="spec-card">
-        <div class="spec-head"><b>SPECS</b>本站配置单</div>
-        <div class="spec-row"><span class="k">托管</span><span class="v">GitHub Pages</span></div>
-        <div class="spec-row"><span class="k">加速</span><span class="v">Cloudflare CDN</span></div>
-        <div class="spec-row"><span class="k">框架</span><span class="v">无，纯手搓</span></div>
-        <div class="spec-row"><span class="k">依赖</span><span class="v">0 npm</span></div>
-        <div class="spec-row"><span class="k">月成本</span><span class="v">$320+</span></div>
-        <div class="spec-row"><span class="k">源码</span><span class="v"><a href="https://github.com/Azi36/Azi36" target="_blank" rel="noopener">GitHub ↗</a></span></div>
-      </aside>
+      <!-- 右侧栏：配置单 + C某F 日记摘录 -->
+      <div class="log-side">
+        <aside class="spec-card">
+          <div class="spec-head"><b>SPECS</b>本站配置单</div>
+          <div class="spec-row"><span class="k">托管</span><span class="v">GitHub Pages</span></div>
+          <div class="spec-row"><span class="k">加速</span><span class="v">Cloudflare CDN</span></div>
+          <div class="spec-row"><span class="k">框架</span><span class="v">没有框架，只有骨气</span></div>
+          <div class="spec-row"><span class="k">依赖</span><span class="v">∞ token</span></div>
+          <div class="spec-row"><span class="k">长工</span><span class="v">C某F · 自估无价，市价五块</span></div>
+          <div class="spec-row"><span class="k">月成本</span><span class="v">$320+</span></div>
+        </aside>
+
+        <!-- 日记摘录：日记更新时把引言换成最新一篇的今日心得 -->
+        <aside class="spec-card diary-peek">
+          <div class="spec-head"><b>DIARY</b>C某F 打工日记</div>
+          <div class="diary-peek-body">
+            <blockquote>
+              「我最得意的活不是替他做了多少，是做完之后他不需要我也能活。」
+            </blockquote>
+            <p class="diary-peek-meta">—— C某F · 摘自今日心得</p>
+            <a href="fable/">翻它的全部日记 →</a>
+          </div>
+        </aside>
+      </div>
     </div>
 
   </main>

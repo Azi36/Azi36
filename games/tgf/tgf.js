@@ -105,6 +105,132 @@
   const NAME_B = ['狗蛋', '发财', '暴富', '斯基', '施瓦辛格', '不亏', '梭哈', '回本', '大聪明', '锦鲤'];
   const randomName = () => pick(NAME_A) + '·' + pick(NAME_B);
 
+  /* ---------- 声音：BGM 无缝循环 + WebAudio 合成音效 ----------
+     一个按钮管静音，悬停滑块分管音效/音乐（和斗地主同一套操作习惯） */
+  const SND = (() => {
+    const loadV = (k, d) => {
+      const v = parseInt(localStorage.getItem(k), 10);
+      return Math.min(100, Math.max(0, Number.isNaN(v) ? d : v)) / 100;
+    };
+    let muted = localStorage.getItem('tgf-mute') === '1';
+    let vSfx = loadV('tgf-vol-sfx', 100);
+    let vBgm = loadV('tgf-vol-bgm', 55);
+    let ctx = null, master = null;
+    let buf = null, bSrc = null, bGain = null, loading = false, wantBgm = false;
+    const bgmTarget = () => 0.4 * vBgm;
+    const ac = () => {
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        master = ctx.createGain();
+        master.gain.value = vSfx;
+        master.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      return ctx;
+    };
+    const note = (f, t, dur, type = 'sine', vol = 0.12) => {
+      const c = ac();
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f, c.currentTime + t);
+      g.gain.setValueAtTime(vol, c.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + t + dur);
+      o.connect(g).connect(master);
+      o.start(c.currentTime + t);
+      o.stop(c.currentTime + t + dur + 0.02);
+    };
+    const seq = {
+      buy:     () => { note(520, 0, 0.07, 'triangle', 0.12); note(392, 0.07, 0.1, 'triangle', 0.1); },
+      sell:    () => { note(784, 0, 0.07, 'triangle', 0.12); note(1046, 0.08, 0.12, 'triangle', 0.12); },
+      day:     () => { note(330, 0, 0.1, 'sine', 0.08); note(440, 0.1, 0.14, 'sine', 0.08); },
+      luck:    () => [660, 880, 1100].forEach((f, i) => note(f, i * 0.07, 0.12, 'triangle', 0.09)),
+      ouch:    () => { note(220, 0, 0.16, 'sawtooth', 0.1); note(165, 0.13, 0.22, 'sawtooth', 0.09); },
+      bust:    () => [700, 500, 700, 500].forEach((f, i) => note(f, i * 0.11, 0.1, 'square', 0.1)),
+      win:     () => [523, 659, 784].forEach((f, i) => note(f, i * 0.08, 0.14, 'triangle', 0.11)),
+      lose:    () => { note(311, 0, 0.18); note(233, 0.16, 0.3); },
+      jackpot: () => [523, 659, 784, 1046, 1318].forEach((f, i) => note(f, i * 0.09, 0.18, 'triangle', 0.12)),
+      end:     () => [523, 659, 784, 1046].forEach((f, i) => note(f, i * 0.12, 0.22, 'triangle', 0.12)),
+      dead:    () => { note(330, 0, 0.3, 'sine', 0.12); note(233, 0.28, 0.4, 'sine', 0.12); note(175, 0.6, 0.6, 'sine', 0.12); },
+    };
+    const bgmLoad = () => {
+      if (buf || loading) return;
+      loading = true;
+      fetch('bgm.mp3')
+        .then((r) => r.arrayBuffer())
+        .then((ab) => new Promise((res, rej) => ac().decodeAudioData(ab, res, rej)))
+        .then((b) => {
+          // 掐掉 mp3 编码器的首尾静音垫，循环点落在有声样本上
+          const d = b.getChannelData(0);
+          let a = 0, z = d.length - 1;
+          while (a < z && Math.abs(d[a]) < 1e-3) a++;
+          while (z > a && Math.abs(d[z]) < 1e-3) z--;
+          buf = b; buf._ls = a / b.sampleRate; buf._le = z / b.sampleRate;
+          loading = false;
+          if (wantBgm) bgmPlay();
+        })
+        .catch(() => { loading = false; });
+    };
+    const bgmPlay = () => {
+      wantBgm = true;
+      if (muted || !vBgm || bSrc) return;
+      if (!buf) return bgmLoad();
+      const c = ac();
+      if (c.state === 'suspended') return;
+      bGain = c.createGain();
+      bGain.gain.setValueAtTime(0.001, c.currentTime);
+      bGain.gain.exponentialRampToValueAtTime(Math.max(0.002, bgmTarget()), c.currentTime + 1.5);
+      bSrc = c.createBufferSource();
+      bSrc.buffer = buf; bSrc.loop = true;
+      bSrc.loopStart = buf._ls; bSrc.loopEnd = buf._le;
+      bSrc.connect(bGain).connect(c.destination);
+      bSrc.start(c.currentTime, buf._ls);
+    };
+    const bgmFadeOut = (fast) => {
+      if (!bSrc) return;
+      const c = ac(), s = bSrc, g = bGain;
+      bSrc = null; bGain = null;
+      try {
+        g.gain.cancelScheduledValues(c.currentTime);
+        g.gain.setValueAtTime(Math.max(g.gain.value, 0.001), c.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + (fast ? 0.2 : 0.8));
+        s.stop(c.currentTime + (fast ? 0.25 : 0.9));
+      } catch (e) { /* 已经停了 */ }
+    };
+    const duck = () => {
+      if (!bGain) return;
+      const c = ac(), t = c.currentTime;
+      try {
+        bGain.gain.cancelScheduledValues(t);
+        bGain.gain.setValueAtTime(bGain.gain.value, t);
+        bGain.gain.linearRampToValueAtTime(bgmTarget() * 0.4, t + 0.05);
+        bGain.gain.linearRampToValueAtTime(Math.max(0.002, bgmTarget()), t + 0.8);
+      } catch (e) { /* 让不了就不让 */ }
+    };
+    return {
+      play: (n) => { if (muted || !vSfx || !seq[n]) return; try { duck(); seq[n](); } catch (e) { /* 无声胜有声 */ } },
+      bgm: bgmPlay,
+      kick: () => { if (wantBgm && !bSrc) bgmPlay(); },
+      resume: () => { if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); },
+      muted: () => muted,
+      setMuted: (m) => { muted = m; localStorage.setItem('tgf-mute', m ? '1' : '0'); if (m) bgmFadeOut(true); else bgmPlay(); },
+      setSfx: (v) => { vSfx = v; localStorage.setItem('tgf-vol-sfx', Math.round(v * 100)); if (master) master.gain.value = v; },
+      setBgm: (v) => {
+        vBgm = v; localStorage.setItem('tgf-vol-bgm', Math.round(v * 100));
+        if (bSrc && bGain) {
+          const c = ac(), t = c.currentTime;
+          try {
+            bGain.gain.cancelScheduledValues(t);
+            bGain.gain.setValueAtTime(Math.max(bGain.gain.value, 0.001), t);
+            bGain.gain.linearRampToValueAtTime(Math.max(0.002, bgmTarget()), t + 0.15);
+          } catch (e) { /* 拧不动算了 */ }
+        } else if (wantBgm && v > 0) bgmPlay();
+      },
+      vSfx: () => vSfx,
+      vBgm: () => vBgm,
+    };
+  })();
+  document.addEventListener('pointerdown', () => { SND.resume(); SND.kick(); }, true);
+
   /* ---------- 状态 ---------- */
   let S = null;
   let playerName = localStorage.getItem('tgf-name') || '';
@@ -254,6 +380,7 @@
     if (S.over) return;
     S.day += 1;
     if (S.day > DAYS) return endGame(null, true); // 按第 40 天收盘价结算
+    SND.play('day');
 
     S.deposit = Math.floor(S.deposit * (1 + DEPOSIT_RATE));
     if (S.debt > 0) S.debt = Math.ceil(S.debt * (1 + DEBT_RATE));
@@ -280,6 +407,7 @@
       blackHeld.forEach((g) => { seized += S.inv[g.id].qty; delete S.inv[g.id]; });
       S.cash -= fine;
       S.health -= rand(5, 12);
+      SND.play('bust');
       log(`🚨 凌晨突击检查！${seized} 件黑货全部没收，罚款 ${fmt(fine)}，还挨了两下${mercyNote()}`);
     }
 
@@ -288,10 +416,12 @@
       if (ev.cash) {
         const v = rand(Math.min(...ev.cash), Math.max(...ev.cash));
         S.cash = Math.max(0, S.cash + v);
+        SND.play(v >= 0 ? 'luck' : 'ouch');
         log((v >= 0 ? '🍀 ' : '💸 ') + ev.msg.replace('{v}', fmt(Math.abs(v))));
       } else {
         const v = rand(Math.min(...ev.health), Math.max(...ev.health));
         S.health = Math.min(100, S.health + v);
+        SND.play(v >= 0 ? 'luck' : 'ouch');
         log((v >= 0 ? '💪 ' : '🤢 ') + ev.msg.replace('{v}', Math.abs(v)));
       }
     }
@@ -299,6 +429,7 @@
     if (S.debt >= 50000 && Math.random() < 0.5) {
       const dmg = rand(8, 18);
       S.health -= dmg;
+      SND.play('ouch');
       log(`👊 债主带着两位纹身壮汉来「关心」你。健康 -${dmg}`);
     }
 
@@ -373,6 +504,7 @@
 
     // 黑市交易风险（概率随当日风声浮动）
     if (g.black && Math.random() < HEATS[S.heat].trade) {
+      SND.play('bust');
       const fine = fineAmt(Math.ceil((S.cash + S.deposit) * 0.2));
       if (trade.mode === 'buy') {
         payFrom(total + fine);
@@ -395,6 +527,7 @@
       const slot = S.inv[trade.id] || { qty: 0, cost: 0 };
       slot.qty += qty; slot.cost += total;
       S.inv[trade.id] = slot;
+      SND.play('buy');
       log(`🛒 买入 ${g.name} ×${qty}，花费 ${fmt(total)}`);
     } else {
       const slot = S.inv[trade.id];
@@ -403,6 +536,7 @@
       if (slot.qty <= 0) delete S.inv[trade.id];
       S.cash += total;
       const profit = total - costPart;
+      SND.play(profit >= 0 ? 'sell' : 'ouch');
       log(`💰 卖出 ${g.name} ×${qty}，进账 ${fmt(total)}（${profit >= 0 ? '赚' : '亏'} ${fmt(Math.abs(profit))}）`);
     }
     closeTrade();
@@ -496,9 +630,11 @@
       const win = Math.floor(bet * horses.find((h) => h.n === mine).odds);
       S.cash += win;
       S.casinoPL += win - bet;
+      SND.play('win');
       log(`🏇 【${winner.name}】率先冲线！你押中了，赢得 ${fmt(win)}`);
     } else {
       S.casinoPL -= bet;
+      SND.play('lose');
       log(`🏇 【${winner.name}】夺冠，你押的【${horses.find((h) => h.n === mine).name}】在半路吃草。-${fmt(bet)}`);
     }
     rollHorses(); render();
@@ -512,8 +648,8 @@
     S.cash -= bet;
     S.diceHist = S.diceHist.concat(d >= 4 ? '大' : '小').slice(-10);
     const won = (big && d >= 4) || (!big && d <= 3);
-    if (won) { const win = Math.floor(bet * 1.95); S.cash += win; S.casinoPL += win - bet; log(`🎲 骰子开 ${d} 点（${d >= 4 ? '大' : '小'}），你赢了 ${fmt(win)}`); }
-    else { S.casinoPL -= bet; log(`🎲 骰子开 ${d} 点（${d >= 4 ? '大' : '小'}），庄家笑纳 ${fmt(bet)}`); }
+    if (won) { const win = Math.floor(bet * 1.95); S.cash += win; S.casinoPL += win - bet; SND.play('win'); log(`🎲 骰子开 ${d} 点（${d >= 4 ? '大' : '小'}），你赢了 ${fmt(win)}`); }
+    else { S.casinoPL -= bet; SND.play('lose'); log(`🎲 骰子开 ${d} 点（${d >= 4 ? '大' : '小'}），庄家笑纳 ${fmt(bet)}`); }
     render();
   };
 
@@ -526,8 +662,8 @@
     const n = rand(0, 9);
     S.cash -= bet;
     S.numHist = S.numHist.concat(n).slice(-10);
-    if (n === guess) { const win = bet * 9; S.cash += win; S.casinoPL += win - bet; log(`🔢 开出 ${n}！猜中了，赢 ${fmt(win)}（9 倍）`); }
-    else { S.casinoPL -= bet; log(`🔢 开出 ${n}，你猜 ${guess}。差之毫厘 -${fmt(bet)}`); }
+    if (n === guess) { const win = bet * 9; S.cash += win; S.casinoPL += win - bet; SND.play('jackpot'); log(`🔢 开出 ${n}！猜中了，赢 ${fmt(win)}（9 倍）`); }
+    else { S.casinoPL -= bet; SND.play('lose'); log(`🔢 开出 ${n}，你猜 ${guess}。差之毫厘 -${fmt(bet)}`); }
     render();
   };
 
@@ -551,6 +687,7 @@
     else if (r < 0.25) win = 50;
     else if (r < 0.45) win = 10;
     S.cash += win;
+    SND.play(win >= 2000 ? 'jackpot' : win > 0 ? 'win' : 'lose');
     log(win >= 2000 ? `🎫 刮刮乐刮出 ${fmt(win)}！！手都在抖！` : win > 0 ? `🎫 刮出 ${fmt(win)}，回了点血` : '🎫 「谢谢惠顾」。谢什么谢。');
     render();
   };
@@ -574,7 +711,7 @@
     let winQty = 0;
     S.lotto.tickets.forEach((t) => { if (t.num === winning) winQty += t.qty; });
     const prize = winQty * 2000;
-    if (prize > 0) { S.cash += prize; log(`🎉 彩票开奖【${winning}】——你中了 ${winQty} 注，狂揽 ${fmt(prize)}！！`); }
+    if (prize > 0) { S.cash += prize; SND.play('jackpot'); log(`🎉 彩票开奖【${winning}】——你中了 ${winQty} 注，狂揽 ${fmt(prize)}！！`); }
     else log(`🎟️ 彩票开奖【${winning}】，你的号码全军覆没`);
     S.lotto.last = winning;
     S.lotto.tickets = [];
@@ -673,6 +810,7 @@
     S.over = true;
     closeTrade();
     const score = netWorth();
+    SND.play(deathReason || score < 0 ? 'dead' : 'end');
     const day = natural ? DAYS : S.day;
     const best = JSON.parse(localStorage.getItem('tgf-rank') || '[]');
     best.push({ name: playerName, score, day, mode, date: new Date().toISOString().slice(0, 10) });
@@ -942,6 +1080,7 @@
     $('barName').textContent = '👤 ' + playerName;
     win.classList.remove('pre');
     $('startPanel').hidden = true;
+    SND.bgm();   // 进城，起乐
     newGame();
     // 开局自动把游戏窗口滚到视口顶部
     win.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -961,6 +1100,21 @@
 
   document.querySelectorAll('.rank-tabs button').forEach((b) =>
     b.addEventListener('click', () => loadRank(b.dataset.rank)));
+
+  /* 声音总台：点按钮静音，悬停滑块调音量 */
+  const ICN_VOL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+  const ICN_VOLX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>';
+  const renderSndBtn = () => {
+    $('sndBtn').innerHTML = (SND.muted() ? ICN_VOLX : ICN_VOL) + ' 声音';
+    $('sndBtn').title = SND.muted() ? '已静音，点击恢复' : '点击静音 · 悬停调音量';
+  };
+  $('sndBtn').addEventListener('click', () => { SND.setMuted(!SND.muted()); renderSndBtn(); if (!SND.muted()) SND.play('win'); });
+  $('volSfx').value = Math.round(SND.vSfx() * 100);
+  $('volBgm').value = Math.round(SND.vBgm() * 100);
+  $('volSfx').addEventListener('input', () => { if (SND.muted()) { SND.setMuted(false); renderSndBtn(); } SND.setSfx($('volSfx').value / 100); });
+  $('volSfx').addEventListener('change', () => SND.play('buy'));
+  $('volBgm').addEventListener('input', () => { if (SND.muted()) { SND.setMuted(false); renderSndBtn(); } SND.setBgm($('volBgm').value / 100); });
+  renderSndBtn();
 
   $('playerName').value = playerName || randomName();
   showStart();

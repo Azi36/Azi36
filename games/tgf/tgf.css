@@ -915,3 +915,43 @@
   .tgf-actions .primary { width: 100%; margin-left: 0; }
   .mode-grid { gap: 8px; }
 }
+
+/* ---------- 声音总台：点按钮静音，悬停出滑块（与斗地主同款交互） ---------- */
+.snd-wrap { position: relative; display: inline-flex; }
+
+#sndBtn svg { width: 13px; height: 13px; vertical-align: -2px; margin-right: 2px; }
+
+.snd-pop {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 8px;      /* 悬停走廊 */
+  display: none;
+  z-index: 95;
+}
+
+.snd-wrap:hover .snd-pop,
+.snd-wrap:focus-within .snd-pop { display: block; }
+
+.snd-pop-in {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-float);
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.snd-pop label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.snd-pop input[type="range"] { width: 96px; accent-color: var(--brand); }
