@@ -54,22 +54,86 @@
     { name: '搜索', dynamic: true, tracks: [] },
     { name: '收藏', fav: true, tracks: [] },
     { name: '本地', local: true, tracks: [] },
+    { name: '歌单', opened: true, tracks: [] },   // 底部广场点开的 QQ 歌单落在这
+    { name: '历史', history: true, tracks: [] },  // 播放历史
   ];
-  const PL_HOT = 1, PL_FAV = 2, PL_LOC = 3;
+  const PL_HOT = 1, PL_FAV = 2, PL_LOC = 3, PL_OPEN = 4, PL_HIST = 5;
   const HOT_SEEDS = ['周杰伦', '林俊杰', '邓紫棋', '陈奕迅', '薛之谦', '汪苏泷'];
   const PAGE_SIZE = 10;
 
   /* 收藏：localStorage 持久化（本地导入的 blob 重开就死，不给收藏） */
   try { PLAYLISTS[PL_FAV].tracks = JSON.parse(localStorage.getItem('mu-favs') || '[]'); } catch (e) { /* 空手起家 */ }
   const saveFavs = () => localStorage.setItem('mu-favs', JSON.stringify(PLAYLISTS[PL_FAV].tracks));
-  const favKey = (t) => t.src;
+  /* 稳定键：网关曲目播放前没有 src、且直链会过期，改用 songmid/id 认曲 */
+  const favKey = (t) => t.qqMid ? 'qq:' + t.qqMid : t.ncmId ? 'ncm:' + t.ncmId : t.src;
   const isFaved = (t) => PLAYLISTS[PL_FAV].tracks.some((x) => favKey(x) === favKey(t));
+  /* 收进收藏前洗掉易失字段：网关直链会过期，本地 blob/dbId 换设备就死，都别持久化 */
+  const cleanFav = (t) => {
+    const { lrcTried, dbId, ...keep } = t;
+    if (keep.qqMid || keep.ncmId) delete keep.src;
+    return keep;
+  };
+  const addFav = (t) => {
+    if (isFaved(t)) return false;
+    PLAYLISTS[PL_FAV].tracks.push(cleanFav(t));
+    return true;
+  };
+
+  /* ---------- 跨页状态：正在放什么 / 队列 / 历史，全存本地，供全站迷你播放器接力 ---------- */
+  const compact = (t) => ({
+    t: t.title, s: t.sub, a: t.artist || '', img: t.img || '',
+    q: t.qqMid || undefined, n: t.ncmId || undefined,
+    u: (t.qqMid || t.ncmId || t.local) ? undefined : t.src,   // 只有 iTunes 直链稳定，能跨页
+    c: t.cover || undefined, loc: t.local ? 1 : undefined,
+  });
+  const expand = (c) => ({
+    title: c.t, name: c.t, sub: c.s, artist: c.a, img: c.img, imgBig: c.img,
+    qqMid: c.q, ncmId: c.n, src: c.u || undefined, cover: c.c, local: !!c.loc,
+  });
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 满了就算了 */ } };
+  const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+
+  // 历史：开页捞回
+  PLAYLISTS[PL_HIST].tracks = (lsGet('mu-history') || []).map((c) => (c.title ? c : expand(c)));
+  const saveHistory = () => lsSet('mu-history', PLAYLISTS[PL_HIST].tracks.map(compact));
+  const pushHistory = (t) => {
+    if (!t) return;
+    const arr = PLAYLISTS[PL_HIST].tracks;
+    const k = favKey(t);
+    const at = arr.findIndex((x) => favKey(x) === k);
+    if (at >= 0) arr.splice(at, 1);
+    arr.unshift(cleanFav(t));
+    if (arr.length > 60) arr.length = 60;
+    saveHistory();
+    if (plView === PL_HIST) renderList();
+  };
+
+  // 正在播放 + 队列：写给全站迷你播放器
+  let queueKind = '';
+  const writeQueue = () => {
+    const list = tracksOf(plPlay);
+    lsSet('mu-queue', { name: PLAYLISTS[plPlay].name, k: source(), q: list.map(compact) });
+    queueKind = source();
+  };
+  const writeNow = (playing) => {
+    const t = nowTrack();
+    if (!t) { localStorage.removeItem('mu-now'); return; }
+    lsSet('mu-now', {
+      cur: compact(t), i: cur, p: audio.currentTime || 0, d: audio.duration || 0,
+      pl: !!playing, k: source(), ts: Date.now(),
+    });
+    window.dispatchEvent(new Event('azi-now'));   // 同页导航控件即时刷新
+  };
+  let nowThrottle = 0;
+  let pendingSeek = 0;
+  let queueSig = '';
 
   const ICN_PLAY = '<svg class="icn" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
   const ICN_PAUSE = '<svg class="icn" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="4.6" height="16" rx="1.4"/><rect x="14.4" y="4" width="4.6" height="16" rx="1.4"/></svg>';
   const ICN_LOOP = '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
   const ICN_LOOP1 = '<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/><path d="M11 10h1v4"/></svg>';
   const ICN_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+  const ICN_DISC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M12 3a9 9 0 0 1 0 18"/></svg>';
 
   /* ---------- 音源三选：iTunes 试听（默认）/ 网易云网关 / QQ 音乐网关 ---------- */
   let apiUrl = (localStorage.getItem('mu-api') || '').replace(/\/$/, '');
@@ -161,12 +225,16 @@
     PLAYLISTS[p].dynamic ? (gwOn() ? `搜点什么听听——${source() === 'qq' ? 'QQ 音乐' : '网易云'}网关已接管，整首伺候` : '搜点什么听听——iTunes 正版接口，30 秒管饱；想听整首去右上角设置')
     : PLAYLISTS[p].fav ? '还没收藏——列表里点小心心，走的时候带上'
     : PLAYLISTS[p].local ? '把硬盘里的歌导进来——存进浏览器仓库（IndexedDB），关页不丢'
+    : PLAYLISTS[p].history ? '还没听过歌——放几首，这儿记着你的足迹'
     : '空空如也';
 
   const renderList = () => {
     const list = tracksOf(plView);
     $('muSearch').hidden = !PLAYLISTS[plView].dynamic;
     $('muImport').hidden = !PLAYLISTS[plView].local;
+    const op = PLAYLISTS[plView].opened && list.length;
+    $('muOpened').hidden = !op;
+    if (op) $('openName').textContent = PLAYLISTS[plView].name;
     renderPager();
     $('trackList').innerHTML = list.length
       ? list.map((t, i) => {
@@ -458,6 +526,9 @@
       plPlay = p;
       cur = ((i % n) + n) % n;
       const t = tracksOf(p)[cur];
+      const sig = plPlay + ':' + n + ':' + source();
+      if (sig !== queueSig) { writeQueue(); queueSig = sig; }
+      if (andPlay) pushHistory(t);
       if (t.src) return startSrc(t.src);
       if (t.qqMid && qqUrl) {
         renderNow();
@@ -537,8 +608,7 @@
       if (isFaved(t)) {
         PLAYLISTS[PL_FAV].tracks = PLAYLISTS[PL_FAV].tracks.filter((x) => favKey(x) !== favKey(t));
       } else {
-        const { lrcTried, ...keep } = t;
-        PLAYLISTS[PL_FAV].tracks.push(keep);
+        addFav(t);
       }
       saveFavs();
       renderList();
@@ -551,8 +621,8 @@
     else load(plView, i, true);
   });
 
-  audio.addEventListener('play', () => { initViz(); renderNow(); });
-  audio.addEventListener('pause', renderNow);
+  audio.addEventListener('play', () => { initViz(); renderNow(); writeNow(true); });
+  audio.addEventListener('pause', () => { renderNow(); writeNow(false); });
   audio.addEventListener('playing', () => { errStreak = 0; });
   audio.addEventListener('ended', () => {
     if (loopOne) { audio.currentTime = 0; audio.play().catch(() => {}); fade(1, 300); }
@@ -574,6 +644,10 @@
   audio.addEventListener('loadedmetadata', () => {
     const t = nowTrack();
     if (t) { durCache[t.src] = fmt(audio.duration); renderList(); }
+    if (pendingSeek > 0 && audio.duration) {   // 记忆退出：跳回断点
+      try { audio.currentTime = Math.min(pendingSeek, audio.duration - 1); } catch (e) { /* 拒了就从头 */ }
+      pendingSeek = 0;
+    }
   });
 
   audio.addEventListener('timeupdate', () => {
@@ -582,6 +656,8 @@
     $('tCur').textContent = fmt(audio.currentTime);
     $('tDur').textContent = fmt(audio.duration);
     syncLyrics();
+    const nowMs = performance.now();
+    if (!audio.paused && nowMs - nowThrottle > 1000) { nowThrottle = nowMs; writeNow(true); }
   });
   $('progWrap').addEventListener('pointerdown', (e) => {
     if (!audio.duration) return;
@@ -618,7 +694,9 @@
 
   const renderTabs = () => {
     $('plTabs').innerHTML = PLAYLISTS.map((p, i) =>
-      `<button class="${i === plView ? 'on' : ''}" data-p="${i}">${p.name}<i>${p.dynamic ? '' : p.tracks.length}</i></button>`).join('');
+      ((p.opened || p.history) && !p.tracks.length)   // 「歌单」「历史」空着时先藏
+        ? ''
+        : `<button class="${i === plView ? 'on' : ''}" data-p="${i}">${esc(p.name)}<i>${p.dynamic ? '' : p.tracks.length}</i></button>`).join('');
   };
 
   /* ---------- 律动背景 ---------- */
@@ -652,28 +730,41 @@
     const playing = !audio.paused && cur >= 0;
     const spectral = analyser && playing;   // 真频谱（自产/本地）
     if (spectral) analyser.getByteFrequencyData(freq);
-    const N = 64;
-    [[0.72, 'rgba(214, 51, 132, .30)', 1], [0.78, 'rgba(138, 79, 208, .22)', -1]].forEach(([base, color, dir], k) => {
-      cctx.beginPath();
+    const N = 72;
+    // 三条波：一条主色描边 + 一条辅色，各自带一层柔和填充，铺在页面底部 1/3
+    const bands = [
+      [0.82, 'rgba(214, 51, 132, .55)', 'rgba(214, 51, 132, .10)', 1],
+      [0.88, 'rgba(138, 79, 208, .42)', 'rgba(138, 79, 208, .08)', -1],
+    ];
+    bands.forEach(([base, stroke, fill, dir], k) => {
+      const pts = [];
       for (let i = 0; i <= N; i++) {
         const x = (i / N) * w;
         let amp;
         if (spectral) {
-          amp = (freq[Math.floor((i / N) * (freq.length - 1))] / 255) * h * 0.14;
+          amp = (freq[Math.floor((i / N) * (freq.length - 1))] / 255) * h * 0.22;
         } else if (playing) {
-          // 网关模式读不到频谱：合成节拍——多条正弦叠出「在动」的起伏，跟播放同步
+          // 网关模式读不到频谱：合成节拍——多条正弦叠出「在动」的起伏
           const t = now / 1000;
-          const beat = 0.6 + 0.4 * Math.abs(Math.sin(t * 2.4 + k));
+          const beat = 0.55 + 0.45 * Math.abs(Math.sin(t * 2.4 + k));
           amp = (Math.sin(i * 0.5 + t * 3 + k * 2) * 0.5 + Math.sin(i * 0.23 - t * 1.7) * 0.5)
-            * h * 0.05 * beat + h * 0.03;
+            * h * 0.085 * beat + h * 0.05;
         } else {
-          amp = Math.sin(now / 1600 + i * 0.55 + k * 2) * h * 0.012 + h * 0.012;   // 静默：慢呼吸
+          amp = Math.sin(now / 1400 + i * 0.55 + k * 2) * h * 0.02 + h * 0.028;   // 静默：慢呼吸
         }
-        const y = h * base - amp * dir;
-        i === 0 ? cctx.moveTo(x, y) : cctx.lineTo(x, y);
+        pts.push([x, h * base - amp * dir]);
       }
-      cctx.strokeStyle = color;
-      cctx.lineWidth = 2;
+      // 填充：波形 → 沿底边闭合
+      cctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? cctx.lineTo(x, y) : cctx.moveTo(x, y)));
+      cctx.lineTo(w, h); cctx.lineTo(0, h); cctx.closePath();
+      cctx.fillStyle = fill;
+      cctx.fill();
+      // 描边
+      cctx.beginPath();
+      pts.forEach(([x, y], i) => (i ? cctx.lineTo(x, y) : cctx.moveTo(x, y)));
+      cctx.strokeStyle = stroke;
+      cctx.lineWidth = 2.5;
       cctx.stroke();
     });
   };
@@ -739,6 +830,10 @@
         $('qqStatus').textContent = '登记成功 ✓ 已设为当前音源——刷新页面即整首';
         $('qqCookie').value = '';
         localStorage.setItem('mu-source', 'qq');   // 添加即启用
+        // 抓 uin 存下来：拉「我的歌单」要显式带 id（网关默认读浏览器 cookie=空）
+        const uin = ((raw.match(/\buin=([^;]+)/) || [])[1] || '').replace(/\D/g, '');
+        if (uin) localStorage.setItem('mu-qq-uin', uin);
+        loadPlaza();   // 登记完立刻刷新底部歌单广场
       })
       .catch(() => { $('qqStatus').textContent = '登记没成——连不上网关。若你是直接双击打开 HTML 的，浏览器会拦跨域，用本地服务器打开或等上线后再试'; });
   });
@@ -786,10 +881,170 @@
     }).catch(() => { $('apiStatus').textContent = '连不上网关——地址不对，或后端还没部署'; });
   });
 
+  /* ---------- 底部「歌单广场」：我的自建/收藏歌单 + 粘链接开任意歌单 + 一键导入收藏 ---------- */
+  const qqReady = () => !!qqUrl && !!qqKey();
+  const setPlaza = (msg, warn) => {
+    const el = $('plazaStatus');
+    el.textContent = msg || '';
+    el.classList.toggle('warn', !!warn);
+    el.hidden = !msg;
+  };
+  const normPl = (v, kind) => ({
+    tid: String(v.tid || v.dissid || v.dirid || ''),
+    name: v.diss_name || v.dissname || v.title || '未命名歌单',
+    cover: (v.diss_cover || v.logo || v.cover || v.picurl || '').replace(/^http:/, 'https:'),
+    count: v.song_cnt != null ? v.song_cnt : (v.songnum != null ? v.songnum : (v.total || 0)),
+    kind,
+  });
+  const qqSongsToTracks = (d) => {
+    const songs = (d && d.data && (d.data.songlist || d.data.list)) || [];
+    return songs.filter((s) => s && s.songmid).map((s) => {
+      const t = {
+        qqMid: s.songmid,
+        title: s.songname || s.name || '未知曲目',
+        name: s.songname || s.name || '',
+        artist: (s.singer && s.singer[0] && s.singer[0].name) || '',
+        sub: `${(s.singer || []).map((a) => a.name).join('/')} · ${s.albumname || (s.album && s.album.name) || '单曲'}`,
+        img: s.albummid ? `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg` : '',
+        imgBig: s.albummid ? `https://y.gtimg.cn/music/photo_new/T002R500x500M000${s.albummid}.jpg` : '',
+      };
+      if (s.interval) durCache['qq' + s.songmid] = fmt(s.interval);
+      return t;
+    });
+  };
+  const fetchSongs = (tid) => qq(`/songlist?id=${encodeURIComponent(tid)}`).then(qqSongsToTracks);
+
+  const openPlaylist = (tid, name) => {
+    if (!qqReady()) { setPlaza('先在右上角设置里配好 QQ 网关地址和口令', true); return; }
+    setPlaza('翻开歌单……');
+    fetchSongs(tid).then((rows) => {
+      if (!rows.length) { setPlaza('这个歌单空的，或者需要权限', true); return; }
+      PLAYLISTS[PL_OPEN].tracks = rows;
+      PLAYLISTS[PL_OPEN].name = name || '歌单';
+      PLAYLISTS[PL_OPEN].openTid = String(tid);
+      plView = PL_OPEN;
+      renderTabs(); renderList();
+      setPlaza('');
+      const w = document.querySelector('.mu-window');
+      if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }).catch(() => setPlaza('打不开——网关没接住或链接不对', true));
+  };
+
+  const importPlaylist = (tid, name) => {
+    if (!qqReady()) { setPlaza('先配好 QQ 网关', true); return; }
+    setPlaza(`正在把《${name}》搬进收藏……`);
+    fetchSongs(tid).then((rows) => {
+      let n = 0;
+      rows.forEach((t) => { if (addFav(t)) n += 1; });
+      saveFavs(); renderTabs();
+      if (plView === PL_FAV) renderList();
+      setPlaza(n ? `已把 ${n} 首收进收藏${n < rows.length ? `（另 ${rows.length - n} 首本来就有）` : ''} ♥` : '这些歌收藏里都有了');
+    }).catch(() => setPlaza('导入失败——网关没接住', true));
+  };
+
+  const parseTid = (s) => {
+    s = (s || '').trim();
+    const m = s.match(/(?:playlist|dissid|list|id)[\/=]?(\d{3,})/i) || s.match(/(\d{5,})/);
+    return m ? m[1] : '';
+  };
+
+  const cardHtml = (p) => `
+    <div class="plaza-card" role="button" tabindex="0" data-tid="${esc(p.tid)}" data-name="${esc(p.name)}" title="${esc(p.name)}">
+      <span class="pc-cover">${p.cover ? `<img src="${esc(p.cover)}" alt="" loading="lazy">` : ICN_DISC}<em class="pc-play">${ICN_PLAY}</em><i class="pc-imp" data-imp="1" role="button" tabindex="0" aria-label="导入到收藏" title="全部导入收藏">${ICN_HEART}</i></span>
+      <b class="pc-name">${esc(p.name)}</b>
+      <span class="pc-cnt">${p.count} 首</span>
+    </div>`;
+
+  const renderGrid = (gridId, groupId, list) => {
+    const grid = $(gridId), group = $(groupId);
+    if (!list.length) { group.hidden = true; grid.innerHTML = ''; return; }
+    group.hidden = false;
+    grid.innerHTML = list.map(cardHtml).join('');
+  };
+
+  const loadPlaza = () => {
+    const uin = localStorage.getItem('mu-qq-uin') || '';
+    if (source() !== 'qq' || !qqReady()) {
+      $('plazaSelf').hidden = true; $('plazaColl').hidden = true;
+      $('plazaEmpty').hidden = false;
+      $('plazaEmpty').textContent = '切到 QQ 音乐并登录后，你的自建/收藏歌单会摆在这；也能直接在上面粘一个歌单链接打开。';
+      return;
+    }
+    if (!uin) {
+      $('plazaSelf').hidden = true; $('plazaColl').hidden = true;
+      $('plazaEmpty').hidden = false;
+      $('plazaEmpty').textContent = '已接管 QQ 音乐——去设置里重新登记一次 cookie 就能抓到你的歌单（早前的登记没存 uin）。';
+      return;
+    }
+    $('plazaEmpty').hidden = true;
+    setPlaza('翻你的唱片架……');
+    Promise.all([
+      qq(`/user/songlist?id=${uin}`).then((d) => ((d.data && d.data.list) || []).map((v) => normPl(v, 'self'))).catch(() => []),
+      qq(`/user/collect/songlist?id=${uin}&pageSize=60`).then((d) => ((d.data && d.data.list) || []).map((v) => normPl(v, 'collect'))).catch(() => []),
+    ]).then(([self, coll]) => {
+      setPlaza('');
+      renderGrid('gridSelf', 'plazaSelf', self.filter((p) => p.tid));
+      renderGrid('gridColl', 'plazaColl', coll.filter((p) => p.tid));
+      if (!self.length && !coll.length) {
+        $('plazaEmpty').hidden = false;
+        $('plazaEmpty').textContent = '没抓到歌单——可能你还没建过、也没收藏过歌单。上面粘个链接也能听。';
+      }
+    });
+  };
+
+  $('plazaGo').addEventListener('click', () => {
+    const raw = $('plazaInput').value;
+    const tid = parseTid(raw);
+    if (!tid) { setPlaza('没认出歌单 ID——粘完整的歌单链接，或直接粘那串数字', true); return; }
+    openPlaylist(tid, '歌单 ' + tid);
+  });
+  $('plazaInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('plazaGo').click(); });
+
+  $('muPlaza').addEventListener('click', (e) => {
+    const imp = e.target.closest('[data-imp]');
+    const card = e.target.closest('.plaza-card');
+    if (!card) return;
+    if (imp) { e.preventDefault(); e.stopPropagation(); importPlaylist(card.dataset.tid, card.dataset.name); return; }
+    openPlaylist(card.dataset.tid, card.dataset.name);
+  });
+
+  $('openImp').addEventListener('click', () => {
+    const p = PLAYLISTS[PL_OPEN];
+    if (p.openTid) importPlaylist(p.openTid, p.name);
+    else { let n = 0; p.tracks.forEach((t) => { if (addFav(t)) n += 1; }); saveFavs(); renderTabs(); setPlaza(n ? `已收 ${n} 首 ♥` : '都收过了'); }
+  });
+
+  /* 记忆退出：开页从上次断点把队列和进度接上（能续播就 cue 好，自动播被拦就停在断点等点一下） */
+  const restoreNow = () => {
+    const now = lsGet('mu-now'), q = lsGet('mu-queue');
+    if (!now || !now.cur || now.cur.loc) return;
+    if (!(q && q.q && q.q.length && q.k === source())) return;   // 音源不一致/无队列：不硬续
+    PLAYLISTS[PL_OPEN].tracks = q.q.map(expand);
+    PLAYLISTS[PL_OPEN].name = q.name || '继续播放';
+    PLAYLISTS[PL_OPEN].openTid = null;
+    plView = PL_OPEN; plPlay = PL_OPEN;
+    cur = Math.max(0, Math.min(now.i || 0, PLAYLISTS[PL_OPEN].tracks.length - 1));
+    queueSig = plPlay + ':' + PLAYLISTS[PL_OPEN].tracks.length + ':' + source();
+    pendingSeek = now.p || 0;
+    renderTabs(); renderList(); renderNow();
+    if (now.pl) load(PL_OPEN, cur, true);   // 试着接着放
+    else writeNow(false);
+  };
+
+  // 给全站迷你播放器的同页控制接口（导航图标/popover 直接调这里）
+  window.AziPlayer = {
+    host: true,
+    toggle: () => toggle(),
+    next: () => load(plPlay, cur + 1, true),
+    prev: () => load(plPlay, cur - 1, true),
+  };
+
   $('muCount').textContent = gwOn()
     ? `${source() === 'qq' ? 'QQ 音乐' : '网易云'}网关接管中 · 整首模式`
     : '搜索走 iTunes · 歌词走 LRCLIB · 免费优先';
   renderTabs();
   renderLoop();
   renderNow();
+  loadPlaza();
+  restoreNow();
 })();

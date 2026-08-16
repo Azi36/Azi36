@@ -182,7 +182,8 @@ input[type="text"], input[type="number"], input[type="search"], input[type="pass
 body {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Helvetica Neue", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-  background: var(--bg);
+  /* 底色交给 html：body 若不透明会盖住 z-index:-1 的律动画布和极光装饰 */
+  background: transparent;
   color: var(--text);
   font-size: 15px;
   line-height: 1.6;
@@ -2493,4 +2494,108 @@ body { position: relative; }
   .nav-status { display: none; }              /* 小屏隐藏状态徽标 */
   .site-header .container { padding: 0 14px; }
   .footer-cols { gap: 40px; }
+}
+
+/* ===== 全站迷你播放器：导航 EQ 图标 + popover ===== */
+.nav-player { position: relative; display: flex; align-items: center; }
+
+.np-icon {
+  width: 34px; height: 34px;
+  border: none; background: none; padding: 0;
+  display: grid; place-items: center;
+  color: var(--text-2); cursor: pointer;
+  border-radius: 50%;
+  transition: background .2s, color .2s;
+}
+
+.np-icon:hover { background: var(--bg-hover); color: var(--brand); }
+
+.np-eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+
+.np-eq i { width: 2.5px; background: currentColor; border-radius: 2px; transition: height .25s var(--ease); }
+
+/* 静默态也长成均衡器的样子（高低错落），不是齐平的柱子 */
+.np-eq i:nth-child(1) { height: 45%; }
+.np-eq i:nth-child(2) { height: 90%; }
+.np-eq i:nth-child(3) { height: 55%; }
+.np-eq i:nth-child(4) { height: 75%; }
+
+.nav-player.playing .np-icon { color: var(--brand); }
+
+/* 播放时各柱不同节奏地跳，像真在蹦 */
+.nav-player.playing .np-eq i { animation: np-eq 1s ease-in-out infinite; }
+.nav-player.playing .np-eq i:nth-child(1) { animation-duration: .82s; }
+.nav-player.playing .np-eq i:nth-child(2) { animation-duration: 1.14s; animation-delay: -.4s; }
+.nav-player.playing .np-eq i:nth-child(3) { animation-duration: .68s; animation-delay: -.2s; }
+.nav-player.playing .np-eq i:nth-child(4) { animation-duration: 1.32s; animation-delay: -.6s; }
+
+@keyframes np-eq { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-player.playing .np-eq i { animation: none; }
+}
+
+.np-pop {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 278px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-float);
+  padding: 14px;
+  z-index: 300;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .18s var(--ease), transform .18s var(--ease);
+}
+
+.nav-player.open .np-pop { opacity: 1; transform: none; }
+
+.np-head { display: flex; gap: 11px; align-items: center; }
+
+.np-cover { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; background: var(--bg-soft); flex: none; }
+
+.np-meta { min-width: 0; flex: 1; }
+
+.np-meta .np-title { display: block; font-size: 13.5px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.np-meta .np-sub { display: block; font-size: 11.5px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.np-bar { margin: 12px 0 5px; height: 4px; border-radius: 999px; background: var(--border-light); cursor: pointer; }
+
+.np-fill { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--grad-brand); }
+
+.np-time { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+.np-ctrl { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
+
+.np-ctrl button, .np-ctrl a {
+  width: 34px; height: 34px;
+  border: none; background: none; padding: 0;
+  display: grid; place-items: center;
+  color: var(--text-2); cursor: pointer;
+  border-radius: 50%;
+  transition: color .15s, background .15s, transform .15s var(--ease);
+}
+
+.np-ctrl button:hover, .np-ctrl a:hover { color: var(--brand); background: var(--bg-hover); transform: scale(1.08); }
+
+.np-ctrl .np-play.big {
+  width: 42px; height: 42px;
+  background: var(--grad-brand);
+  color: #fff;
+}
+
+.np-ctrl .np-play.big:hover { color: #fff; transform: scale(1.06); }
+
+.np-ctrl svg { width: 16px; height: 16px; }
+
+.np-ctrl .np-play.big svg { width: 18px; height: 18px; }
+
+.np-ctrl .np-open { margin-left: 4px; }
+
+@media (max-width: 720px) {
+  .np-pop { right: -44px; }
 }

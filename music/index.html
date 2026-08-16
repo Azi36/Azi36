@@ -6,11 +6,12 @@
   <title>音乐 · Azi36</title>
   <meta name="description" content="Azi36 电台——自产曲目先扛大梁，全网聚合歌单在路上。">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="../assets/style.css?v=26">
-  <link rel="stylesheet" href="music.css?v=8">
+  <link rel="stylesheet" href="../assets/style.css?v=28">
+  <link rel="stylesheet" href="music.css?v=9">
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
   <script src="../assets/site.js?v=13" defer></script>
-  <script src="music.js?v=11" defer></script>
+  <script src="../assets/player.js?v=1" defer></script>
+  <script src="music.js?v=14" defer></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%222447e6%22/><stop offset=%221%22 stop-color=%227c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
 </head>
 <body class="ch-pink">
@@ -97,6 +98,10 @@
             <input type="file" id="impFile" multiple hidden accept="audio/*,.flac,.ogg,.oga,.opus,.m4a,.aac,.wav,.webm,.ape,.wma,.wv,.aiff,.dsf">
             <span class="imp-note" id="impNote">MP3 / FLAC / OGG / OPUS / M4A / WAV 通吃 · 存进浏览器仓库，关页不丢</span>
           </div>
+          <div class="mu-opened" id="muOpened" hidden>
+            <span class="op-name" id="openName">歌单</span>
+            <button id="openImp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>全部收藏</button>
+          </div>
           <ol class="mu-list" id="trackList"></ol>
           <div class="mu-pager" id="muPager" hidden>
             <button id="pgPrev">上一页</button>
@@ -107,11 +112,24 @@
       </div>
     </div>
 
-    <!-- ===== 全网歌单：占位 ===== -->
-    <div class="section-title"><svg class="t-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15V6"/><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>全网歌单 <span class="count">施工中</span></div>
-    <div class="mu-teaser">
-      免费能拿的先拿：热门试听走 iTunes 官方接口，正版 30 秒管饱。
-      整首解锁靠登录自己的账号、用自己的 VIP——网关在路上，公家饭一口不吃。
+    <!-- ===== 歌单广场：我的自建/收藏歌单 + 粘链接开任意歌单 + 一键导入收藏 ===== -->
+    <div class="section-title"><svg class="t-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15V6"/><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path d="M12 12H3"/><path d="M16 6H3"/><path d="M12 18H3"/></svg>歌单广场 <span class="count">QQ 音乐</span></div>
+    <div class="mu-plaza" id="muPlaza">
+      <div class="plaza-open">
+        <svg class="po-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <input type="text" id="plazaInput" placeholder="粘一个 QQ 歌单链接或 ID，一键打开别人的歌单" autocomplete="off">
+        <button id="plazaGo">打开</button>
+      </div>
+      <div class="plaza-status" id="plazaStatus" hidden></div>
+      <div class="plaza-empty" id="plazaEmpty">切到 QQ 音乐并登录后，你的自建/收藏歌单会摆在这；也能直接在上面粘一个歌单链接打开。</div>
+      <div class="plaza-group" id="plazaSelf" hidden>
+        <h4>我建的</h4>
+        <div class="plaza-grid" id="gridSelf"></div>
+      </div>
+      <div class="plaza-group" id="plazaColl" hidden>
+        <h4>我收藏的</h4>
+        <div class="plaza-grid" id="gridColl"></div>
+      </div>
     </div>
   </main>
 
