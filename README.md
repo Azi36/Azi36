@@ -1,7 +1,9 @@
 <div align="center">
 
 <a href="https://azi36.com">
-  <img src="assets/readme-terminal.svg" width="680" alt="$ whoami → Azi36，读作「矮子」。$ npm run 灵感 --force → 网站已上线 azi36.com">
+  <!-- 走自己域名的绝对地址：GitHub 会用 camo 代理转发，
+       比相对路径解析到的 raw.githubusercontent.com 稳得多（后者国内经常取不到，图就碎） -->
+  <img src="https://azi36.com/assets/readme-terminal.svg" width="680" alt="$ whoami → Azi36，读作「矮子」。$ npm run 灵感 --force → 网站已上线 azi36.com">
 </a>
 
 <a href="https://azi36.com"><img src="https://api.azi36.com/badge" alt="azi36.com 实时访客数"></a>
