@@ -14,3 +14,15 @@ desktop.ini
 node_modules/
 *.log
 _themetest.html
+
+# 密钥兜底：这个仓库本来就不该有，但别让手滑的一次提交把它带进历史
+# （进了历史就得重写历史才能拿掉，而重写是有代价的）
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_ed25519
