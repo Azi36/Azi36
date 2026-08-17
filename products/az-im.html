@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Az-im 图像工具 · Azi36</title>
-  <meta name="description" content="Az-im：在线图像工具四件套——压缩、抠图、放大、去水印，全在浏览器本地完成，图片不上传。">
+  <meta name="description" content="Az-im：浏览器里的图像工具——批量压缩 JPEG/PNG/WebP/AVIF/HEIC/SVG/GIF，格式转换、缩放裁剪，外加 AI 背景移除、超分放大、去水印。全程本地处理，图片不上传。">
   <link rel="canonical" href="https://azi36.com/products/az-im.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Azi36">
   <meta property="og:title" content="Az-im 图像工具 · Azi36">
-  <meta property="og:description" content="Az-im：在线图像工具四件套——压缩、抠图、放大、去水印，全在浏览器本地完成，图片不上传。">
+  <meta property="og:description" content="Az-im：浏览器里的图像工具——批量压缩 JPEG/PNG/WebP/AVIF/HEIC/SVG/GIF，格式转换、缩放裁剪，外加 AI 背景移除、超分放大、去水印。全程本地处理，图片不上传。">
   <meta property="og:url" content="https://azi36.com/products/az-im.html">
   <meta property="og:image" content="https://azi36.com/assets/img/og.png">
   <meta property="og:image:width" content="1200">
@@ -78,9 +78,17 @@
         <li><strong>压缩</strong>：每种格式用各自最合适的引擎（JPEG 用 MozJPEG、PNG 用 OxiPNG……），
           质量、颜色数、抖色系数都能调，还有一个"极限模式"给抠体积的人</li>
         <li><strong>转换</strong>：JPG、PNG、WebP、AVIF 互转，透明背景转不透明格式时可以自选填充色</li>
-        <li><strong>缩放裁剪</strong>：按宽、高、长短边、百分比缩放；按比例、固定尺寸、打印纸型裁剪；
-          公众号封面、B 站封面这类常用尺寸一键填入</li>
-        <li><strong>交付</strong>：处理前后拖分割线对比画质，逐张下载或整批打包 ZIP</li>
+        <li><strong>缩放裁剪</strong>：八种模式 —— 按宽、高、长短边、百分比缩放；按比例、固定尺寸、
+          打印纸型（A3/A4/A5/Letter/Legal/B4/B5）裁剪；
+          公众号封面、小红书 3:4、B 站封面这类常用尺寸一键填入</li>
+        <li><strong>存成预设</strong>：调好的一整套参数存下来，下次一键套用。
+          内置平衡 / 公众号配图 / 网页配图 / 保清晰 / 极致压缩五个，自己还能再存十二个</li>
+        <li><strong>单张开小灶</strong>：整批用一套参数，某一张不满意就单独给它改，只重压它自己，不动其他</li>
+        <li><strong>多核一起上</strong>：压缩跑在 worker 池里并行，几百张的时候真吃得到多核；
+          中途能停，某个 worker 崩了会换新的顶上</li>
+        <li><strong>挑得出问题图</strong>：列表能筛"失败 / 已停止 / <em>反而变大了</em>"，
+          也能按体积或压缩效果最差排序</li>
+        <li><strong>交付</strong>：处理前后拖分割线对比画质，逐张下载或整批打包 ZIP（打包有进度）</li>
       </ul>
       <p>压缩率看图片内容，通常五到九成。一张 32KB 的测试图能压到 4.8KB，肉眼看不出差别。</p>
 
@@ -95,7 +103,11 @@
           <tr><td><strong>高质量</strong></td><td>Silueta</td><td>42MB</td><td>边缘细节更完整，处理慢一点</td></tr>
         </table>
       </div>
-      <p>切换模型时如果已经有图，会自动用新模型重跑一遍，不用重新选图。</p>
+      <p>
+        切换模型时如果已经有图，会自动用新模型重跑一遍，不用重新选图。
+        结果底色能在格纹 / 白 / 黑之间切，方便看边缘干不干净；
+        出图可以直接下载，也能一键复制进剪贴板，粘到别处就用。
+      </p>
 
       <h3>③ 图片放大</h3>
       <p>
@@ -107,7 +119,9 @@
       <h3>④ 去水印</h3>
       <p>
         把水印、logo、路人甲涂红，点「移除」，周围的像素会智能补上。
-        画笔粗细可调，修完不满意接着涂接着修，逐步清干净。
+        画笔 8–80px 可调，修完不满意接着涂接着修，逐步清干净。
+        涂错了能<strong>逐笔撤销</strong>，修坏了能<strong>撤销上一次修复</strong>或直接<strong>还原原图</strong>，
+        往回退十步都有。
         用的是经典修复算法（OpenCV），对小面积水印、文字、杂物效果最好；
         大面积的复杂遮挡，等后续上大模型。
       </p>

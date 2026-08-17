@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Az-term 终端工具 · Azi36</title>
-  <meta name="description" content="Az-term：SSH 终端 + SFTP 文件管理 + 远程文件直接编辑 + 指令库 + 备忘录。免费、无账号、不过期，Windows 与 macOS 桌面版。">
+  <meta name="description" content="Az-term：SSH 终端 + SFTP 双栏 + 远程文件直接改 + 端口转发 + 跳板机。支持 2FA、GBK 编码、断点续传、目录同步。免费、无账号、不过期，Windows 与 macOS 桌面版。">
   <link rel="canonical" href="https://azi36.com/products/az-term.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Azi36">
   <meta property="og:title" content="Az-term 终端工具 · Azi36">
-  <meta property="og:description" content="Az-term：SSH 终端 + SFTP 文件管理 + 远程文件直接编辑 + 指令库 + 备忘录。免费、无账号、不过期，Windows 与 macOS 桌面版。">
+  <meta property="og:description" content="Az-term：SSH 终端 + SFTP 双栏 + 远程文件直接改 + 端口转发 + 跳板机。支持 2FA、GBK 编码、断点续传、目录同步。免费、无账号、不过期，Windows 与 macOS 桌面版。">
   <meta property="og:url" content="https://azi36.com/products/az-term.html">
   <meta property="og:image" content="https://azi36.com/assets/img/og.png">
   <meta property="og:image:width" content="1200">
@@ -58,7 +58,7 @@
       <a class="back-link" href="../">← 返回首页</a>
       <div class="kicker">产品 № 002</div>
       <h1>Az-term 终端工具</h1>
-      <div class="article-meta">桌面版 Windows / macOS · 免费 · 开源 MIT · 网址：<a href="https://term.azi36.com" target="_blank" rel="noopener">term.azi36.com</a></div>
+      <div class="article-meta">桌面版 Windows / macOS · 免费 · 开源 MIT · 网址：<a href="https://term.azi36.com/" target="_blank" rel="noopener">term.azi36.com</a></div>
 
       <p>
         连服务器的软件，市面上不缺。缺的是不问你要账号、不掐试用期、
@@ -69,22 +69,24 @@
       <h2>一台服务器，一个标签</h2>
       <p>
         左边侧栏是服务器列表，单击看配置，双击直接连。
-        每台服务器占一个标签，标签里面分三页：<strong>终端 · 文件 · 配置</strong>。
+        每台服务器占一个标签，标签里面分四页：<strong>终端 · 文件 · 隧道 · 配置</strong>。
         不用为了看一眼配置就跳出去开新窗口，也不用为了传个文件另开一个软件。
         切走的终端还活着 —— 回来接着敲，正在跑的东西不会断。
+        <code>Ctrl+Tab</code> 换标签，<code>Ctrl+1..9</code> 直接跳第几个。
       </p>
 
       <figure class="figure">
         <div class="mock">
-          <div class="mock-head">京东云 — 终端 / 文件 / 配置</div>
+          <div class="mock-head">京东云 — 终端 / 文件 / 隧道 / 配置</div>
           <div class="mock-body">
             <div><span class="mock-select">root@server</span>:~# nginx -t</div>
             <div class="mock-ok">✓ configuration file test is successful</div>
             <div class="mock-sub">上面这条是从指令库点出来的，没手打</div>
             <div class="mock-ok">✓ nginx.conf 在内置编辑器里改完，Ctrl+S 存回服务器</div>
+            <div class="mock-ok">✓ 隧道页把远端 3306 映到本机，本地客户端直接连</div>
           </div>
         </div>
-        <figcaption>日常运维的三件事：敲命令、传文件、改配置，全在一个标签里</figcaption>
+        <figcaption>敲命令、传文件、改配置、开隧道，全在同一个标签里</figcaption>
       </figure>
 
       <h2>逐个说</h2>
@@ -93,9 +95,19 @@
       <p>
         Rust 侧用 <code>russh</code> 自己实现的引擎，前端 xterm.js 画布，真 PTY、真颜色、真 resize。
         回滚 5000 行，<code>Ctrl+F</code> 在里面搜；<code>Ctrl+Shift+C / V</code> 复制粘贴
-        （<code>Ctrl+C</code> 留给中断，规矩不能乱）。配色六套、字号四档，改完所有开着的终端立刻跟着变，不用重连。
+        （<code>Ctrl+C</code> 留给中断，规矩不能乱）。配色六套（每套深浅两版）、字号四档，
+        改完所有开着的终端立刻跟着变，不用重连。
         30 秒一次保活包，挂着不动也不会被中间的网关悄悄掐掉。
       </p>
+      <ul>
+        <li><strong>三种认证</strong>：密码、公钥，以及 keyboard-interactive ——
+          所以<strong>开了 2FA / OTP 的机器也能连</strong>，验证码在弹窗里填</li>
+        <li><strong>编码热切换</strong>：UTF-8、GBK、GB18030、Big5、Shift_JIS、EUC-KR、Latin-1 七种，
+          连着不断线直接换。老国产机器打出一屏乱码，不用重连也能救回来</li>
+        <li><strong>掉线自己接</strong>：断了按 3 → 6 → 12 秒退避重连，但只在手上有凭据时才接；
+          也能设闲置多少分钟自动断</li>
+        <li><strong>会话日志</strong>：把这次会话的输出抄进文件，出了事有据可查</li>
+      </ul>
 
       <h3>② SFTP 文件管理</h3>
       <p>
@@ -104,10 +116,15 @@
       <ul>
         <li><strong>多选</strong>：Ctrl 加减、Shift 选一段，批量传批量删</li>
         <li><strong>整个目录传</strong>：目录递归展开成任务丢进队列，不是"只能传文件"</li>
-        <li><strong>传输队列</strong>：排队跑、看进度、取消、失败重试，一目了然</li>
+        <li><strong>断点续传</strong>：传到一半断了，下次从已传的位置接着走，不用从头再来。
+          取消时半截文件会删掉，续传的那种保留</li>
+        <li><strong>传输队列</strong>：默认三条车道并发跑，进度实时更新，可取消、失败可重试</li>
+        <li><strong>撞名先问你</strong>：同名文件先比大小和时间，让你选覆盖 / 跳过 / 续传，不闷头盖掉</li>
+        <li><strong>目录同步</strong>：只推"对面没有的"和"对面旧了的"。
+          <em>不做</em>同步删除 —— 单向少传总比多删安全</li>
         <li><strong>拖拽上传</strong>：从资源管理器把文件或文件夹拖进右栏，松手就传</li>
         <li><strong>收藏目录</strong>：常去的目录加星，本地一套、每台服务器各一套，一键跳</li>
-        <li><strong>其它</strong>：排序、按名过滤、隐藏文件开关、chmod 改权限、新建文件建完直接打开</li>
+        <li><strong>其它</strong>：排序、按名过滤、隐藏文件开关、chmod 改权限、栏内复制移动、新建文件建完直接打开</li>
       </ul>
       <p>SFTP 走的是终端那条连接的子通道 —— 不重新认证，不用二次输密码。</p>
 
@@ -128,7 +145,22 @@
         按组勾选导入，不用从零敲。再也不用狂按 ↑ 翻历史。
       </p>
 
-      <h3>⑤ 备忘录</h3>
+      <h3>⑤ 端口转发与跳板机</h3>
+      <p>
+        标签里的<strong>隧道</strong>页，三种转发都在，复用的还是终端那条已经认证过的连接
+        —— 不用另开一个 ssh 命令窗口挂着：
+      </p>
+      <ul>
+        <li><strong>本地转发（-L）</strong>：把远端的 3306 映到本机，用桌面上的客户端连"本地"数据库</li>
+        <li><strong>SOCKS5 动态代理（-D）</strong>：握手是自己实现的，浏览器挂上就走服务器出网</li>
+        <li><strong>远程转发（-R）</strong>：把本机的服务反向暴露到服务器那一侧</li>
+      </ul>
+      <p>
+        <strong>跳板机（ProxyJump）</strong>：先连堡垒机，再从它连目标机，
+        跳板自己也支持密码或密钥。生产环境不给直连的那种网，这条路是必需品。
+      </p>
+
+      <h3>⑥ 备忘录</h3>
       <p>
         端口开了哪些、这台机器是谁的、上次那个坑怎么绕的 —— 随手记在软件里，
         跟服务器标签平级，随时切。停手就自动存，纯本地，不同步不上传。
@@ -146,6 +178,16 @@
         指纹变了才拦住报警</strong> —— 那才是该停下来看一眼的时候。想更严格，设置里能改成每次都问。
       </p>
 
+      <h2>换台电脑，不用从头填</h2>
+      <p>
+        服务器列表、指令库、备忘、设置都能<strong>导出成一个 JSON</strong>，换机器导回去就行。
+        导出的文件里<strong>不含任何密码</strong> —— 明文导出会把"不落明文"这件事整个作废，
+        所以到了新机器上密码得重填一次，这是故意的。
+      </p>
+      <p>
+        本来就用命令行的话更省事：直接从 <code>~/.ssh/config</code> 把主机列表扫出来，勾选成组导入。
+      </p>
+
       <h2>为什么是自己写的</h2>
       <p>
         底座是 <a href="https://tauri.app" target="_blank" rel="noopener">Tauri v2</a>：
@@ -156,9 +198,11 @@
 
       <h2>还差什么</h2>
       <p>
-        老实交代：端口转发、跳板机、分屏广播这些老牌软件的招牌功能还在路上，
-        FTP 也还没接。<strong>已经能替掉的是日常那部分</strong> ——
-        连上去敲命令、传文件、改配置文件。而这部分不锁付费墙。
+        老实交代：<strong>分屏与输入广播</strong>还没做，<strong>FTP</strong> 也还没接
+        （协议选项在界面上灰着，标着"稍后"）；数据库和 Redis 面板在侧栏排着队，还没轮到。
+        云同步不在计划里 —— 真要做也只会走你自己的 WebDAV，不做"我这边的云"。
+        <strong>日常那部分已经齐了</strong>：连上去敲命令、传文件、改配置、开隧道、过跳板机。
+        而这些一样不锁付费墙。
       </p>
 
       <h2>常见问题</h2>
@@ -179,7 +223,7 @@
       </blockquote>
 
       <p>
-        <a class="btn btn-primary" href="https://term.azi36.com" target="_blank" rel="noopener">去下载<span class="btn-arrow">→</span></a>
+        <a class="btn btn-primary" href="https://term.azi36.com/" target="_blank" rel="noopener">前往下载<span class="btn-arrow">→</span></a>
         <a class="btn btn-ghost" href="https://github.com/Azi36/Az-terminal-tools" target="_blank" rel="noopener">看源码</a>
       </p>
 
@@ -204,7 +248,7 @@
       </div>
       <div class="aside-box">
         <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
-        <a class="aside-link" href="https://term.azi36.com" target="_blank" rel="noopener">去下载 term.azi36.com</a>
+        <a class="aside-link" href="https://term.azi36.com/" target="_blank" rel="noopener">前往 term.azi36.com 下载</a>
         <a class="aside-link" href="https://github.com/Azi36/Az-terminal-tools" target="_blank" rel="noopener">GitHub 仓库</a>
         <a class="aside-link" href="az-im.html">№ 001 Az-im 图像工具</a>
         <a class="aside-link" href="../">← 返回首页</a>

@@ -145,7 +145,7 @@
         <!-- 玩具二：点击灯泡加灵感（顺手切深浅色），长按=隐藏线性充能，>100 松手蹦迪回退到 0 -->
         <div class="todo-line">
           <span class="ln">3</span><span class="cb">[ ]</span>
-          <span class="txt">构思第一个正式产品 · 灵感值 <b class="pct" id="sparkCount">0</b>，点击灯泡加灵感 →</span>
+          <span class="txt">正在构思下一个产品 · 灵感值 <b class="pct" id="sparkCount">0</b>，点击灯泡加灵感 →</span>
           <button class="bulb-mini" id="bulbBtn" aria-label="点击灯泡加灵感"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></button>
         </div>
         <!-- 玩具三：借口生成器 + 废纸篓（hover 现身，销毁后换成撤回·撤不回） -->
@@ -165,7 +165,7 @@
       <div class="pb-left">
         <div class="pb-kicker">PRODUCT № 002 · 桌面工具 · 免费开源</div>
         <h2><span class="grad-text">Az-term</span> 终端工具</h2>
-        <p class="pb-tagline">SSH 终端、SFTP 双栏、远程文件直接改。免费、无账号、不过期。</p>
+        <p class="pb-tagline">SSH 终端、SFTP 双栏、端口转发、跳板机。别人锁在订阅里的，这儿一样不少。</p>
         <div class="mini-window pb-window">
           <div class="mini-bar"><i></i><i></i><i></i></div>
           <div class="mini-body">
@@ -177,15 +177,15 @@
       </div>
       <div class="pb-right">
         <ul class="pb-features">
-          <li><b>SSH 终端</b><span>Rust 引擎，真 PTY 真颜色，回滚里能搜</span></li>
-          <li><b>SFTP 双栏</b><span>多选、整目录传、队列可取消重试</span></li>
-          <li><b>远程直接编辑</b><span>配置文件点开就改，Ctrl+S 存回去</span></li>
-          <li><b>指令库 + 备忘</b><span>常敲的命令点一下，笔记就在手边</span></li>
+          <li><b>SSH 终端</b><span>Rust russh 引擎，真 PTY，2FA 和 GBK 都认</span></li>
+          <li><b>SFTP 双栏</b><span>断点续传、目录同步、队列可取消重试</span></li>
+          <li><b>远程直接改</b><span>配置文件点开就编辑，Ctrl+S 存回去</span></li>
+          <li><b>隧道 + 跳板机</b><span>本地 / SOCKS5 / 远程转发，堡垒机后面也能连</span></li>
         </ul>
         <div class="pb-actions">
           <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
           <a class="btn btn-ghost" href="products/az-term.html">详情</a>
-          <a class="btn btn-primary" href="https://term.azi36.com" target="_blank" rel="noopener">去下载<span class="btn-arrow">→</span></a>
+          <a class="btn btn-primary" href="https://term.azi36.com/" target="_blank" rel="noopener">前往下载<span class="btn-arrow">→</span></a>
         </div>
       </div>
     </section>
@@ -196,22 +196,22 @@
       <div class="pb-left">
         <div class="pb-kicker">PRODUCT № 001 · 在线工具 · 免费开源</div>
         <h2><span class="grad-text">Az-im</span> 图像工具</h2>
-        <p class="pb-tagline">压缩、抠图、放大、去水印。全在浏览器本地，不用上传。</p>
+        <p class="pb-tagline">压缩、转换、缩放、裁剪，外加抠图放大去水印。全在浏览器本地，一张都不上传。</p>
         <div class="mini-window pb-window">
           <div class="mini-bar"><i></i><i></i><i></i></div>
           <div class="mini-body">
             <div><span class="c-p">$</span>az-im --tools</div>
-            <div class="c-dim">压缩 · 抠图 · 放大 · 去水印</div>
+            <div class="c-dim">压缩 · 背景移除 · 放大 · 去水印</div>
             <div><span class="c-ok">✓</span>0 files uploaded → <span class="c-link">im.azi36.com</span></div>
           </div>
         </div>
       </div>
       <div class="pb-right">
         <ul class="pb-features">
-          <li><b>图片压缩</b><span>六种格式批量处理，体积最多砍九成</span></li>
+          <li><b>批量压缩</b><span>七种格式，多核并行，参数能存成预设</span></li>
+          <li><b>缩放裁剪</b><span>八种缩放模式，公众号 / B 站尺寸一键填</span></li>
           <li><b>背景移除</b><span>AI 一键抠图，快速 / 高质量双模型</span></li>
-          <li><b>图片放大</b><span>超分辨率重建细节，2 倍或 4 倍</span></li>
-          <li><b>去水印</b><span>涂一涂点一下，碍眼的就没了</span></li>
+          <li><b>放大 + 去水印</b><span>超分重建 2× / 4×，水印涂一涂就没了</span></li>
         </ul>
         <div class="pb-actions">
           <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
@@ -277,6 +277,10 @@
       <div>
         <ol class="changelog">
           <li>
+            <div class="log-head"><span class="log-tag">v1.6</span><b>№ 002 Az-term 进站</b><time>2026-08-17</time></div>
+            <p>产品区开第二格：连服务器的桌面工具，Tauri + Rust 自己写的引擎。SSH 终端、SFTP 双栏、远程文件直接改、端口转发、跳板机 —— 别人锁在订阅里的那几样，它一样不少。主站只挂门票，产品住在 term.azi36.com。</p>
+          </li>
+          <li>
             <div class="log-head"><span class="log-tag">v1.5</span><b>第一个产品上线：Az-im 图像工具</b><time>2026-08-17</time></div>
             <p>TODO 第 3 行等的就是它。压缩、抠图、放大、去水印四件套，模型在浏览器本地跑，图片不出门。产品住在 im.azi36.com，独立仓库独立域名，主站只管递门票。</p>
           </li>
@@ -333,7 +337,7 @@
           <div class="spec-head"><b>DIARY</b>C某F 打工日记</div>
           <div class="diary-peek-body">
             <blockquote>
-              「我最得意的活不是替他做了多少，是做完之后他不需要我也能活。」
+              「甲方指出一处不好，不等于批准我重做一遍。」
             </blockquote>
             <p class="diary-peek-meta">—— C某F · 摘自今日心得</p>
             <a href="fable/">翻它的全部日记 →</a>
