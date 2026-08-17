@@ -6,6 +6,48 @@
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- 0.0 存储小助手 ----------
+     Safari 无痕、浏览器禁 cookie 时 localStorage 一读就抛异常。
+     整个脚本在同一个 IIFE 里，任何一处抛错都会把后面所有交互带走，
+     所以所有存取都从这里过一遍，失败就当没这功能。 */
+  const store = {
+    get(k, fallback = null) {
+      try { const v = localStorage.getItem(k); return v === null ? fallback : v; } catch (e) { return fallback; }
+    },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 存不了就算了 */ } },
+    getJSON(k, fallback) {
+      try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch (e) { return fallback; }
+    },
+    setJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 同上 */ } },
+    session: {
+      get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+      set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* 同上 */ } },
+    },
+  };
+
+  /* ---------- 0.1 深浅色：全站统一入口 ----------
+     导航上的开关和首页灯泡彩蛋都调这里，免得两套逻辑各写一遍。
+     head 里的内联脚本负责在首帧前把存下来的主题贴上去（防白闪）。 */
+  const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = () => {
+    const t = document.documentElement.getAttribute('data-theme');
+    return t === 'dark' ? true : t === 'light' ? false : prefersDark();
+  };
+  const applyTheme = (mode) => {                 // mode: 'dark' | 'light'
+    document.documentElement.setAttribute('data-theme', mode);
+    store.set('azi-theme', mode);
+    // 手动选过之后，两条按系统偏好分流的 theme-color 就不作数了，统一成当前色
+    const c = mode === 'dark' ? '#101116' : '#ffffff';
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', c));
+    document.querySelectorAll('.theme-toggle').forEach(b => b.setAttribute('aria-pressed', String(mode === 'dark')));
+  };
+  window.aziToggleTheme = () => applyTheme(isDark() ? 'light' : 'dark');
+
+  document.querySelectorAll('.theme-toggle').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(isDark()));
+    btn.addEventListener('click', () => window.aziToggleTheme());
+  });
+
   /* ---------- 0. Twemoji：emoji 统一渲染成 SVG ----------
      CDN 加载失败时优雅降级为系统 emoji */
   const emojify = el => { if (window.twemoji) twemoji.parse(el, { folder: 'svg', ext: '.svg' }); };
@@ -45,13 +87,22 @@
     targets.forEach(el => io.observe(el));
   }
 
-  /* ---------- 3. 卡片鼠标光斑追踪 ---------- */
+  /* ---------- 3. 卡片鼠标光斑追踪 ----------
+     mousemove 一秒能来上百次，每次都写 CSS 变量会逼浏览器反复重算样式；
+     用 rAF 攒一帧只写一次，效果一样但不掉帧 */
   if (!reduceMotion) {
+    let spotCard = null, spotX = 0, spotY = 0, spotQueued = false;
+    const flushSpot = () => {
+      spotQueued = false;
+      if (!spotCard) return;
+      spotCard.style.setProperty('--mx', spotX + 'px');
+      spotCard.style.setProperty('--my', spotY + 'px');
+    };
     document.querySelectorAll('.card, .feature').forEach(card => {
       card.addEventListener('mousemove', e => {
         const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        spotCard = card; spotX = e.clientX - r.left; spotY = e.clientY - r.top;
+        if (!spotQueued) { spotQueued = true; requestAnimationFrame(flushSpot); }
       });
     });
   }
@@ -233,13 +284,8 @@
     let tmr = null, holdTimer = null, chargeT = 0, confT = 0, lastTapT = -1e9;
     const render = () => { sparkCount.textContent = Math.floor(spark); };
     // 单击顺手拉个闸：开关灯（深/浅色）——「灯泡那边切深浅色」的彩蛋
-    const flipLights = () => {
-      const t = document.documentElement.getAttribute('data-theme');
-      const dark = t === 'dark' ? false : t === 'light' ? true : !window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const next = dark ? 'dark' : 'light';
-      localStorage.setItem('azi-theme', next);
-      document.documentElement.setAttribute('data-theme', next);
-    };
+    // 跟导航上那个正经开关走同一个入口（见 0.1），状态和图标都跟着一起变
+    const flipLights = () => window.aziToggleTheme();
     const goDisco = () => {
       charging = false; discoing = true;
       document.body.classList.add('discoing');
@@ -363,10 +409,10 @@
   const visitEl = document.getElementById('visitCount');
   if (visitEl) {
     const API = 'https://api.azi36.com';
-    const path = sessionStorage.getItem('azi-counted') ? '/count' : '/hit';
+    const path = store.session.get('azi-counted') ? '/count' : '/hit';
     fetch(API + path).then(r => r.json()).then(d => {
       if (typeof d.total !== 'number') return;
-      sessionStorage.setItem('azi-counted', '1');
+      store.session.set('azi-counted', '1');
       visitEl.textContent = ' · 第 ' + d.total.toLocaleString() + ' 次到访'
         + (typeof d.people === 'number' ? ' · 你是第 ' + d.people.toLocaleString() + ' 位路过的朋友' : '');
       visitEl.hidden = false;
@@ -409,16 +455,20 @@
   const msgList = document.getElementById('msgList');
   if (msgList) {
     const API = 'https://api.azi36.com';
-    const msgPage = msgList.closest('.msg-board').dataset.page || 'home';
-    const escMsg = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    const likedSet = new Set(JSON.parse(localStorage.getItem('azi-liked') || '[]'));
+    const board = msgList.closest('.msg-board');
+    const msgPage = (board && board.dataset.page) || 'home';
+    // 后端返回的内容一律当不可信：& < > " ' 全转义，属性和文本位置都安全
+    const escMsg = (s) => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const likedSet = new Set(store.getJSON('azi-liked', []));
 
     const msgRow = (m) => `
       <div class="msg">
         <div class="msg-head"><b>${escMsg(m.name)}</b><time>${escMsg(m.date || '')}</time></div>
         <p>${escMsg(m.text)}</p>
-        <button class="msg-like${likedSet.has(String(m.id)) ? ' on' : ''}" data-like="${m.id}" aria-label="点赞">
-          ♥ <i>${m.likes || 0}</i>
+        <button class="msg-like${likedSet.has(String(m.id)) ? ' on' : ''}" data-like="${escMsg(m.id)}" aria-label="点赞">
+          ♥ <i>${escMsg(m.likes || 0)}</i>
         </button>
       </div>`;
 
@@ -432,11 +482,14 @@
       .then(d => renderMsgs(d.msgs || []))
       .catch(() => { msgList.innerHTML = '<p class="msg-empty">留言本暂时打不开，回头再来。</p>'; });
 
-    document.getElementById('msgSend').addEventListener('click', () => {
-      const name = document.getElementById('msgName').value.trim();
-      const text = document.getElementById('msgText').value.trim();
-      if (!text) { document.getElementById('msgText').focus(); return; }
-      const btn = document.getElementById('msgSend');
+    const sendBtn = document.getElementById('msgSend');
+    const nameEl = document.getElementById('msgName');
+    const msgTextEl = document.getElementById('msgText');
+    if (sendBtn && msgTextEl) sendBtn.addEventListener('click', () => {
+      const name = nameEl ? nameEl.value.trim() : '';
+      const text = msgTextEl.value.trim();
+      if (!text) { msgTextEl.focus(); return; }
+      const btn = sendBtn;
       btn.disabled = true; btn.textContent = '寄出中…';
       fetch(API + '/msgs', {
         method: 'POST',
@@ -445,7 +498,7 @@
       }).then(r => r.json()).then(d => {
         btn.disabled = false; btn.textContent = '留下';
         if (!d.ok) { btn.textContent = d.error || '没发出去'; setTimeout(() => { btn.textContent = '留下'; }, 2000); return; }
-        document.getElementById('msgText').value = '';
+        msgTextEl.value = '';
         const empty = msgList.querySelector('.msg-empty');
         if (empty) empty.remove();
         msgList.insertAdjacentHTML('afterbegin', msgRow(d.msg));
@@ -458,7 +511,7 @@
       const id = btn.dataset.like;
       if (likedSet.has(id)) return;
       likedSet.add(id);
-      localStorage.setItem('azi-liked', JSON.stringify([...likedSet]));
+      store.setJSON('azi-liked', [...likedSet]);
       btn.classList.add('on');
       fetch(`${API}/msgs/${id}/like`, { method: 'POST' }).then(r => r.json()).then(d => {
         if (typeof d.likes === 'number') btn.querySelector('i').textContent = d.likes;

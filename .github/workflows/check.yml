@@ -1,0 +1,21 @@
+name: 全站体检
+
+# 手写 14 个 HTML 难免漏改一页，push 上来先让脚本过一遍。
+# 这个 workflow 只做检查，不参与 Pages 部署——挂了也不会拦住网站上线，
+# 但 commit 旁边会有个红叉提醒你哪页忘了改。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 一致性体检
+        run: node tools/check.mjs

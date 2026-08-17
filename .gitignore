@@ -1,2 +1,16 @@
-﻿# Az-term 在本地孵化，成熟后迁独立仓库 Az-terminal-tools
-/Az-term/
+# 独立产品各自有仓库，主站只放站点本身
+# Az-term → Azi36/Az-terminal-tools
+# Az-im  → Azi36/Az-image-tools
+
+# 系统 / 编辑器垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# 顺手跑脚本留下的
+node_modules/
+*.log
+_themetest.html

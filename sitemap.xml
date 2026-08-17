@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 tools/check.mjs --write-sitemap 生成，别手改 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://azi36.com/</loc></url>
+  <url><loc>https://azi36.com/shares/</loc></url>
+  <url><loc>https://azi36.com/shares/github-pages.html</loc></url>
+  <url><loc>https://azi36.com/shares/cloudflare-cdn.html</loc></url>
+  <url><loc>https://azi36.com/links/</loc></url>
+  <url><loc>https://azi36.com/games/</loc></url>
+  <url><loc>https://azi36.com/games/aim/</loc></url>
+  <url><loc>https://azi36.com/games/ddz/</loc></url>
+  <url><loc>https://azi36.com/games/tgf/</loc></url>
+  <url><loc>https://azi36.com/music/</loc></url>
+  <url><loc>https://azi36.com/fable/</loc></url>
+  <url><loc>https://azi36.com/products/az-im.html</loc></url>
+  <url><loc>https://azi36.com/products/az-term.html</loc></url>
+</urlset>

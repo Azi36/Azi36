@@ -5,13 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azi36</title>
   <meta name="description" content="Azi36 的个人小站：分享与产品。">
+  <link rel="canonical" href="https://azi36.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Azi36">
+  <meta property="og:title" content="Azi36">
+  <meta property="og:description" content="Azi36 的个人小站：分享与产品。">
+  <meta property="og:url" content="https://azi36.com/">
+  <meta property="og:image" content="https://azi36.com/assets/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="assets/style.css?v=32">
+  <link rel="stylesheet" href="assets/style.css?v=33">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://api.azi36.com" crossorigin>
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
-  <script src="assets/site.js?v=13" defer></script>
-  <script src="assets/player.js?v=1" defer></script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%232447e6%22/><stop offset=%221%22 stop-color=%22%237c5ce0%22/></linearGradient></defs><rect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22url(%23g)%22/><path d=%22M14 34 24 13l10 21%22 fill=%22none%22 stroke=%22white%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/><circle cx=%2233.5%22 cy=%2213.5%22 r=%223.4%22 fill=%22%23ffb02e%22/></svg>">
+  <script src="assets/site.js?v=14" defer></script>
+  <script src="assets/player.js?v=2" defer></script>
+  <link rel="icon" href="assets/favicon.svg">
 </head>
 <body>
 
@@ -38,6 +52,10 @@
       </nav>
       <div class="nav-side">
         <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
         <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="assets/img/avatar.png" alt="Azi36"></a>
       </div>
     </div>
@@ -141,6 +159,37 @@
       </div>
     </div>
 
+    <!-- ===== 产品 № 002：Az-term 终端工具（通栏异形卡） ===== -->
+    <section class="product-banner">
+      <div class="pb-no" aria-hidden="true">№002</div>
+      <div class="pb-left">
+        <div class="pb-kicker">PRODUCT № 002 · 桌面工具 · 免费开源</div>
+        <h2><span class="grad-text">Az-term</span> 终端工具</h2>
+        <p class="pb-tagline">SSH 终端、SFTP 双栏、远程文件直接改。免费、无账号、不过期。</p>
+        <div class="mini-window pb-window">
+          <div class="mini-bar"><i></i><i></i><i></i></div>
+          <div class="mini-body">
+            <div><span class="c-p">root@server</span>:~# nginx -t</div>
+            <div><span class="c-ok">✓</span>configuration file test is successful</div>
+            <div class="c-dim">这条是从指令库点出来的，没手打 → <span class="c-link">term.azi36.com</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pb-right">
+        <ul class="pb-features">
+          <li><b>SSH 终端</b><span>Rust 引擎，真 PTY 真颜色，回滚里能搜</span></li>
+          <li><b>SFTP 双栏</b><span>多选、整目录传、队列可取消重试</span></li>
+          <li><b>远程直接编辑</b><span>配置文件点开就改，Ctrl+S 存回去</span></li>
+          <li><b>指令库 + 备忘</b><span>常敲的命令点一下，笔记就在手边</span></li>
+        </ul>
+        <div class="pb-actions">
+          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
+          <a class="btn btn-ghost" href="products/az-term.html">详情</a>
+          <a class="btn btn-primary" href="https://term.azi36.com" target="_blank" rel="noopener">去下载<span class="btn-arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== 产品 № 001：Az-im 图像工具（通栏异形卡，不设栏目标题） ===== -->
     <section class="product-banner">
       <div class="pb-no" aria-hidden="true">№001</div>
@@ -165,7 +214,7 @@
           <li><b>去水印</b><span>涂一涂点一下，碍眼的就没了</span></li>
         </ul>
         <div class="pb-actions">
-          <span class="pb-score" title="店主自评，童叟无欺">★★★★★<small>店主自评</small></span>
+          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
           <a class="btn btn-ghost" href="products/az-im.html">详情</a>
           <a class="btn btn-primary" href="https://im.azi36.com" target="_blank" rel="noopener">去用用<span class="btn-arrow">→</span></a>
         </div>
@@ -324,8 +373,9 @@
           <a href="shares/">分享</a>
           <a href="links/">推荐</a>
           <a href="games/">游戏</a>
-        <a href="music/">音乐</a>
-        </div>      </div>
+          <a href="music/">音乐</a>
+        </div>
+      </div>
     </div>
     <div class="container footer-meta">
       <span>© 2026 Azi36 · No Rights Reserved.<span id="visitCount" hidden></span></span>

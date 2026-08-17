@@ -12,9 +12,16 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const LS = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
   const LSs = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 满了算了 */ } };
+  // 纯文本读取也得包起来：无痕模式下 localStorage 一读就抛，会把整个播放器带走
+  const LSt = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const LSd = (k) => { try { localStorage.removeItem(k); } catch (e) { /* 同上 */ } };
   const isMusic = !!document.querySelector('.mu-window');   // 音乐页：只当遥控，不自建音频
   const navSide = document.querySelector('.nav-side');
-  if (!navSide) return;
+  // 图标要挂在导航「音乐」这一项后面。各页到 music/ 的相对深度不一样，
+  // 音乐页自己那条还是 './'，所以认文字不认 href。
+  const musicLink = [...document.querySelectorAll('.site-nav a')]
+    .find((a) => a.textContent.trim() === '音乐');
+  if (!musicLink && !navSide) return;
 
   const fmt = (s) => {
     if (!Number.isFinite(s) || s < 0) return '0:00';
@@ -24,10 +31,10 @@
   const keyOf = (c) => (c ? (c.q ? 'qq:' + c.q : c.n ? 'ncm:' + c.n : c.u || c.t) : '');
 
   const cfg = () => ({
-    qqUrl: (localStorage.getItem('mu-qq') || '').replace(/\/$/, ''),
-    apiUrl: (localStorage.getItem('mu-api') || '').replace(/\/$/, ''),
-    key: localStorage.getItem('mu-qq-key') || '',
-    apiCookie: localStorage.getItem('mu-api-cookie') || '',
+    qqUrl: LSt('mu-qq').replace(/\/$/, ''),
+    apiUrl: LSt('mu-api').replace(/\/$/, ''),
+    key: LSt('mu-qq-key'),
+    apiCookie: LSt('mu-api-cookie'),
   });
 
   /* ---------- DOM：导航 EQ 图标 + popover ---------- */
@@ -45,6 +52,9 @@
   wrap.innerHTML = `
     <button class="np-icon" aria-label="正在播放" title="正在播放"><span class="np-eq"><i></i><i></i><i></i><i></i></span></button>
     <div class="np-pop" hidden>
+      <button class="np-close" aria-label="关闭播放器" title="关闭播放器（停止播放）">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
       <div class="np-head">
         <img class="np-cover" alt="">
         <div class="np-meta"><b class="np-title">—</b><span class="np-sub"></span></div>
@@ -58,8 +68,12 @@
         <a class="np-open" href="${isMusic ? '#' : (location.pathname.includes('/') && !location.pathname.endsWith('/') ? './' : '') + 'music/'}" aria-label="打开音乐频道" title="去音乐频道">${'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'}</a>
       </div>
     </div>`;
-  const ghost = navSide.querySelector('.nav-gh');
-  navSide.insertBefore(wrap, ghost || null);
+  // 正常情况下就住在导航胶囊里、「音乐」右边；万一哪天页面没有那一项，退回右侧头像前面
+  if (musicLink) {
+    musicLink.insertAdjacentElement('afterend', wrap);
+  } else {
+    navSide.insertBefore(wrap, navSide.querySelector('.nav-gh') || null);
+  }
   // 修正「去音乐频道」链接的相对路径（子目录页面要回上级）
   const openLink = $('.np-open', wrap);
   if (!isMusic) {
@@ -70,7 +84,7 @@
   }
 
   const el = {
-    icon: $('.np-icon', wrap), pop: $('.np-pop', wrap),
+    icon: $('.np-icon', wrap), pop: $('.np-pop', wrap), close: $('.np-close', wrap),
     cover: $('.np-cover', wrap), title: $('.np-title', wrap), sub: $('.np-sub', wrap),
     fill: $('.np-fill', wrap), cur: $('.np-cur', wrap), dur: $('.np-dur', wrap),
     play: $('.np-play', wrap), prev: $('.np-prev', wrap), next: $('.np-next', wrap),
@@ -85,10 +99,33 @@
   el.icon.addEventListener('click', (e) => { e.preventDefault(); pinned = !pinned; pinned ? openPop() : closePop(); });
   document.addEventListener('click', (e) => { if (pinned && !wrap.contains(e.target)) { pinned = false; closePop(); } });
 
+  /* ---------- 关闭：点 × 就彻底收摊 ----------
+     停止播放 + 抹掉跨页记忆 mu-now + 收起导航图标。
+     下次在音乐页放歌，mu-now 重新写上，图标自己回来。 */
+  let closed = false;
+  let stopAudio = null;      // 非音乐页的音频引擎晚一点才建，建好后往这儿挂个停止入口
+  const shutDown = () => {
+    closed = true;
+    pinned = false;
+    if (isMusic) {
+      // 音乐页的音频归 music.js 管，让它自己停（顺带清掉 mu-now）
+      if (window.AziPlayer && window.AziPlayer.stop) window.AziPlayer.stop();
+      else LSd('mu-now');
+    } else {
+      if (stopAudio) stopAudio();
+      LSd('mu-now');
+    }
+    wrap.classList.remove('open', 'playing');
+    el.pop.hidden = true;
+    wrap.hidden = true;
+  };
+  el.close.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); shutDown(); });
+
   /* ---------- 渲染：把 mu-now 画到图标/popover ---------- */
   let curState = { c: null, p: 0, d: 0, pl: false };
   const paint = () => {
     const c = curState.c;
+    if (closed) { wrap.hidden = true; return; }   // 关过就别再自己冒出来
     if (!c) { wrap.hidden = true; return; }
     wrap.hidden = false;
     el.cover.src = c.img || disc;
@@ -129,7 +166,8 @@
   let playing = false;
   const audio = new Audio();
   audio.preload = 'metadata';
-  audio.volume = (() => { const v = parseInt(localStorage.getItem('mu-vol'), 10); return Number.isNaN(v) ? 0.7 : v / 100; })();
+  audio.volume = (() => { const v = parseInt(LSt('mu-vol'), 10); return Number.isNaN(v) ? 0.7 : v / 100; })();
+  stopAudio = () => { audio.pause(); audio.removeAttribute('src'); };   // 供 × 关闭时叫停
 
   curState = { c: queue[idx] || now0.cur, p: now0.p || 0, d: now0.d || 0, pl: false };
   paint();

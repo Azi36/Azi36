@@ -15,7 +15,8 @@
   --brand: #1e40d8;         /* 品牌蓝 */
   --brand-hover: #1a35b0;
   --brand-light: #eef1fc;   /* 品牌浅底 */
-  --grad-brand: linear-gradient(135deg, #1e40d8, #6d5ae0);
+  --grad-brand: linear-gradient(135deg, #1e40d8, #6d5ae0);   /* 渐变填充：上面要压白字，得够深 */
+  --grad-text: linear-gradient(135deg, #1e40d8, #6d5ae0);    /* 渐变文字：自己就是字，深浅另算 */
   --grad-warm: linear-gradient(135deg, #342b62, #7257d8 56%, #e27655);
   --blob-a: #c7d4ff;        /* 极光背景三团光的颜色 */
   --blob-b: #e8ddff;
@@ -30,20 +31,36 @@
   --maxw: 1080px;
 }
 
-/* ---------- 深色模式：跟随系统，或灯泡/手动 data-theme='dark' ---------- */
-/* 深色色板抽成一段，系统深色与显式深色共用 */
+/* ---------- 深色模式：跟随系统，或灯泡/导航开关手动 data-theme='dark' ----------
+   深色色板抽成一段，系统深色与显式深色共用。
+   ⚠ 下面两处 --xx: var(--dark-xx) 的映射必须逐行一致（一个走属性、一个走
+   媒体查询，CSS 没法合成一条）。tools/check.mjs 会比对它们，别只改一处。
+
+   这版调色的由来：老版深色只换了灰阶，品牌色和渐变原封不动，
+   #1e40d8 压在近黑底上对比度只有 2.35（正文要 4.5），大标题和主按钮
+   一律发闷发脏；卡片底与页面底对比 1.07，等于没有层次。
+   所以：底色压深并偏一点冷、卡片提起来、品牌色和渐变文字提亮到达标，
+   极光那三团光也从浅粉浅蓝换成冷蓝深紫，免得压暗后泛浑浊。 */
 :root[data-theme="dark"],
 :root:not([data-theme="light"]) {
-  --dark-bg: #17181b; --dark-bg-soft: #1d1e22; --dark-bg-hover: #26272d;
-  --dark-text: #e9e9ec; --dark-text-2: #a6a6ae; --dark-text-3: #71717a;
-  --dark-border: #2f3037; --dark-border-light: #26272d; --dark-brand-light: #1c2440;
-  --dark-header-bg: rgba(23,24,27,.82); --dark-nav-bg: rgba(38,39,45,.7);
+  --dark-bg: #101116; --dark-bg-soft: #1e212a; --dark-bg-hover: #272b36;
+  --dark-text: #e9eaf0; --dark-text-2: #a9adbb; --dark-text-3: #868b9a;
+  --dark-border: #313543; --dark-border-light: #262a34;
+  --dark-brand: #6b8bff; --dark-brand-hover: #8aa4ff; --dark-brand-light: #182043;
+  /* 填充用的渐变要压得住白字，文字用的渐变要在深底上读得出，两者不能共用 */
+  --dark-grad-brand: linear-gradient(135deg, #3552e8, #7a5fe0);
+  --dark-grad-text: linear-gradient(135deg, #7d9bff, #b49bff);
+  --dark-blob-a: #1d2b63; --dark-blob-b: #2a2059; --dark-blob-c: #16304a;
+  --dark-header-bg: rgba(16,17,22,.82); --dark-nav-bg: rgba(35,38,47,.7);
 }
 
 :root[data-theme="dark"] {
   --bg: var(--dark-bg); --bg-soft: var(--dark-bg-soft); --bg-hover: var(--dark-bg-hover);
   --text: var(--dark-text); --text-2: var(--dark-text-2); --text-3: var(--dark-text-3);
-  --border: var(--dark-border); --border-light: var(--dark-border-light); --brand-light: var(--dark-brand-light);
+  --border: var(--dark-border); --border-light: var(--dark-border-light);
+  --brand: var(--dark-brand); --brand-hover: var(--dark-brand-hover); --brand-light: var(--dark-brand-light);
+  --grad-brand: var(--dark-grad-brand); --grad-text: var(--dark-grad-text);
+  --blob-a: var(--dark-blob-a); --blob-b: var(--dark-blob-b); --blob-c: var(--dark-blob-c);
   --header-bg: var(--dark-header-bg); --nav-bg: var(--dark-nav-bg);
   --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.4);
   --shadow-float: 0 8px 30px rgba(0,0,0,.55);
@@ -54,7 +71,10 @@
   :root:not([data-theme="light"]) {
     --bg: var(--dark-bg); --bg-soft: var(--dark-bg-soft); --bg-hover: var(--dark-bg-hover);
     --text: var(--dark-text); --text-2: var(--dark-text-2); --text-3: var(--dark-text-3);
-    --border: var(--dark-border); --border-light: var(--dark-border-light); --brand-light: var(--dark-brand-light);
+    --border: var(--dark-border); --border-light: var(--dark-border-light);
+    --brand: var(--dark-brand); --brand-hover: var(--dark-brand-hover); --brand-light: var(--dark-brand-light);
+    --grad-brand: var(--dark-grad-brand); --grad-text: var(--dark-grad-text);
+    --blob-a: var(--dark-blob-a); --blob-b: var(--dark-blob-b); --blob-c: var(--dark-blob-c);
     --header-bg: var(--dark-header-bg); --nav-bg: var(--dark-nav-bg);
     --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.4);
     --shadow-float: 0 8px 30px rgba(0,0,0,.55);
@@ -62,20 +82,50 @@
   }
 }
 
-/* 频道页在深色下把品牌浅底也压暗，不然一块亮斑很出戏 */
-:root[data-theme="dark"] body.ch-orange { --brand-light: #3a2411; }
-:root[data-theme="dark"] body.ch-green { --brand-light: #103021; }
-:root[data-theme="dark"] body.ch-purple { --brand-light: #241a40; }
-:root[data-theme="dark"] body.ch-pink { --brand-light: #3a1730; }
+/* 频道页的深色装：四个频道各自的 --dk-* 在这里统一接管。
+   选择器带上 :root[...] 后特异度高于 body.ch-*，所以能盖住频道的浅色值；
+   没有频道 class 的页面（首页 / 404 / 产品页）走 var() 的兜底，即基础深色板。
+   ⚠ 这一对同样必须逐行一致，tools/check.mjs 会比对。 */
+:root[data-theme="dark"] body {
+  --brand: var(--dk-brand, var(--dark-brand));
+  --brand-hover: var(--dk-brand-hover, var(--dark-brand-hover));
+  --brand-light: var(--dk-brand-light, var(--dark-brand-light));
+  --grad-brand: var(--dk-grad-brand, var(--dark-grad-brand));
+  --grad-text: var(--dk-grad-text, var(--dark-grad-text));
+  --blob-a: var(--dk-blob-a, var(--dark-blob-a));
+  --blob-b: var(--dk-blob-b, var(--dark-blob-b));
+  --blob-c: var(--dk-blob-c, var(--dark-blob-c));
+}
 
-/* 平滑过渡 + 暗色下弱化极光背景，免得糊 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    --brand: var(--dk-brand, var(--dark-brand));
+    --brand-hover: var(--dk-brand-hover, var(--dark-brand-hover));
+    --brand-light: var(--dk-brand-light, var(--dark-brand-light));
+    --grad-brand: var(--dk-grad-brand, var(--dark-grad-brand));
+    --grad-text: var(--dk-grad-text, var(--dark-grad-text));
+    --blob-a: var(--dk-blob-a, var(--dark-blob-a));
+    --blob-b: var(--dk-blob-b, var(--dark-blob-b));
+    --blob-c: var(--dk-blob-c, var(--dark-blob-c));
+  }
+}
+
+/* 平滑过渡；极光背景在深色下本来要压到 .4 才不浑浊，
+   现在三团光换成了冷蓝深紫，可以放开一点，暗处也看得见光 */
 html { transition: background .3s var(--ease); }
 
-:root[data-theme="dark"] .bg-decor { opacity: .4; }
+:root[data-theme="dark"] .bg-decor { opacity: .55; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bg-decor { opacity: .55; }
+}
 
 /* ============================================
    频道主题：给 <body> 加类即可整页换装
    ============================================ */
+
+/* 每个频道都写两套：--xx 是浅色下直接用的，--dk-xx 只在深色下由下面那对
+   映射规则接管。这样加频道只改一处，不用再去深色区补规则。 */
 
 /* 🧡 分享频道：暖橙 */
 body.ch-orange {
@@ -83,9 +133,18 @@ body.ch-orange {
   --brand-hover: #b8540f;
   --brand-light: #fff1e6;
   --grad-brand: linear-gradient(135deg, #e2742d, #d43f3f);
+  --grad-text: linear-gradient(135deg, #e2742d, #d43f3f);
   --blob-a: #ffd9bd;
   --blob-b: #ffe8d6;
   --blob-c: #ffd0d0;
+  --dk-brand: #f0913f;
+  --dk-brand-hover: #ffa757;
+  --dk-brand-light: #3a2411;
+  --dk-grad-brand: linear-gradient(135deg, #b0551a, #a3332e);
+  --dk-grad-text: linear-gradient(135deg, #ffa95c, #ff8a7a);
+  --dk-blob-a: #4a2a12;
+  --dk-blob-b: #3a2618;
+  --dk-blob-c: #3d1f22;
 }
 
 /* 💚 推荐频道：青绿 */
@@ -94,9 +153,18 @@ body.ch-green {
   --brand-hover: #007a30;
   --brand-light: #e6f9ec;
   --grad-brand: linear-gradient(135deg, #00a32a, #0aa5a5);
+  --grad-text: linear-gradient(135deg, #00a32a, #0aa5a5);
   --blob-a: #c2f0cc;
   --blob-b: #dff5e2;
   --blob-c: #d6f0ff;
+  --dk-brand: #3ecf7a;
+  --dk-brand-hover: #62dd93;
+  --dk-brand-light: #103021;
+  --dk-grad-brand: linear-gradient(135deg, #0b7f36, #0a7d7d);
+  --dk-grad-text: linear-gradient(135deg, #4fdc8a, #4fd8d8);
+  --dk-blob-a: #10402a;
+  --dk-blob-b: #123a2c;
+  --dk-blob-c: #10333f;
 }
 
 /* 💜 游戏频道：紫红 */
@@ -105,9 +173,18 @@ body.ch-pink {
   --brand-hover: #b52a6f;
   --brand-light: #ffe9f4;
   --grad-brand: linear-gradient(135deg, #e0479b, #8a4fd0);
+  --grad-text: linear-gradient(135deg, #e0479b, #8a4fd0);
   --blob-a: #ffd3ea;
   --blob-b: #ffe3f1;
   --blob-c: #e6d9ff;
+  --dk-brand: #f472b6;
+  --dk-brand-hover: #f992c7;
+  --dk-brand-light: #3a1730;
+  --dk-grad-brand: linear-gradient(135deg, #b8317a, #6f38b0);
+  --dk-grad-text: linear-gradient(135deg, #ff8ac4, #b98cf5);
+  --dk-blob-a: #3f1b33;
+  --dk-blob-b: #351a34;
+  --dk-blob-c: #2a1f4a;
 }
 
 body.ch-purple {
@@ -115,9 +192,18 @@ body.ch-purple {
   --brand-hover: #5d43c4;
   --brand-light: #f1ecff;
   --grad-brand: linear-gradient(135deg, #7257d8, #c44fd0);
+  --grad-text: linear-gradient(135deg, #7257d8, #c44fd0);
   --blob-a: #ddd3ff;
   --blob-b: #efe0ff;
   --blob-c: #ffd6ee;
+  --dk-brand: #a78bfa;
+  --dk-brand-hover: #bda6ff;
+  --dk-brand-light: #241a40;
+  --dk-grad-brand: linear-gradient(135deg, #5d3fc0, #9c39ad);
+  --dk-grad-text: linear-gradient(135deg, #b49bff, #e08ae0);
+  --dk-blob-a: #241a48;
+  --dk-blob-b: #2a1a42;
+  --dk-blob-c: #3a1a38;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -324,6 +410,39 @@ main.container { padding-top: 44px; padding-bottom: 96px; }
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 180, 42, .35); }
   50% { box-shadow: 0 0 0 5px rgba(0, 180, 42, 0); }
 }
+
+/* 深浅色开关：默认跟随系统，点一下手动锁定（首页灯泡彩蛋走的是同一个开关） */
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: none;
+  display: grid;
+  place-items: center;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color .2s, background .2s;
+}
+
+.theme-toggle:hover { color: var(--text); background: var(--bg-hover); }
+
+.theme-toggle svg { width: 17px; height: 17px; display: block; }
+
+/* 图标显示的是「点下去会变成什么」：浅色下给月亮，深色下给太阳 */
+.theme-toggle .ic-sun { display: none; }
+.theme-toggle .ic-moon { display: block; }
+
+:root[data-theme="dark"] .theme-toggle .ic-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .ic-moon { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .ic-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-toggle .ic-moon { display: none; }
+}
+
+.theme-toggle:active svg { transform: scale(.85) rotate(-12deg); transition: transform .15s var(--ease); }
 
 .nav-gh {
   width: 34px;
@@ -542,7 +661,7 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 @keyframes caret-blink { 50% { opacity: 0; } }
 
 .hero h1 .grad-text {
-  background: var(--grad-brand);
+  background: var(--grad-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -748,7 +867,9 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
   background: #26272e;
 }
 
-.mini-bar i { width: 7px; height: 7px; border-radius: 50%; }
+.mini-bar { align-items: center; }
+
+.mini-bar i { width: 7px; height: 7px; border-radius: 50%; flex: none; }
 .mini-bar i:nth-child(1) { background: #ff5f57; }
 .mini-bar i:nth-child(2) { background: #febc2e; }
 .mini-bar i:nth-child(3) { background: #28c840; }
@@ -818,7 +939,7 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .article a.btn-ghost:hover { color: var(--brand); }
 .article .btn { margin: 6px 12px 0 0; }
 
-/* ---------- 产品横幅：№ 001 通栏异形大卡 ---------- */
+/* ---------- 产品横幅：通栏异形大卡 ---------- */
 .product-banner {
   position: relative;
   display: grid;
@@ -846,7 +967,7 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .pb-kicker { color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
 .product-banner h2 { margin: 10px 0 4px; font-size: clamp(24px, 3vw, 30px); line-height: 1.2; }
 .product-banner h2 .grad-text {
-  background: var(--grad-brand);
+  background: var(--grad-text);   /* 渐变文字走文字那套，深色下才读得出（跟 hero 标题一致） */
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -860,7 +981,7 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .pb-right { display: flex; flex-direction: column; position: relative; z-index: 1; }
 .pb-features { list-style: none; margin: 6px 0 18px; padding: 0; display: grid; gap: 11px; align-content: start; }
 .pb-features li {
-  display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: baseline;
+  display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: baseline;  /* 96 而不是 76：「远程直接编辑」「指令库 + 备忘」放不下会糊到说明上 */
   padding-bottom: 11px; border-bottom: 1px dashed var(--border);
   font-size: 13.5px; color: var(--text-2);
 }
@@ -2558,6 +2679,8 @@ body { position: relative; }
   .site-nav a { padding: 5px 10px; font-size: 13px; }
   .site-logo span.wordmark { display: none; } /* 小屏只留 logo 方块 */
   .nav-status { display: none; }              /* 小屏隐藏状态徽标 */
+  .nav-side { gap: 4px; }                     /* 开关和头像挨紧点，给导航腾地方 */
+  .theme-toggle { width: 30px; height: 30px; }
   .site-header .container { padding: 0 14px; }
   .footer-cols { gap: 40px; }
 }
@@ -2575,6 +2698,30 @@ body { position: relative; }
 }
 
 .np-icon:hover { background: var(--bg-hover); color: var(--brand); }
+
+/* ===== 住在导航胶囊里：紧跟「音乐」那一项 =====
+   胶囊本身只有 4px 内边距，34px 的圆钮会把它顶胖，所以在这儿收成 26px 的小药丸，
+   前面留一道浅分隔线，表示「这是音乐那一项的附属件」，不是又一个独立按钮。 */
+.site-nav .nav-player { margin-left: 2px; padding-left: 6px; position: relative; }
+
+.site-nav .nav-player::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 1px; height: 15px;
+  background: var(--border);
+}
+
+.site-nav .np-icon {
+  width: 26px; height: 26px;
+  border-radius: 999px;
+}
+
+.site-nav .np-icon:hover { background: var(--bg); }
+
+/* 胶囊里的均衡器矮一点，跟旁边的字一样高 */
+.site-nav .np-eq { height: 11px; }
 
 .np-eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
 
@@ -2619,7 +2766,24 @@ body { position: relative; }
 
 .nav-player.open .np-pop { opacity: 1; transform: none; }
 
-.np-head { display: flex; gap: 11px; align-items: center; }
+/* × 关闭播放器：停播 + 收起导航图标（见 player.js 的 shutDown） */
+.np-close {
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 24px; height: 24px;
+  border: 0; padding: 0; background: none;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--text-3); cursor: pointer;
+  transition: color .2s, background .2s;
+}
+
+.np-close:hover { color: var(--text); background: var(--bg-hover); }
+
+.np-close svg { width: 12px; height: 12px; }
+
+/* 标题右边留出 × 的位置，免得长歌名顶到它底下 */
+.np-head { display: flex; gap: 11px; align-items: center; padding-right: 20px; }
 
 .np-cover { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; background: var(--bg-soft); flex: none; }
 
@@ -2662,6 +2826,54 @@ body { position: relative; }
 
 .np-ctrl .np-open { margin-left: 4px; }
 
+/* 图标从右侧挪进导航中间后，面板不能再一味往左掛。
+   以图标为中心展开在窄屏会出界：430px 屏上算下来右边要顶出 38px。
+   所以 720 以下改成挂在页头正下方、按屏幕居中 —— 面板宽 278，
+   哪个手机宽度都稳稳在屏内。
+   这里的 fixed 实际以 .site-header 为容器（它有 backdrop-filter，
+   会成为 fixed 后代的包含块）；万一浏览器不支持，退化成视口 fixed，
+   而页头本来就吸在视口顶部，两种情况下位置一致。 */
 @media (max-width: 720px) {
-  .np-pop { right: -44px; }
+  .np-pop {
+    position: fixed;
+    top: 70px;                    /* 页头 60px + 10px 间隙 */
+    right: auto;
+    left: 50%;
+    width: min(278px, calc(100vw - 24px));
+    transform: translate(-50%, -6px);
+  }
+
+  .nav-player.open .np-pop { transform: translateX(-50%); }
+}
+
+/* ===== 小屏页头：胶囊回到正常流 =====
+   宽屏时导航胶囊是绝对定位居中的（见 .site-nav），不占 flex 空间，
+   所以窄屏它会直接盖住右边的东西 —— 头像以前一直被压在底下就是这个原因，
+   现在胶囊里还多了播放器图标，右边又多了深浅色开关，更得治。
+   这个区间把胶囊放回 flex 流里，logo、胶囊、右侧按钮各占一段，谁也不压谁。
+
+   不用 overflow 裁切：播放器的弹出面板就挂在胶囊里的图标下面，
+   一旦给胶囊加 overflow，面板会被连带剪掉。所以改成把里头的元素收窄腾地方。
+   算过 360px：容器 332 − logo 26 − 右侧 58 − 间距 12 = 胶囊 236，
+   而收窄后内容约 228，装得下。再窄到 330 以下胶囊会略微溢出一点，
+   但那个尺寸的机器已经基本绝迹，比剪掉面板划算。 */
+@media (max-width: 430px) {
+  .site-header .container { gap: 6px; }
+
+  .site-nav {
+    position: static;
+    left: auto;
+    transform: none;
+    min-width: 0;
+  }
+
+  .site-nav a { padding: 4px 7px; font-size: 12px; }
+
+  /* 播放器图标跟着收，分隔线也贴紧点 */
+  .site-nav .nav-player { margin-left: 0; padding-left: 4px; }
+  .site-nav .np-icon { width: 24px; height: 24px; }
+
+  .theme-toggle { width: 26px; height: 26px; }
+  .nav-gh { width: 28px; height: 28px; }
+  .nav-gh img { width: 22px; height: 22px; }
 }

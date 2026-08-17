@@ -63,7 +63,9 @@
 
   /* 收藏：localStorage 持久化（本地导入的 blob 重开就死，不给收藏） */
   try { PLAYLISTS[PL_FAV].tracks = JSON.parse(localStorage.getItem('mu-favs') || '[]'); } catch (e) { /* 空手起家 */ }
-  const saveFavs = () => localStorage.setItem('mu-favs', JSON.stringify(PLAYLISTS[PL_FAV].tracks));
+  const saveFavs = () => {
+    try { localStorage.setItem('mu-favs', JSON.stringify(PLAYLISTS[PL_FAV].tracks)); } catch (e) { /* 存不了就算了 */ }
+  };
   /* 稳定键：网关曲目播放前没有 src、且直链会过期，改用 songmid/id 认曲 */
   const favKey = (t) => t.qqMid ? 'qq:' + t.qqMid : t.ncmId ? 'ncm:' + t.ncmId : t.src;
   const isFaved = (t) => PLAYLISTS[PL_FAV].tracks.some((x) => favKey(x) === favKey(t));
@@ -92,6 +94,11 @@
   });
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 满了就算了 */ } };
   const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+  // 纯文本版：无痕模式 / 禁用 cookie 时 localStorage 一碰就抛，
+  // 而下面这些读取全在初始化阶段，不包起来整个音乐频道会白屏
+  const lsRaw = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const lsPut = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* 存不了就算了 */ } };
+  const lsDel = (k) => { try { localStorage.removeItem(k); } catch (e) { /* 同上 */ } };
 
   // 历史：开页捞回
   PLAYLISTS[PL_HIST].tracks = (lsGet('mu-history') || []).map((c) => (c.title ? c : expand(c)));
@@ -117,7 +124,7 @@
   };
   const writeNow = (playing) => {
     const t = nowTrack();
-    if (!t) { localStorage.removeItem('mu-now'); return; }
+    if (!t) { lsDel('mu-now'); return; }
     lsSet('mu-now', {
       cur: compact(t), i: cur, p: audio.currentTime || 0, d: audio.duration || 0,
       pl: !!playing, k: source(), ts: Date.now(),
@@ -136,18 +143,18 @@
   const ICN_DISC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M12 3a9 9 0 0 1 0 18"/></svg>';
 
   /* ---------- 音源三选：iTunes 试听（默认）/ 网易云网关 / QQ 音乐网关 ---------- */
-  let apiUrl = (localStorage.getItem('mu-api') || '').replace(/\/$/, '');
-  let apiCookie = localStorage.getItem('mu-api-cookie') || '';
-  let qqUrl = (localStorage.getItem('mu-qq') || '').replace(/\/$/, '');
+  let apiUrl = (lsRaw('mu-api')).replace(/\/$/, '');
+  let apiCookie = lsRaw('mu-api-cookie');
+  let qqUrl = (lsRaw('mu-qq')).replace(/\/$/, '');
   const source = () => {
-    const s = localStorage.getItem('mu-source') || 'itunes';
+    const s = lsRaw('mu-source') || 'itunes';
     if (s === 'ncm' && !apiUrl) return 'itunes';
     if (s === 'qq' && !qqUrl) return 'itunes';
     return s;
   };
   const gwOn = () => source() !== 'itunes';
   /* 两个网关共用一把口令墙钥匙（公网网关不设防等于请全世界白嫖 VIP） */
-  const qqKey = () => localStorage.getItem('mu-qq-key') || '';
+  const qqKey = () => lsRaw('mu-qq-key');
   const gw = (path) =>
     fetch(apiUrl + path + (path.includes('?') ? '&' : '?') + 'timestamp=' + Date.now()
       + (apiCookie ? '&cookie=' + encodeURIComponent(apiCookie) : ''),
@@ -187,7 +194,7 @@
 
   let plView = 0, plPlay = 0, cur = -1;
   let errStreak = 0, errTimer = null;
-  let loopOne = localStorage.getItem('mu-loop') === '1';
+  let loopOne = lsRaw('mu-loop') === '1';
   let lrcLines = [];
   const durCache = {};
 
@@ -201,7 +208,7 @@
   };
 
   /* ---------- 音量与淡入淡出：硬切是原罪 ---------- */
-  const savedVol = parseInt(localStorage.getItem('mu-vol'), 10);
+  const savedVol = parseInt(lsRaw('mu-vol'), 10);
   let userVol = (Number.isNaN(savedVol) ? 70 : Math.min(100, Math.max(0, savedVol))) / 100;
   let fadeF = 1, fadeTimer = null;
   const applyVol = () => { audio.volume = Math.max(0, Math.min(1, userVol * fadeF)); };
@@ -672,14 +679,14 @@
   };
   $('loopBtn').addEventListener('click', () => {
     loopOne = !loopOne;
-    localStorage.setItem('mu-loop', loopOne ? '1' : '0');
+    lsPut('mu-loop', loopOne ? '1' : '0');
     renderLoop();
   });
 
   $('vol').value = Math.round(userVol * 100);
   $('vol').addEventListener('input', () => {
     userVol = $('vol').value / 100;
-    localStorage.setItem('mu-vol', $('vol').value);
+    lsPut('mu-vol', $('vol').value);
     applyVol();
   });
 
@@ -861,7 +868,7 @@
     $('qqUrl').value = qqUrl;
     $('qqKeyInput').value = qqKey();
     $('ncmKeyInput').value = qqKey();   // 两个网关共用一把口令
-    showPane(localStorage.getItem('mu-source') || 'itunes');
+    showPane(lsRaw('mu-source') || 'itunes');
     $('apiStatus').textContent = apiCookie ? '已登录（凭证存在本机）' : (apiUrl ? '网关已配置，未登录' : '');
     $('setModal').showModal();
   });
@@ -871,14 +878,14 @@
     const b = e.target.closest('button');
     if (!b) return;
     showPane(b.dataset.src);
-    if (b.dataset.src === 'itunes') localStorage.setItem('mu-source', 'itunes');
+    if (b.dataset.src === 'itunes') lsPut('mu-source', 'itunes');
   });
 
   /* QQ 音乐：存地址 + 把粘来的 cookie 登记进网关（多脏都行，我来洗） */
   $('qqSave').addEventListener('click', () => {
     qqUrl = $('qqUrl').value.trim().replace(/\/$/, '');
-    localStorage.setItem('mu-qq', qqUrl);
-    localStorage.setItem('mu-qq-key', $('qqKeyInput').value.trim());
+    lsPut('mu-qq', qqUrl);
+    lsPut('mu-qq-key', $('qqKeyInput').value.trim());
     if (!qqUrl) { $('qqStatus').textContent = '已清除'; return; }
     const raw = $('qqCookie').value
       .replace(/^cookie:\s*/i, '')
@@ -909,10 +916,10 @@
         if (!d || d.result !== 100) throw 0;
         $('qqStatus').textContent = '登记成功 ✓ 已设为当前音源——刷新页面即整首';
         $('qqCookie').value = '';
-        localStorage.setItem('mu-source', 'qq');   // 添加即启用
+        lsPut('mu-source', 'qq');   // 添加即启用
         // 抓 uin 存下来：拉「我的歌单」要显式带 id（网关默认读浏览器 cookie=空）
         const uin = ((raw.match(/\buin=([^;]+)/) || [])[1] || '').replace(/\D/g, '');
-        if (uin) localStorage.setItem('mu-qq-uin', uin);
+        if (uin) lsPut('mu-qq-uin', uin);
         loadPlaza();   // 登记完立刻刷新底部歌单广场
       })
       .catch(() => { $('qqStatus').textContent = '登记没成——连不上网关。若你是直接双击打开 HTML 的，浏览器会拦跨域，用本地服务器打开或等上线后再试'; });
@@ -926,8 +933,8 @@
         if (d.code === 803) {
           clearInterval(qrTimer);
           apiCookie = d.cookie || '';
-          localStorage.setItem('mu-api-cookie', apiCookie);
-          localStorage.setItem('mu-source', 'ncm');   // 登录即启用
+          lsPut('mu-api-cookie', apiCookie);
+          lsPut('mu-source', 'ncm');   // 登录即启用
           $('qrArea').hidden = true;
           $('apiStatus').textContent = '登录成功！已设为当前音源——刷新页面即整首';
         } else if (d.code === 800) {
@@ -942,8 +949,8 @@
 
   $('apiSave').addEventListener('click', () => {
     apiUrl = $('apiUrl').value.trim().replace(/\/$/, '');
-    localStorage.setItem('mu-api', apiUrl);
-    localStorage.setItem('mu-qq-key', $('ncmKeyInput').value.trim());   // 共用口令
+    lsPut('mu-api', apiUrl);
+    lsPut('mu-qq-key', $('ncmKeyInput').value.trim());   // 共用口令
     clearInterval(qrTimer);
     $('qrArea').hidden = true;
     if (!apiUrl) { $('apiStatus').textContent = '已清除，回到 iTunes 免费源（刷新生效）'; return; }
@@ -1043,7 +1050,7 @@
   };
 
   const loadPlaza = () => {
-    const uin = localStorage.getItem('mu-qq-uin') || '';
+    const uin = lsRaw('mu-qq-uin');
     if (source() !== 'qq' || !qqReady()) {
       $('plazaSelf').hidden = true; $('plazaColl').hidden = true;
       $('plazaEmpty').hidden = false;
@@ -1117,6 +1124,14 @@
     toggle: () => toggle(),
     next: () => load(plPlay, cur + 1, true),
     prev: () => load(plPlay, cur - 1, true),
+    // 导航迷你播放器上的 × 会叫这个：停播 + 抹掉跨页记忆，
+    // 本页界面不动（歌还在列表里），下次按播放就又写回 mu-now
+    stop: () => {
+      audio.pause();
+      lsDel('mu-now');
+      window.dispatchEvent(new Event('azi-now'));
+      renderNow();
+    },
   };
 
   $('muCount').textContent = gwOn()
