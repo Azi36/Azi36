@@ -969,6 +969,52 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .pb-score { margin-right: auto; display: inline-flex; align-items: baseline; gap: 8px; color: var(--brand); font-size: 13px; letter-spacing: 2.5px; }
 .pb-score small { color: var(--text-3); font-size: 11px; letter-spacing: normal; }
 
+/* Az-design 那一张横幅的内芯。
+   横幅共用的只有外框和主色变量，内部骨架各长各的 —— term 和 im 用终端小窗，
+   配色工具的脸就该是色阶本身，再套一个终端窗只会三张卡长一个样。 */
+.pb-palette {
+  max-width: 430px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .07);
+  transform: rotate(-1.2deg);
+  transition: transform .35s var(--ease);
+}
+.product-banner:hover .pb-palette { transform: rotate(0); }
+
+.pbp-ramp { display: grid; grid-template-columns: repeat(11, 1fr); height: 34px; }
+.pbp-ramp i { display: block; }
+
+.pbp-rows { padding: 10px 12px 11px; display: grid; gap: 7px; }
+.pbp-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11.5px; color: var(--text-2);
+}
+.pbp-row > i { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+.pbp-row > span { margin-right: auto; }
+.pbp-row b {
+  font-weight: 600; font-size: 10.5px; padding: 1px 6px; border-radius: 999px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+}
+/* 达标 / 不达标各一套色。这里不复用频道色 —— 它表达的是判定结果，不是装饰 */
+.pbp-row b.ok { background: #e6f5ec; color: #1f7a4d; }
+.pbp-row b.no { background: #fdeceb; color: #b3261e; }
+
+:root[data-theme="dark"] .pb-palette { box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+:root[data-theme="dark"] .pbp-row b.ok { background: #14301f; color: #7ddba6; }
+:root[data-theme="dark"] .pbp-row b.no { background: #3a1512; color: #ff9d94; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pb-palette { box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+  :root:not([data-theme="light"]) .pbp-row b.ok { background: #14301f; color: #7ddba6; }
+  :root:not([data-theme="light"]) .pbp-row b.no { background: #3a1512; color: #ff9d94; }
+}
+
+@media (max-width: 860px) {
+  .pb-palette { max-width: 100%; }
+}
+
 @media (max-width: 860px) {
   .product-banner { grid-template-columns: 1fr; gap: 20px; padding: 22px 18px; }
   .pb-no { font-size: 64px; right: 12px; top: -10px; }

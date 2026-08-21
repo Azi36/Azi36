@@ -36,6 +36,7 @@ const PAGES = [
   ['fable/index.html', '../', '/fable/'],
   ['products/az-im.html', '../', '/products/az-im.html'],
   ['products/az-term.html', '../', '/products/az-term.html'],
+  ['products/az-design.html', '../', '/products/az-design.html'],
 ];
 
 /* 不该出现在成品里的占位文案 */

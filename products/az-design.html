@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Az-design 设计工具 · Azi36</title>
+  <meta name="description" content="Az-design：给一个主色，推出色阶、状态色、语义色，浅深两套同时校对比度（WCAG 2.1 + APCA），导出九种框架能直接粘的写法；外加中文排版体检。全在浏览器本地算完，不注册不上传。">
+  <link rel="canonical" href="https://azi36.com/products/az-design.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Azi36">
+  <meta property="og:title" content="Az-design 设计工具 · Azi36">
+  <meta property="og:description" content="Az-design：给一个主色，推出色阶、状态色、语义色，浅深两套同时校对比度（WCAG 2.1 + APCA），导出九种框架能直接粘的写法；外加中文排版体检。全在浏览器本地算完，不注册不上传。">
+  <meta property="og:url" content="https://azi36.com/products/az-design.html">
+  <meta property="og:image" content="https://azi36.com/assets/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
+  <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/style.css?v=35">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://api.azi36.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
+  <script src="../assets/site.js?v=14" defer></script>
+  <script src="../assets/player.js?v=2" defer></script>
+  <link rel="icon" href="../assets/favicon.svg">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../">
+        <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+        <span class="wordmark">Azi<b>36</b></span>
+      </a>
+      <nav class="site-nav">
+        <a href="../">首页</a>
+        <a href="../shares/">分享</a>
+        <a href="../links/">推荐</a>
+        <a href="../games/">游戏</a>
+        <a href="../music/">音乐</a>
+      </nav>
+      <div class="nav-side">
+        <span class="nav-status"><em class="nav-emo">😊</em>Keep Smile ~</span>
+        <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+        <a class="nav-gh" href="https://github.com/Azi36" aria-label="GitHub"><img src="../assets/img/avatar.png" alt="Azi36"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="article-layout">
+    <article class="article">
+      <a class="back-link" href="../">← 返回首页</a>
+      <div class="kicker">产品 № 003</div>
+      <h1>Az-design 设计工具</h1>
+      <div class="article-meta">网页版 · 免费 · 开源 MIT · 网址：<a href="https://design.azi36.com" target="_blank" rel="noopener">design.azi36.com</a></div>
+
+      <p>
+        配色工具挑完色不校对比度，检查工具校完不给你色阶，两边都不管深色模式那一套要重来一遍。
+        中间那几步，一直是复制粘贴在几个标签页之间来回倒腾。
+        Az-design 就是来接那几步的：<strong>给一个主色，一路走到能粘进项目的 CSS 变量。</strong>
+      </p>
+      <p>
+        另外它有个不太常见的坚持：<strong>凡是写出来的数，都能被引擎重算一遍，并且有测试盯着。</strong>
+        文章里引用的对比度、首页演示卡里的比值、中文行高那套推导，改了引擎对不上就报错 ——
+        不是把测试放宽，是文章跟着改。
+      </p>
+
+      <h2>配色工作台</h2>
+      <p>
+        色阶按 OKLCH 生成。不用 HSL 是因为 HSL 的 L 是纯数学中点，不是人眼看到的亮度 ——
+        同样 L=50% 的黄和蓝，看上去亮度差一大截，拿它生成阶梯会一深一浅乱跳。
+        OKLab 是感知均匀的，固定明度换色相，看上去才是同一档深浅。
+      </p>
+      <p>
+        还有一件小事但很要紧：<strong>你给的那个色本身就在阶梯里</strong>。
+        色阶会整体挪一点去锚定它，而不是丢给你一个色号相近、其实已经换了颜色的近似色。
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">主色 #016c73 → 十一档色阶</div>
+          <div class="mock-body">
+            <div class="pbp-ramp" aria-hidden="true" style="border-radius:6px;overflow:hidden">
+              <i style="background:#f1f9fa"></i><i style="background:#e1f4f5"></i><i style="background:#c5e9ec"></i>
+              <i style="background:#a1dadf"></i><i style="background:#73c7ce"></i><i style="background:#47b3bc"></i>
+              <i style="background:#1a9ea7"></i><i style="background:#00858d"></i><i style="background:#016c73"></i>
+              <i style="background:#0b5459"></i><i style="background:#063437"></i>
+            </div>
+            <div class="mock-sub">第 9 档就是你输入的那个色，不是近似值</div>
+          </div>
+        </div>
+        <figcaption>色阶按 OKLCH 生成，并锚定输入色本身。</figcaption>
+      </figure>
+
+      <h2>浅色深色一起校，两把尺子一起给</h2>
+      <p>
+        九个语义角色、两套主题，十八个组合在一屏之内全判完，改任何一格两边同时重算。
+        这是它跟别的对比度检查器最不一样的地方 —— 深色模式不是「等浅色做完再说」的事，
+        它跟浅色是同一个决定的两面。
+      </p>
+      <p>
+        判定给两个数：<strong>WCAG 2.1</strong> 是现行规范，无障碍验收和法规认的是它；
+        <strong>APCA</strong> 是 WCAG 3 的草案算法，把明暗极性算了进去，深色模式下更贴近实际观感。
+        两个数一起给，谁也不替谁，<strong>打架的地方专门标出来</strong> —— 那种组合最该亲眼看一下。
+      </p>
+      <p>
+        这不是纸上谈兵。本站自己的旧主色在深色模式下就栽在这儿：WCAG 算出 6.07:1，看着挺宽裕，
+        APCA 只给 Lc 43 —— 亮字压暗底会产生光晕，公式是对称的，人眼不是。
+        换成现在这套青色，就是这个工具查出来之后的事。
+      </p>
+
+      <h2>状态色和语义色一并推出来</h2>
+      <p>
+        悬停、按下在同一条色阶上挪档：浅色模式往深里走，深色模式往浅里走 ——
+        两边都是「往对比更强的方向」，手感才一致。
+        禁用态不是把颜色调淡，是<strong>先砍掉色度再拉向背景</strong>；光调淡只会变成「另一个浅色按钮」。
+      </p>
+      <p>
+        焦点环那一格踩过一个坑，值得单说：一开始按「环跟按钮底 3:1」去挑，结果<strong>无解</strong> ——
+        主色本来就夹在按钮底和页面底中间。查清楚才明白，WCAG 2.2 要的是环跟<strong>相邻颜色</strong> 3:1，
+        而环画在按钮外面、中间留一圈页面底的缝，「相邻」的就是页面底。
+        所以导出的 CSS 里那句 <code>outline-offset</code> 不能删，缝没了这个环就不合规。
+      </p>
+      <p>
+        语义色则是<strong>色相锁死</strong>：危险 25°、警告 75°、成功 150°、信息 250°。
+        让它们跟主色像一家人的办法是把明度和色度向主色看齐，不是转色相 ——
+        跟着主色转一圈，用户就分不清「这是个操作」还是「这件事出结果了」。
+      </p>
+
+      <h2>别撞衫：判的是撞不撞色号</h2>
+      <p>
+        Tailwind 和 shadcn/ui 的默认主色在 OKLCH 里挤在色相 260°–304° 那一段，
+        AI 生成的界面绝大多数就是这个色。
+      </p>
+      <p>
+        但这一节<strong>不是在说蓝紫色不好</strong>。蓝紫本身是好色，Stripe、Linear、Discord 都在这一带，
+        用得很漂亮。真正的问题是「一模一样」—— 直接拿 <code>#6366f1</code> 当主色，
+        跟另外几十万个页面撞的是同一个<strong>色号</strong>，不是同一个色系。
+        所以工具量的是你离那六个默认值在 OKLab 里有多远：
+        留在这一带、但把色调成自己的，一样算过关，界面上也不会再劝你换。
+      </p>
+      <p>
+        真撞上了给<strong>两条</strong>出路，不是一条。一条是不换色系，把它调成你自己的 ——
+        压深、降纯、墨感、偏冷、偏暖、提亮。这里有个实测出来的意外：
+        <strong>这一带比看上去密得多</strong>，indigo-500 往冷转 26° 就正好落在 blue-500 上。
+        所以每条方案都是沿着那个方向一直走，走到真的拉开为止，走了多少也写出来。
+        另一条是换个色相，按「分量不变」排序：换的只是色相，
+        原来那个色的明度和色度尽量保住。
+      </p>
+
+      <h2>中文排版体检</h2>
+      <p>
+        大部分中文网页的排版问题不是审美问题，是<strong>参数抄错了</strong>。
+        行高 1.5、每行 45–75 字符、字距收紧 —— 这些数值是照着拉丁字母的形状调出来的，
+        搬到方块字上，每一条的前提都不成立。
+      </p>
+      <p>
+        所以这个工具不说「中文行高要大一点」，而是把拉丁那个数<strong>是怎么来的</strong>摊开：
+        拉丁小写字母主体只占 em 框的一半左右，剩下的半格天然就是行间留白；
+        汉字要把格子填满，字面约占 0.86。同样 1.5 的行高，实际留白从 0.98em 掉到 0.64em，少了六成。
+        要让中文看上去跟拉丁 1.5 一样宽裕，得给到 <strong>1.84</strong>。
+      </p>
+      <p>
+        这个数是算出来的，而它正好落在中文排版一贯的经验区间里 ——
+        两条独立的路推到同一处，这个模型才可信。
+      </p>
+      <p>
+        「每行 45–75」那条也一样：它说的是 <strong>character</strong>，
+        拉丁一个词平均五六个字母，45–75 字符其实只有十来个词；
+        照着数字套成 45–75 个<strong>汉字</strong>，信息量差了好几倍。
+        中文这边反而有个便宜：汉字就是 1em 宽，所以 <code>max-width: 36em</code> 里的数字
+        <strong>就是每行字数</strong>，拉丁只能用 <code>ch</code> 近似。
+      </p>
+      <p>
+        字体栈顺序、负字距、细字重、<code>break-all</code>、标点挤压一并查。
+        另外顺带查标点本身：省略号写成三个句点、破折号写成一个短横、直引号、全角空格 ——
+        AI 生成的中文里这几样几乎必现，因为它是照着英文的标点习惯拼出来的。
+      </p>
+
+      <h2>中国设计体系色板</h2>
+      <p>
+        Ant Design、TDesign、WeUI、Arco、Semi、Element Plus、NutUI、Vant 八套的官方主色与色阶。
+        色值不是手抄的，是脚本从各家源文件里直接解析的，<strong>每条都带出处链接</strong>，可以自己点过去核。
+      </p>
+      <p>
+        顺带发现一件事：<strong>八套里有五套的主色，配字达不到 WCAG AA。</strong>数字就在那儿，自己看。
+      </p>
+      <p>
+        只收有公开源文件、能点过去核对的色值。淘宝橙、B 站粉这类营销品牌色，
+        因为找不到可核对的官方出处，现在一条没收 —— 混进来整张表就不可信了。
+      </p>
+
+      <h2>还有一份给 AI 用的</h2>
+      <p>
+        九种导出格式里最后一种不是代码，是<strong>一段能直接粘进跟 AI 对话里的约束</strong>：
+        把色值、硬规矩、不许用的那六个色号一次说清。
+        整套引擎还打包成了一个能离线跑的命令行 skill，扔进项目的 <code>.claude/skills/</code> 就能用，
+        让 AI 自己去算，而不是凭印象挑一个颜色。
+      </p>
+      <p>
+        它不是复制粘贴的第二份实现 —— 引擎是从网页那三个源文件打包出来的，
+        测试会核对<strong>命令行与网页算出的结果逐字节相同</strong>，也会拦住「改了源码忘记重新打包」。
+      </p>
+
+      <h2>不上传，不注册，不埋点</h2>
+      <p>
+        全部在你的浏览器里算完，关掉页面就什么都不剩。没有账号，没有试用期，没有导出次数。
+        源码在 <a href="https://github.com/Azi36/Az-design-tools" target="_blank" rel="noopener">GitHub</a>，MIT。
+      </p>
+
+      <div class="dim">
+        <a class="btn btn-primary" href="https://design.azi36.com" target="_blank" rel="noopener">去 design.azi36.com<span class="btn-arrow">→</span></a>
+        <a class="btn btn-ghost" href="https://github.com/Azi36/Az-design-tools" target="_blank" rel="noopener">看源码</a>
+      </div>
+    </article>
+
+    <!-- 右侧粘性栏：目录由 site.js 自动生成 -->
+    <aside class="article-aside">
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>本文目录</div>
+        <nav class="toc-list"></nav>
+      </div>
+      <div class="aside-box">
+        <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
+        <a class="aside-link" href="https://design.azi36.com" target="_blank" rel="noopener">前往 design.azi36.com</a>
+        <a class="aside-link" href="https://github.com/Azi36/Az-design-tools" target="_blank" rel="noopener">GitHub 仓库</a>
+        <a class="aside-link" href="az-term.html">№ 002 Az-term 终端工具</a>
+        <a class="aside-link" href="az-im.html">№ 001 Az-im 图像工具</a>
+        <a class="aside-link" href="../">← 返回首页</a>
+      </div>
+    </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="site-logo" href="../">
+          <span class="logo-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 34 24 13l10 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="13.5" r="3.4" fill="#ffb02e"/></svg></span>
+          <span class="wordmark">Azi<b>36</b></span>
+        </a>
+        <p class="footer-tag">把灵感慢慢掏出来，别急！</p>
+        <div class="footer-social">
+          <a href="https://github.com/Azi36" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col mystery">
+          <a href="../">首页</a>
+          <a href="../shares/">分享</a>
+          <a href="../links/">推荐</a>
+          <a href="../games/">游戏</a>
+          <a href="../music/">音乐</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-meta">
+      <span>© 2026 Azi36 · No Rights Reserved.</span>
+      <a class="meta-top" href="#">回到顶部 ↑</a>
+    </div>
+    <div class="footer-ghost" aria-hidden="true">AZI36</div>
+  </footer>
+
+</body>
+</html>

@@ -18,7 +18,7 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="assets/style.css?v=34">
+  <link rel="stylesheet" href="assets/style.css?v=35">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://api.azi36.com" crossorigin>
@@ -159,6 +159,43 @@
       </div>
     </div>
 
+    <!-- ===== 产品 № 003：Az-design 设计工具（通栏异形卡） ===== -->
+    <section class="product-banner">
+      <div class="pb-no" aria-hidden="true">№003</div>
+      <div class="pb-left">
+        <div class="pb-kicker">PRODUCT № 003 · 在线工具 · 免费开源</div>
+        <h2><span class="grad-text">Az-design</span> 设计工具</h2>
+        <p class="pb-tagline">给一个主色，推出整套能用的配色；再顺手查一遍中文排版。每个数都算给你看。</p>
+        <!-- 这一格不用终端小窗：那是 term 和 im 的脸。配色工具的脸是色阶本身。 -->
+        <div class="pb-palette">
+          <div class="pbp-ramp" aria-hidden="true">
+            <i style="background:#f1f9fa"></i><i style="background:#e1f4f5"></i><i style="background:#c5e9ec"></i>
+            <i style="background:#a1dadf"></i><i style="background:#73c7ce"></i><i style="background:#47b3bc"></i>
+            <i style="background:#1a9ea7"></i><i style="background:#00858d"></i><i style="background:#016c73"></i>
+            <i style="background:#0b5459"></i><i style="background:#063437"></i>
+          </div>
+          <div class="pbp-rows">
+            <div class="pbp-row"><i style="background:#016c73"></i><span>白字压主色</span><b class="ok">6.19:1</b><b class="ok">Lc 86</b></div>
+            <div class="pbp-row"><i style="background:#73a9ae"></i><span>弱化文字 · 浅色</span><b class="no">2.62:1</b><b class="no">Lc 51</b></div>
+            <div class="pbp-row"><i style="background:#6366f1"></i><span>indigo-500 撞衫</span><b class="no">ΔE 0.00</b><b class="no">同一色号</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="pb-right">
+        <ul class="pb-features">
+          <li><b>整套推出来</b><span>色阶、状态色、语义色，浅深两套同时校对比度</span></li>
+          <li><b>两把尺子</b><span>WCAG 2.1 与 APCA 一起给，中文正文单独判一档</span></li>
+          <li><b>别撞衫</b><span>量的是离默认色号多远，不是「你是不是蓝紫」</span></li>
+          <li><b>中文排版体检</b><span>行高 1.5 是拉丁的数，汉字该给 1.84——算给你看</span></li>
+        </ul>
+        <div class="pb-actions">
+          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
+          <a class="btn btn-ghost" href="products/az-design.html">详情</a>
+          <a class="btn btn-primary" href="https://design.azi36.com" target="_blank" rel="noopener">去用用<span class="btn-arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== 产品 № 002：Az-term 终端工具（通栏异形卡） ===== -->
     <section class="product-banner">
       <div class="pb-no" aria-hidden="true">№002</div>
@@ -276,6 +313,10 @@
     <div class="log-layout">
       <div>
         <ol class="changelog">
+          <li>
+            <div class="log-head"><span class="log-tag">v1.7</span><b>№ 003 Az-design 进站；全站换主色</b><time>2026-08-22</time></div>
+            <p>产品区开第三格：给一个主色推出整套能用的配色，浅深两套同时校对比度，导出九种框架的写法；外加一个中文排版体检。顺手拿它给自己体检了一遍 —— 旧主色在深色模式下 WCAG 算 6.07:1 看着达标，APCA 只给 Lc 43，于是四个站一起换成了青色。频道色降级成点缀。</p>
+          </li>
           <li>
             <div class="log-head"><span class="log-tag">v1.6</span><b>№ 002 Az-term 进站</b><time>2026-08-17</time></div>
             <p>产品区开第二格：连服务器的桌面工具，Tauri + Rust 自己写的引擎。SSH 终端、SFTP 双栏、远程文件直接改、端口转发、跳板机 —— 别人锁在订阅里的那几样，它一样不少。主站只挂门票，产品住在 term.azi36.com。</p>
