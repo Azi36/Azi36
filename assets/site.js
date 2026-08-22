@@ -396,15 +396,6 @@
     });
   }
 
-  /* 日报条上的日期：写访客本地的今天，日报本身按北京时间早上生成 */
-  document.querySelectorAll('[data-daily-date]').forEach(t => {
-    const now = new Date();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    t.textContent = now.getFullYear() + '-' + mm + '-' + dd;
-    t.setAttribute('datetime', t.textContent);
-  });
-
   /* ---------- 6.9 文章阅读统计 + 点赞 ----------
      每篇文章一个 slug（data-page）；阅读同一会话只计一次 */
   const pageStats = document.getElementById('pageStats');

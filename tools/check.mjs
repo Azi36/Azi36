@@ -221,7 +221,7 @@ if (process.argv.includes('--write-sitemap')) {
   console.log(`已写入 sitemap.xml（${urls.length} 条）`);
 }
 
-/* ---------- 精选区 / 日报条必须是 main 的直接子元素 ----------
+/* ---------- 精选区必须是 main 的直接子元素 ----------
    加 № 003 那张卡时在 design 站踩过：卡片插到了 `</section>` 和下一个
    `<section>` 中间，HTML 完全合法，链接和版本号也全过，但版式是坏的 ——
    上面多出一截（前一个块的下外边距没人吃掉），下面又不留间距。
@@ -234,7 +234,7 @@ if (process.argv.includes('--write-sitemap')) {
 
   for (const [file] of PAGES) {
     const html = fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
-    const total = (html.match(/class="[^"]*(?:showcase|daily-strip)/g) || []).length;
+    const total = (html.match(/class="[^"]*showcase/g) || []).length;
     if (!total) continue;
 
     const open = html.search(/<main[\s>]/);
@@ -249,11 +249,11 @@ if (process.argv.includes('--write-sitemap')) {
       if (name === 'main' && slash) break;
       if (VOID.has(name) || /\/\s*$/.test(attrs)) continue;
       if (slash) { depth--; continue; }
-      if (depth === 0 && /class="[^"]*(?:showcase|daily-strip)/.test(attrs)) direct++;
+      if (depth === 0 && /class="[^"]*showcase/.test(attrs)) direct++;
       depth++;
     }
     if (direct !== total) {
-      fail(file, `${total} 个精选区 / 日报条里只有 ${direct} 个是 <main> 的直接子元素`
+      fail(file, `${total} 个精选区里只有 ${direct} 个是 <main> 的直接子元素`
         + '（上下外边距靠这一层撑，套进别的容器里间距就不对了）');
     }
   }
