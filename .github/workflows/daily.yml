@@ -1,0 +1,42 @@
+name: 日报
+
+# 每天早上生成 AI 日报和币圈日报，产物直接提交进仓库，Pages 随之发布。
+# 只用免费公开接口，没有密钥；任一来源失败只会在页面上写明，不会让工作流红掉。
+on:
+  schedule:
+    - cron: '30 0 * * *'   # UTC 00:30 = 北京 08:30
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 生成两份日报
+        run: node tools/daily.mjs all
+
+      - name: 体检
+        run: node tools/check.mjs
+
+      - name: 提交
+        run: |
+          git config user.name 'azi36-daily'
+          git config user.email 'daily@azi36.com'
+          git add daily
+          if git diff --cached --quiet; then
+            echo '没有变化，不提交'
+            exit 0
+          fi
+          git commit -m "docs: 日报 $(TZ=Asia/Shanghai date +%F)"
+          git push

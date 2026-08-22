@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>用 Cloudflare 免费加速 GitHub Pages · Azi36</title>
-  <meta name="description" content="给 GitHub Pages 套一层 Cloudflare 免费 CDN，让网站在哪儿打开都不再转圈。">
-  <link rel="canonical" href="https://azi36.com/shares/cloudflare-cdn.html">
+  <title>在 GitHub 上免费部署静态网站 · Azi36</title>
+  <meta name="description" content="不买服务器、不花一分钱，十分钟把静态网站部署到 GitHub Pages。">
+  <link rel="canonical" href="https://azi36.com/blog/github-pages.html">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Azi36">
-  <meta property="og:title" content="用 Cloudflare 免费加速 GitHub Pages · Azi36">
-  <meta property="og:description" content="给 GitHub Pages 套一层 Cloudflare 免费 CDN，让网站在哪儿打开都不再转圈。">
-  <meta property="og:url" content="https://azi36.com/shares/cloudflare-cdn.html">
+  <meta property="og:title" content="在 GitHub 上免费部署静态网站 · Azi36">
+  <meta property="og:description" content="不买服务器、不花一分钱，十分钟把静态网站部署到 GitHub Pages。">
+  <meta property="og:url" content="https://azi36.com/blog/github-pages.html">
   <meta property="og:image" content="https://azi36.com/assets/img/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -18,11 +18,11 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="../assets/style.css?v=35">
+  <link rel="stylesheet" href="../assets/style.css?v=36">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://api.azi36.com" crossorigin>
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
-  <script src="../assets/site.js?v=14" defer></script>
+  <script src="../assets/site.js?v=15" defer></script>
   <script src="../assets/player.js?v=2" defer></script>
   <link rel="icon" href="../assets/favicon.svg">
 </head>
@@ -36,8 +36,8 @@
       </a>
       <nav class="site-nav">
         <a href="../">首页</a>
-        <a href="./" class="active">分享</a>
-        <a href="../links/">推荐</a>
+        <a href="./" class="active">博客</a>
+        <a href="../products/">产品</a>
         <a href="../games/">游戏</a>
         <a href="../music/">音乐</a>
       </nav>
@@ -57,152 +57,142 @@
     <article class="article">
       <a class="back-link" href="./">← 返回分享</a>
       <div class="kicker">保姆级教程</div>
-      <h1>用 Cloudflare 免费加速 GitHub Pages</h1>
-      <div class="article-meta">2026-08-15 · 预计阅读 6 分钟 · 作者：Azi36 · 前置阅读：<a href="github-pages.html">在 GitHub 上免费部署静态网站</a></div>
+      <h1>在 GitHub 上免费部署静态网站</h1>
+      <div class="article-meta">2024-06-18 14:33 · 预计阅读 5 分钟 · 作者：Azi36</div>
 
       <p>
-        GitHub Pages 部署省心，但服务器在境外，国内访问时快时慢，
-        有时甚至打不开。解决办法也是免费的：把域名解析托管到
-        Cloudflare，套一层它的全球 CDN——访客会就近访问缓存节点，
-        而不是每次都跨洋去 GitHub 取文件。
+        不用买服务器、不用花一分钱，就能把一个网站放到公网上——
+        这就是 GitHub Pages。本站（azi36.com）就是这么部署的，
+        整个流程走下来大概十分钟，这篇把每一步都写清楚。
       </p>
 
-      <h2>原理一句话</h2>
+      <h2>第一步：新建项目并上传网站文件</h2>
       <p>
-        没有 CDN 时：<code>访客 → GitHub 服务器（境外）</code>，路远且挤。<br>
-        有了 CDN 后：<code>访客 → 就近的 Cloudflare 节点（缓存副本）</code>，
-        只有缓存过期时 Cloudflare 才回 GitHub 取一次新文件。
-        对静态网站来说命中率极高，效果立竿见影。
+        登录 GitHub 新建一个仓库（设为 <strong>Public</strong>），
+        把网站文件传上去。最少只需要一个 <code>index.html</code> 作为入口，
+        用 git 推送或者在网页上 <strong>Add file → Upload files</strong> 拖进去都行：
+      </p>
+      <pre><code>git init
+git add .
+git commit -m "我的第一个网站"
+git branch -M main
+git remote add origin https://github.com/你的用户名/仓库名.git
+git push -u origin main</code></pre>
+
+      <h2>第二步：开启 Pages，分支选 main</h2>
+      <p>
+        进入项目管理面板的 <strong>Settings → Pages</strong>，
+        把部署分支修改为 <code>main</code>：
       </p>
 
-      <h2>第一步：注册 Cloudflare 并添加站点</h2>
-      <ol>
-        <li>注册 <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare</a> 账号</li>
-        <li>点 <strong>Add a site</strong>，输入你的域名（比如 <code>azi36.com</code>）</li>
-        <li>套餐选最下面的 <strong>Free（免费）</strong>——个人网站完全够用，
-          流量不限量</li>
-      </ol>
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Settings / Pages</div>
+          <div class="mock-body">
+            <div class="mock-label">Build and deployment</div>
+            <div class="mock-sub">Source</div>
+            <span class="mock-select">Deploy from a branch ▾</span>
+            <div class="mock-sub">Branch</div>
+            <span class="mock-select"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>main ▾</span>
+            <span class="mock-select">/ (root) ▾</span>
+            <span class="mock-btn">Save</span>
+          </div>
+        </div>
+        <figcaption>仓库 Settings → Pages：Source 选 Deploy from a branch，分支选 main</figcaption>
+      </figure>
+
       <p>
-        Cloudflare 会自动扫描你现有的 DNS 记录（之前配的 A 记录和
-        CNAME 都会被识别出来），确认无误即可。
+        保存后等一两分钟，页面上方会出现网址。
+        <strong>如果不配置自己的域名，默认地址就是
+        <code>你的用户名.github.io/项目名</code></strong>，到这里网站已经上线了。
       </p>
 
-      <h2>第二步：把域名的 NS 改成 Cloudflare 的</h2>
+      <h2>第三步：设置 Custom domain（自定义域名）</h2>
       <p>
-        添加完站点，Cloudflare 会分配给你两个 NS（域名服务器）地址，
-        长这样：
+        有自己的域名的话，在同一个页面的 <strong>Custom domain</strong>
+        填入域名并保存，GitHub 会自动在仓库根目录生成一个
+        <code>CNAME</code> 文件，内容就是你的域名：
+      </p>
+
+      <figure class="figure">
+        <div class="mock">
+          <div class="mock-head">Settings / Pages</div>
+          <div class="mock-body">
+            <div class="mock-label">Custom domain</div>
+            <div class="mock-sub">Custom domains allow you to serve your site from a domain other than github.io</div>
+            <span class="mock-input">azi36.com</span>
+            <span class="mock-btn">Save</span>
+            <div class="mock-ok">✓ DNS check successful</div>
+            <div class="mock-check">☑ Enforce HTTPS</div>
+          </div>
+        </div>
+        <figcaption>Custom domain 填入你的域名，DNS 生效后勾选 Enforce HTTPS</figcaption>
+      </figure>
+
+      <h2>第四步：域名 DNS 配置</h2>
+      <p>
+        到你的<strong>域名注册商</strong>的 DNS 设置里，
+        先添加 4 条 A 记录（这些 IP 是 GitHub Pages 的固定地址）：
       </p>
 
       <div class="table-wrap">
         <table>
-          <tr><th>类型</th><th>值（以你面板上显示的为准）</th></tr>
-          <tr><td>NS</td><td><code>xxx.ns.cloudflare.com</code></td></tr>
-          <tr><td>NS</td><td><code>yyy.ns.cloudflare.com</code></td></tr>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.108.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.109.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.110.153</code></td></tr>
+          <tr><td>A</td><td>@</td><td><code>185.199.111.153</code></td></tr>
         </table>
       </div>
 
-      <p>
-        回到你<strong>购买域名的注册商</strong>后台，找到"DNS 服务器 / NS 设置"，
-        把默认的两条换成 Cloudflare 给的这两条。生效需要几分钟到 24 小时，
-        生效后 Cloudflare 面板会显示 <strong>Active</strong>。
-      </p>
-      <p>
-        注意：换 NS 之后，DNS 记录就全部在 Cloudflare 面板里管理了，
-        注册商那边原来的解析设置不再生效。
-      </p>
+      <p>再添加一条 CNAME 记录，把 <code>yourusername</code> 换成你的 GitHub 用户名：</p>
 
-      <h2>第三步：打开橙色云朵（关键）</h2>
-      <p>
-        在 Cloudflare 的 <strong>DNS</strong> 面板确认这几条记录存在，
-        并把 Proxy status 切换成 <strong>Proxied（橙色云朵）</strong>——
-        这就是"套 CDN"的开关：
-      </p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>CNAME</td><td>www</td><td><code>yourusername.github.io</code></td></tr>
+        </table>
+      </div>
 
-      <figure class="figure">
-        <div class="mock">
-          <div class="mock-head">Cloudflare / DNS / Records</div>
-          <div class="mock-body">
-            <div class="mock-sub">A 记录（4 条，指向 GitHub Pages）</div>
-            <span class="mock-select">A · @ · 185.199.108.153</span>
-            <span class="mock-select" style="color:#f38020; border-color:#f6c093; background:#fff4ea;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>Proxied</span>
-            <div class="mock-sub">CNAME 记录</div>
-            <span class="mock-select">CNAME · www · 你的用户名.github.io</span>
-            <span class="mock-select" style="color:#f38020; border-color:#f6c093; background:#fff4ea;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>Proxied</span>
-            <div class="mock-ok">✓ 橙色云朵 = 流量经过 Cloudflare CDN</div>
-          </div>
-        </div>
-        <figcaption>DNS 面板：每条记录右侧的云朵点成橙色（Proxied）</figcaption>
-      </figure>
-
+      <h2>第五步：对域名做 DNS 归属验证</h2>
       <p>
-        灰色云朵（DNS only）表示只解析不加速；橙色才会走 CDN。
-        四条 A 记录和 www 的 CNAME 都点亮。
+        为了防止别人抢绑你的域名，建议再做一次验证：
+        打开 <strong>GitHub 个人设置</strong>（不是仓库设置）里的
+        <strong>Settings → Pages</strong>，点 <strong>Add a domain</strong>，
+        GitHub 会给你一串验证内容，回到 DNS 设置里加一条 TXT 记录：
       </p>
 
-      <h2>第四步：SSL/TLS 选 Full（严格）</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>类型</th><th>名称</th><th>值</th></tr>
+          <tr><td>TXT</td><td><code>_github-pages-challenge-你的用户名</code></td><td>GitHub 给出的验证内容</td></tr>
+        </table>
+      </div>
+
+      <p>解析生效后回到 GitHub 点 Verify，看到绿色对勾就完成了。</p>
+
+      <h2>关于 SSL 证书（可忽略）</h2>
       <p>
-        进入 <strong>SSL/TLS → Overview</strong>，加密模式选
-        <strong>Full (strict)</strong>。这一步很重要：
+        GitHub Pages 勾选 <strong>Enforce HTTPS</strong> 后会自动签发证书，
+        不需要自己申请。如果以后要给其他服务配 HTTPS，
+        可以在 <a href="https://console.cloud.tencent.com/ssl" target="_blank" rel="noopener">腾讯云</a>
+        等平台申请免费证书。
       </p>
 
-      <figure class="figure">
-        <div class="mock">
-          <div class="mock-head">Cloudflare / SSL/TLS / Overview</div>
-          <div class="mock-body">
-            <div class="mock-label">SSL/TLS encryption mode</div>
-            <div class="mock-sub">访客 ⇆ Cloudflare ⇆ GitHub Pages 全程加密</div>
-            <span class="mock-select">Off</span>
-            <span class="mock-select">Flexible</span>
-            <span class="mock-select">Full</span>
-            <span class="mock-select" style="color:#1a7f37; border-color:#9fd7ae; background:#eefaf1; font-weight:600;">✓ Full (strict)</span>
-          </div>
-        </div>
-        <figcaption>选 Full (strict)——GitHub Pages 本身有合法证书，可以全程严格加密</figcaption>
-      </figure>
-
+      <h2>几个小贴士</h2>
       <ul>
-        <li>选 <strong>Flexible</strong> 会和 GitHub 的强制 HTTPS 打架，
-          造成"重定向次数过多"的死循环——很多人翻车在这里</li>
-        <li>GitHub Pages 自带合法证书，所以放心选最严格的 Full (strict)</li>
-      </ul>
-
-      <h2>第五步：顺手开几个免费优化</h2>
-      <ul>
-        <li><strong>SSL/TLS → Edge Certificates → Always Use HTTPS</strong>：
-          所有 http 访问自动跳转 https</li>
-        <li><strong>Speed → Optimization</strong>：Brotli 压缩默认开启，确认即可</li>
-        <li><strong>Caching → Configuration</strong>：Browser Cache TTL
-          按默认即可；改版后如果看到旧页面，来这里点
-          <strong>Purge Everything</strong> 清一次缓存</li>
-      </ul>
-
-      <h2>验证是否生效</h2>
-      <p>等 NS 生效后，随便找个终端执行：</p>
-      <pre><code>curl -I https://你的域名.com
-
-# 响应头里看到这行就说明成功了：
-server: cloudflare</code></pre>
-      <p>
-        响应头里还有个 <code>cf-cache-status</code>：<code>HIT</code>
-        表示这次访问命中了节点缓存，根本没去 GitHub——这就是加速的来源。
-      </p>
-
-      <h2>注意事项</h2>
-      <ul>
-        <li>DNS 记录本身不用改——还是指向 GitHub 的那 4 个 IP，
-          只是"管理的地方"从注册商搬到了 Cloudflare</li>
-        <li>GitHub 仓库里的 <code>CNAME</code> 文件和 Pages 设置保持原样</li>
-        <li>之前做过的 TXT 域名验证记录也一并保留在 Cloudflare 里</li>
-        <li>免费版完全够个人网站用，不需要买任何付费功能</li>
+        <li>在根目录放一个空的 <code>.nojekyll</code> 文件，
+          告诉 GitHub 跳过 Jekyll 处理，纯 HTML 站部署更快更省心</li>
+        <li>放一个 <code>404.html</code>，访客走错路时能看到你的自定义页面</li>
+        <li>之后改完代码只管 push，大约一分钟内自动生效</li>
       </ul>
 
       <blockquote>
-        部署在 GitHub，加速靠 Cloudflare，域名一年几十块——
-        一个全球可访问的个人网站，成本基本就是一杯奶茶。
+        你现在看到的这个网站，从第一行代码到上线，用的就是上面这套流程。
       </blockquote>
 
       <!-- 阅读统计 + 点赞（数据来自 api.azi36.com） -->
-      <div class="page-stats" id="pageStats" data-page="cloudflare-cdn" hidden>
+      <div class="page-stats" id="pageStats" data-page="github-pages" hidden>
         <span class="ps-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
           <span id="psReads"></span>
@@ -217,7 +207,7 @@ server: cloudflare</code></pre>
       <div class="md-title msg-title"><span>##</span>留言</div>
       <!-- 留言后端已就位（api.azi36.com/msgs），前端暂时关闭：
            开放姿势没想好 + 防赛博牛皮癣。开放时恢复表单即可 -->
-      <div class="msg-board closed" data-page="cloudflare-cdn">
+      <div class="msg-board closed" data-page="github-pages">
         <p class="msg-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>留言功能装修中——门装好了，还没想好怎么开。</p>
       </div>
     </article>
@@ -230,9 +220,9 @@ server: cloudflare</code></pre>
       </div>
       <div class="aside-box">
         <div class="aside-title"><svg class="t-icon" style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>接下来</div>
-        <a class="aside-link" href="github-pages.html">上一篇：部署 GitHub Pages</a>
+        <a class="aside-link" href="cloudflare-cdn.html">下一篇：Cloudflare 免费加速 →</a>
         <a class="aside-link" href="./">← 更多分享</a>
-        <a class="aside-link" href="../links/">好用的网站推荐</a>
+        <a class="aside-link" href="../products/">自己做的产品</a>
       </div>
     </aside>
     </div>
@@ -264,8 +254,8 @@ server: cloudflare</code></pre>
       <div class="footer-cols">
         <div class="footer-col mystery">
           <a href="../">首页</a>
-          <a href="./">分享</a>
-          <a href="../links/">推荐</a>
+          <a href="./">博客</a>
+          <a href="../products/">产品</a>
           <a href="../games/">游戏</a>
         <a href="../music/">音乐</a>
         </div>      </div>

@@ -204,61 +204,6 @@
     entries.forEach(el => dspy.observe(el));
   }
 
-  /* ---------- 6.5 推荐列表：分类筛选 + 折叠（统一状态机） ----------
-     .rec-list 可选配前置 .filter-row 和 data-collapse="5"；
-     · 只在「当前分类的匹配数」超过上限时才显示展开按钮
-     · 按钮文案实时显示当前分类的条数
-     · 切换分类自动重置为折叠态 */
-  document.querySelectorAll('.rec-list').forEach(list => {
-    const prev = list.previousElementSibling;
-    const filterRow = prev && prev.classList.contains('filter-row') ? prev : null;
-    const limit = parseInt(list.dataset.collapse, 10) || 0;
-    const rows = [...list.querySelectorAll('.rec')];
-    if (!filterRow && !limit) return;
-
-    let tag = 'all';
-    let folded = true;
-    let btn = null;
-
-    const match = r => tag === 'all' || (r.dataset.tags || '').split(/\s+/).includes(tag);
-
-    const render = () => {
-      const total = rows.filter(match).length;
-      let shown = 0;
-      rows.forEach(r => {
-        let show = match(r);
-        if (show && limit && folded && shown >= limit) show = false;
-        if (show) shown++;
-        r.classList.toggle('hidden', !show);
-      });
-      if (btn) {
-        const need = total > limit; // 当前分类数量不足时按钮直接消失
-        btn.style.display = need ? '' : 'none';
-        if (need) btn.textContent = folded ? '展开全部 ' + total + ' 条 ▾' : '收起 ▴';
-      }
-    };
-
-    if (limit && rows.length > limit) {
-      btn = document.createElement('button');
-      btn.className = 'rec-more';
-      btn.addEventListener('click', () => { folded = !folded; render(); });
-      list.appendChild(btn);
-    }
-
-    if (filterRow) {
-      const chips = filterRow.querySelectorAll('.filter-chip');
-      chips.forEach(chip => chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        tag = chip.dataset.tag;
-        folded = true; // 换分类回到折叠初始态
-        render();
-      }));
-    }
-
-    render();
-  });
-
   /* ---------- 6.7 首页「最近在忙」三件小玩具 ---------- */
   // ① 打磨进度：缓缓逼近 100% 但永远到不了
   const pct = document.getElementById('polishPct');
@@ -418,6 +363,31 @@
       visitEl.hidden = false;
     }).catch(() => { /* 后端未就绪时保持隐藏 */ });
   }
+
+  /* ---------- 6.8b 产品访问量 ----------
+     每张产品卡一个 data-site（后端登记的站点键）；一次请求拿全部，按键分发。
+     产品站自己的记录由各站引的 assets/hit.js 负责，这里只读不写 */
+  const prodStats = document.querySelectorAll('.prod-stat[data-site]');
+  if (prodStats.length) {
+    fetch('https://api.azi36.com/sites').then(r => r.json()).then(d => {
+      prodStats.forEach(el => {
+        const s = d && d[el.dataset.site];
+        if (!s || typeof s.visits !== 'number') return;
+        el.innerHTML = '<span>访问 <b>' + s.visits.toLocaleString() + '</b></span>'
+          + '<span>访客 <b>' + (s.visitors || 0).toLocaleString() + '</b></span>';
+        el.hidden = false;
+      });
+    }).catch(() => { /* 后端未就绪时保持隐藏 */ });
+  }
+
+  /* 日报条上的日期：写访客本地的今天，日报本身按北京时间早上生成 */
+  document.querySelectorAll('[data-daily-date]').forEach(t => {
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    t.textContent = now.getFullYear() + '-' + mm + '-' + dd;
+    t.setAttribute('datetime', t.textContent);
+  });
 
   /* ---------- 6.9 文章阅读统计 + 点赞 ----------
      每篇文章一个 slug（data-page）；阅读同一会话只计一次 */
@@ -581,9 +551,9 @@
       trim();
     };
     const CMDS = {
-      'help': () => 'whoami · ls · cat 灵感.md · open 分享/推荐/游戏 · date · clear ……还有几条藏起来的，自己猜',
+      'help': () => 'whoami · ls · cat 灵感.md · open 博客/产品/游戏 · date · clear ……还有几条藏起来的，自己猜',
       'whoami': () => '今天最好看的访客',
-      'ls': () => '分享/&nbsp;&nbsp;推荐/&nbsp;&nbsp;游戏/&nbsp;&nbsp;灵感.md',
+      'ls': () => '博客/&nbsp;&nbsp;产品/&nbsp;&nbsp;游戏/&nbsp;&nbsp;灵感.md',
       'cat 灵感.md': () => '「先把网站做完」…… ✓ 已完成',
       'date': () => new Date().toLocaleString('zh-CN'),
       'pwd': () => '/home/azi36/摸鱼中',
@@ -598,8 +568,8 @@
         [...termBody.querySelectorAll('.line')].forEach(l => { if (l !== inputLine) l.remove(); });
         return null;
       },
-      'open 分享': () => { setTimeout(() => location.href = 'shares/', 400); return '正在打开分享…'; },
-      'open 推荐': () => { setTimeout(() => location.href = 'links/', 400); return '正在打开推荐…'; },
+      'open 博客': () => { setTimeout(() => location.href = 'blog/', 400); return '正在打开博客…'; },
+      'open 产品': () => { setTimeout(() => location.href = 'products/', 400); return '正在打开产品…'; },
       'open 游戏': () => { setTimeout(() => location.href = 'games/', 400); return '正在打开游戏…'; },
       'fable': () => { setTimeout(() => location.href = 'fable/', 600); return '找 C某F 是吧？带你去看它的打工日记…'; },
       'sudo fable': () => '权限不足：它只听甲方的（甲方也不太听得动）',

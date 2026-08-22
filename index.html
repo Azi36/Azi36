@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azi36</title>
-  <meta name="description" content="Azi36 的个人小站：分享与产品。">
+  <meta name="description" content="Azi36 的个人小站：博客与产品。">
   <link rel="canonical" href="https://azi36.com/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Azi36">
   <meta property="og:title" content="Azi36">
-  <meta property="og:description" content="Azi36 的个人小站：分享与产品。">
+  <meta property="og:description" content="Azi36 的个人小站：博客与产品。">
   <meta property="og:url" content="https://azi36.com/">
   <meta property="og:image" content="https://azi36.com/assets/img/og.png">
   <meta property="og:image:width" content="1200">
@@ -18,12 +18,12 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="assets/style.css?v=35">
+  <link rel="stylesheet" href="assets/style.css?v=36">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://api.azi36.com" crossorigin>
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
-  <script src="assets/site.js?v=14" defer></script>
+  <script src="assets/site.js?v=15" defer></script>
   <script src="assets/player.js?v=2" defer></script>
   <link rel="icon" href="assets/favicon.svg">
 </head>
@@ -45,8 +45,8 @@
       </a>
       <nav class="site-nav">
         <a href="./" class="active">首页</a>
-        <a href="shares/">分享</a>
-        <a href="links/">推荐</a>
+        <a href="blog/">博客</a>
+        <a href="products/">产品</a>
         <a href="games/">游戏</a>
         <a href="music/">音乐</a>
       </nav>
@@ -72,15 +72,15 @@
           <span class="name-badge">读作「矮子」</span>
         </h1>
         <!-- 打字机文案：想改就编辑 data-typer 里的句子 -->
-        <p class="hero-tagline" data-typer='["把脑子里的想法，一点点做出来。","偶尔写点分享，偶尔做点小东西。","欢迎常来逛逛。"]'>
+        <p class="hero-tagline" data-typer='["把脑子里的想法，一点点做出来。","偶尔写点博客，偶尔做点小东西。","欢迎常来逛逛。"]'>
           <span class="typer-text"></span><span class="caret"></span>
         </p>
         <p class="quote-line">
           这里什么都有，也什么都没有，别催，在睡觉！
         </p>
         <div class="hero-links">
-          <a class="btn btn-primary" href="shares/">看看分享<span class="btn-arrow">→</span></a>
-          <a class="btn btn-ghost" href="links/">逛逛推荐</a>
+          <a class="btn btn-primary" href="products/">逛逛产品<span class="btn-arrow">→</span></a>
+          <a class="btn btn-ghost" href="blog/">看看博客</a>
           <a class="btn btn-ghost" href="https://github.com/Azi36" target="_blank" rel="noopener">
             <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
             GitHub
@@ -99,7 +99,7 @@
             <div class="line"><span class="prompt">$</span>whoami</div>
             <div class="line out">Azi36</div>
             <div class="line"><span class="prompt">$</span>ls ~/azi36.com</div>
-            <div class="line out">分享/&nbsp;&nbsp;推荐/&nbsp;&nbsp;游戏/&nbsp;&nbsp;灵感.md</div>
+            <div class="line out">博客/&nbsp;&nbsp;产品/&nbsp;&nbsp;游戏/&nbsp;&nbsp;灵感.md</div>
             <div class="line"><span class="prompt">$</span>status</div>
             <div class="line out">● 在线 · 慢慢更新中</div>
             <div class="line"><span class="prompt">$</span><input class="term-input" type="text" placeholder="输入 help 试试" autocomplete="off" spellcheck="false" aria-label="终端命令输入"></div>
@@ -151,7 +151,7 @@
         <!-- 玩具三：借口生成器 + 废纸篓（hover 现身，销毁后换成撤回·撤不回） -->
         <div class="todo-line" id="excuseCard" role="button" tabindex="0">
           <span class="ln">4</span><span class="cb" id="excuseCb">[ ]</span>
-          <span class="txt" id="excuseText">写下一篇分享——题目想好了，正文还在脑子里。（不信点我）</span>
+          <span class="txt" id="excuseText">写下一篇博客——题目想好了，正文还在脑子里。（不信点我）</span>
           <button class="excuse-trash" id="excuseTrash" aria-label="扔进废纸篓"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
           <button class="excuse-undo" id="excuseUndo" hidden>撤回</button>
           <span class="todo-meta" id="excuseMeta">草稿</span>
@@ -159,102 +159,96 @@
       </div>
     </div>
 
-    <!-- ===== 产品 № 003：Az-design 设计工具（通栏异形卡） ===== -->
-    <section class="product-banner">
-      <div class="pb-no" aria-hidden="true">№003</div>
-      <div class="pb-left">
-        <div class="pb-kicker">PRODUCT № 003 · 在线工具 · 免费开源</div>
-        <h2><span class="grad-text">Az-design</span> 设计工具</h2>
-        <p class="pb-tagline">给一个主色，推出整套能用的配色；再顺手查一遍中文排版。每个数都算给你看。</p>
-        <!-- 这一格不用终端小窗：那是 term 和 im 的脸。配色工具的脸是色阶本身。 -->
-        <div class="pb-palette">
-          <div class="pbp-ramp" aria-hidden="true">
+    <!-- ===== 产品精选：最新的放大，另外两个靠右叠放；全部清单在 products/ =====
+         每张卡的 .prod-face 各长各的，别套同一个窗；访问量由 site.js 按 data-site 填 -->
+    <div class="md-title"><span>##</span>产品<a class="md-more" href="products/">全部 9 个 →</a></div>
+    <section class="showcase">
+
+      <article class="prod lead" data-p="design">
+        <div class="prod-no" aria-hidden="true">№003</div>
+        <div class="prod-kicker">PRODUCT № 003 · 在线工具 <span class="prod-st live">已上线</span></div>
+        <h2><span class="prod-name">Az-design</span> 设计工具</h2>
+        <p class="prod-tagline">给一个主色，推出整套能用的配色：色阶、状态色、语义色，浅深两套同时校对比度；再顺手查一遍中文排版。每个数都算给你看。</p>
+        <div class="prod-face face-palette">
+          <div class="face-ramp" aria-hidden="true">
             <i style="background:#f1f9fa"></i><i style="background:#e1f4f5"></i><i style="background:#c5e9ec"></i>
             <i style="background:#a1dadf"></i><i style="background:#73c7ce"></i><i style="background:#47b3bc"></i>
             <i style="background:#1a9ea7"></i><i style="background:#00858d"></i><i style="background:#016c73"></i>
             <i style="background:#0b5459"></i><i style="background:#063437"></i>
+            <span class="face-cursor"></span>
           </div>
-          <div class="pbp-rows">
-            <div class="pbp-row"><i style="background:#016c73"></i><span>白字压主色</span><b class="ok">6.19:1</b><b class="ok">Lc 86</b></div>
-            <div class="pbp-row"><i style="background:#73a9ae"></i><span>弱化文字 · 浅色</span><b class="no">2.62:1</b><b class="no">Lc 51</b></div>
-            <div class="pbp-row"><i style="background:#6366f1"></i><span>indigo-500 撞衫</span><b class="no">ΔE 0.00</b><b class="no">同一色号</b></div>
+          <div class="face-rows">
+            <div class="fr"><i style="background:#016c73"></i><span>白字压主色 700</span><b class="ok">6.19:1</b><b class="ok">Lc 86</b></div>
+            <div class="fr"><i style="background:#73a9ae"></i><span>弱化文字 · 浅色</span><b class="no">2.62:1</b><b class="no">Lc 51</b></div>
+            <div class="fr"><i style="background:#6366f1"></i><span>indigo-500 撞衫</span><b class="no">ΔE 0.00</b><b class="no">同一色号</b></div>
           </div>
         </div>
-      </div>
-      <div class="pb-right">
-        <ul class="pb-features">
-          <li><b>整套推出来</b><span>色阶、状态色、语义色，浅深两套同时校对比度</span></li>
-          <li><b>两把尺子</b><span>WCAG 2.1 与 APCA 一起给，中文正文单独判一档</span></li>
-          <li><b>别撞衫</b><span>量的是离默认色号多远，不是你是不是蓝紫</span></li>
-          <li><b>中文排版体检</b><span>行高 1.5 是拉丁的数，汉字该给 1.84，算给你看</span></li>
+        <ul class="prod-points">
+          <li><b>整套推出来</b>色阶、状态色、语义色，浅深两套同时校对比度</li>
+          <li><b>两把尺子</b>WCAG 2.1 与 APCA 一起给，中文正文单独判一档</li>
+          <li><b>别撞衫</b>量的是离默认色号多远，不是你是不是蓝紫</li>
+          <li><b>中文排版体检</b>行高 1.5 是拉丁的数，汉字该给 1.84</li>
         </ul>
-        <div class="pb-actions">
-          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
+        <div class="prod-foot">
+          <span class="prod-stat" data-site="design" hidden></span>
           <a class="btn btn-ghost" href="products/az-design.html">详情</a>
           <a class="btn btn-primary" href="https://design.azi36.com" target="_blank" rel="noopener">去用用<span class="btn-arrow">→</span></a>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <!-- ===== 产品 № 002：Az-term 终端工具（通栏异形卡） ===== -->
-    <section class="product-banner">
-      <div class="pb-no" aria-hidden="true">№002</div>
-      <div class="pb-left">
-        <div class="pb-kicker">PRODUCT № 002 · 桌面工具 · 免费开源</div>
-        <h2><span class="grad-text">Az-term</span> 终端工具</h2>
-        <p class="pb-tagline">SSH 终端、SFTP 双栏、端口转发、跳板机。别人锁在订阅里的，这儿一样不少。</p>
-        <div class="mini-window pb-window">
-          <div class="mini-bar"><i></i><i></i><i></i></div>
-          <div class="mini-body">
-            <div><span class="c-p">root@server</span>:~# nginx -t</div>
-            <div><span class="c-ok">✓</span>configuration file test is successful</div>
-            <div class="c-dim">这条是从指令库点出来的，没手打 → <span class="c-link">term.azi36.com</span></div>
+      <article class="prod" data-p="chain">
+        <div class="prod-no" aria-hidden="true">№004</div>
+        <div class="prod-kicker">PRODUCT № 004 · 交互课 <span class="prod-st live">已上线</span></div>
+        <h3><span class="prod-name">Az-chain</span> 链上实验室</h3>
+        <p class="prod-tagline">四个单元、44 个能自己拨参数的实验，把区块链里常被含糊带过的机制拆开摊在浏览器里。不含任何投资建议。</p>
+        <div class="prod-face face-chain">
+          <div class="ch-blocks" aria-hidden="true"><span>#1</span><span>#2</span><span>#3</span><span class="mine">#4</span><em>出块中…</em></div>
+          <div class="ch-rows">
+            <div><em>单元</em><b>4 个</b></div>
+            <div><em>章节</em><b>52 章</b></div>
+            <div><em>实验</em><b>44 个</b></div>
           </div>
         </div>
-      </div>
-      <div class="pb-right">
-        <ul class="pb-features">
-          <li><b>SSH 终端</b><span>Rust russh 引擎，真 PTY，2FA 和 GBK 都认</span></li>
-          <li><b>SFTP 双栏</b><span>断点续传、目录同步、队列可取消重试</span></li>
-          <li><b>远程直接改</b><span>配置文件点开就编辑，Ctrl+S 存回去</span></li>
-          <li><b>隧道 + 跳板机</b><span>本地 / SOCKS5 / 远程转发，堡垒机后面也能连</span></li>
-        </ul>
-        <div class="pb-actions">
-          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
+        <div class="prod-foot">
+          <span class="prod-stat" data-site="chain" hidden></span>
+          <a class="btn btn-ghost" href="products/az-chain.html">详情</a>
+          <a class="btn btn-primary" href="https://chain.azi36.com" target="_blank" rel="noopener">去上课<span class="btn-arrow">→</span></a>
+        </div>
+      </article>
+
+      <article class="prod" data-p="term">
+        <div class="prod-no" aria-hidden="true">№002</div>
+        <div class="prod-kicker">PRODUCT № 002 · 桌面工具 <span class="prod-st live">已上线</span></div>
+        <h3><span class="prod-name">Az-term</span> 终端工具</h3>
+        <p class="prod-tagline">SSH 终端、SFTP 双栏、端口转发、跳板机。别人锁在订阅里的，这儿一样不少。</p>
+        <div class="prod-face face-term">
+          <div class="mini-window">
+            <div class="mini-bar"><i></i><i></i><i></i></div>
+            <div class="mini-body">
+              <div><span class="c-p">root@server</span>:~# nginx -t</div>
+              <div><span class="c-ok">✓</span>configuration file test is successful</div>
+              <div><span class="c-p">root@server</span>:~# <span class="tw-cursor"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="prod-foot">
+          <span class="prod-stat" data-site="term" hidden></span>
           <a class="btn btn-ghost" href="products/az-term.html">详情</a>
           <a class="btn btn-primary" href="https://term.azi36.com/" target="_blank" rel="noopener">前往下载<span class="btn-arrow">→</span></a>
         </div>
-      </div>
+      </article>
+
     </section>
 
-    <!-- ===== 产品 № 001：Az-im 图像工具（通栏异形卡，不设栏目标题） ===== -->
-    <section class="product-banner">
-      <div class="pb-no" aria-hidden="true">№001</div>
-      <div class="pb-left">
-        <div class="pb-kicker">PRODUCT № 001 · 在线工具 · 免费开源</div>
-        <h2><span class="grad-text">Az-im</span> 图像工具</h2>
-        <p class="pb-tagline">压缩、转换、缩放、裁剪，外加抠图放大去水印。全在浏览器本地，一张都不上传。</p>
-        <div class="mini-window pb-window">
-          <div class="mini-bar"><i></i><i></i><i></i></div>
-          <div class="mini-body">
-            <div><span class="c-p">$</span>az-im --tools</div>
-            <div class="c-dim">压缩 · 背景移除 · 放大 · 去水印</div>
-            <div><span class="c-ok">✓</span>0 files uploaded → <span class="c-link">im.azi36.com</span></div>
-          </div>
-        </div>
+    <!-- ===== 日报：每天早上由工作流自动生成，这里直达最新一期 ===== -->
+    <section class="daily-strip">
+      <div class="ds-head">
+        <span class="ds-kicker">DAILY</span><b>每日日报</b><time data-daily-date></time>
+        <span class="ds-note">每天早上自动整理，只用免费公开来源，只列事实不带观点。</span>
       </div>
-      <div class="pb-right">
-        <ul class="pb-features">
-          <li><b>批量压缩</b><span>七种格式，多核并行，参数能存成预设</span></li>
-          <li><b>缩放裁剪</b><span>八种缩放模式，公众号 / B 站尺寸一键填</span></li>
-          <li><b>背景移除</b><span>AI 一键抠图，快速 / 高质量双模型</span></li>
-          <li><b>放大 + 去水印</b><span>超分重建 2× / 4×，水印涂一涂就没了</span></li>
-        </ul>
-        <div class="pb-actions">
-          <span class="pb-score" title="矮子力推，童叟无欺">★★★★★<small>矮子力推</small></span>
-          <a class="btn btn-ghost" href="products/az-im.html">详情</a>
-          <a class="btn btn-primary" href="https://im.azi36.com" target="_blank" rel="noopener">去用用<span class="btn-arrow">→</span></a>
-        </div>
+      <div class="ds-actions">
+        <a class="ds-btn" href="daily/ai/"><i>🤖</i><span><b>AI 日报</b><small>论文 · 热帖 · 发布</small></span><em>→</em></a>
+        <a class="ds-btn" href="daily/crypto/"><i>🪙</i><span><b>币圈日报</b><small>行情 · 恐贪 · 要闻</small></span><em>→</em></a>
       </div>
     </section>
 
@@ -263,7 +257,7 @@
     <div class="card-grid">
 
       <!-- 新内容放最前面：复制一个 <a class="card">…</a> 改内容即可 -->
-      <a class="card" href="shares/cloudflare-cdn.html">
+      <a class="card" href="blog/cloudflare-cdn.html">
         <div class="card-head">
           <h3>用 Cloudflare 免费加速 GitHub Pages</h3>
           <span class="en">Cloudflare CDN</span>
@@ -282,7 +276,7 @@
         <div class="card-meta"><span class="tag tag-green">保姆级教程</span><span class="date">2026-08-15</span></div>
       </a>
 
-      <a class="card" href="shares/github-pages.html">
+      <a class="card" href="blog/github-pages.html">
         <div class="card-head">
           <h3>在 GitHub 上免费部署静态网站</h3>
           <span class="en">GitHub Pages</span>
@@ -313,6 +307,10 @@
     <div class="log-layout">
       <div>
         <ol class="changelog">
+          <li>
+            <div class="log-head"><span class="log-tag">v1.8</span><b>频道重排：博客、产品、日报</b><time>2026-08-22</time></div>
+            <p>「分享」改叫博客，「推荐」下架，产品自己开了一个频道：首页只留最新三个，全部清单和访问量去 /products 看。№ 004 Az-chain 链上实验室进站。AI 日报和币圈日报每天早上由工作流自动生成，首页一键直达。</p>
+          </li>
           <li>
             <div class="log-head"><span class="log-tag">v1.7</span><b>№ 003 Az-design 进站；全站换主色</b><time>2026-08-22</time></div>
             <p>产品区开第三格：给一个主色推出整套能用的配色，浅深两套同时校对比度，导出九种框架的写法；外加一个中文排版体检。顺手拿它给自己体检了一遍：旧主色在深色模式下 WCAG 算 6.07:1 看着达标，APCA 只给 Lc 43，于是四个站一起换成了青色。频道色降级成点缀。</p>
@@ -415,8 +413,8 @@
       <div class="footer-cols">
         <div class="footer-col mystery">
           <a href="./">首页</a>
-          <a href="shares/">分享</a>
-          <a href="links/">推荐</a>
+          <a href="blog/">博客</a>
+          <a href="products/">产品</a>
           <a href="games/">游戏</a>
           <a href="music/">音乐</a>
         </div>

@@ -15,19 +15,19 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://azi36.com';
 
 /* 频道导航的唯一真相：改这里就等于要求所有页面跟上 */
-const CHANNELS = ['首页', '分享', '推荐', '游戏', '音乐'];
+const CHANNELS = ['首页', '博客', '产品', '游戏', '音乐'];
 
-/* 全站共享的资源：版本号必须 14 个页面完全一致，否则 CDN 会缓存出两份 */
+/* 全站共享的资源：版本号必须所有页面完全一致，否则 CDN 会缓存出两份 */
 const SHARED = ['assets/style.css', 'assets/site.js', 'assets/player.js'];
 
 /* 页面清单：文件 · 相对前缀 · 线上路径（null = 不进索引） */
 const PAGES = [
   ['index.html', '', '/'],
   ['404.html', '/', null],
-  ['shares/index.html', '../', '/shares/'],
-  ['shares/github-pages.html', '../', '/shares/github-pages.html'],
-  ['shares/cloudflare-cdn.html', '../', '/shares/cloudflare-cdn.html'],
-  ['links/index.html', '../', '/links/'],
+  ['blog/index.html', '../', '/blog/'],
+  ['blog/github-pages.html', '../', '/blog/github-pages.html'],
+  ['blog/cloudflare-cdn.html', '../', '/blog/cloudflare-cdn.html'],
+  ['products/index.html', '../', '/products/'],
   ['games/index.html', '../', '/games/'],
   ['games/aim/index.html', '../../', '/games/aim/'],
   ['games/ddz/index.html', '../../', '/games/ddz/'],
@@ -37,7 +37,18 @@ const PAGES = [
   ['products/az-im.html', '../', '/products/az-im.html'],
   ['products/az-term.html', '../', '/products/az-term.html'],
   ['products/az-design.html', '../', '/products/az-design.html'],
+  ['products/az-chain.html', '../', '/products/az-chain.html'],
+  ['daily/ai/index.html', '../../', '/daily/ai/'],
+  ['daily/crypto/index.html', '../../', '/daily/crypto/'],
 ];
+/* 日报归档页由工作流每天生成一张，不手工登记：按目录扫进来（不进 sitemap，索引只认当期） */
+for (const kind of ['ai', 'crypto']) {
+  const dir = path.join(ROOT, 'daily', kind);
+  if (!fs.existsSync(dir)) continue;
+  for (const f of fs.readdirSync(dir)) {
+    if (/^\d{4}-\d{2}-\d{2}\.html$/.test(f)) PAGES.push([`daily/${kind}/${f}`, '../../', null]);
+  }
+}
 
 /* 不该出现在成品里的占位文案 */
 const PLACEHOLDERS = ['产品页地址', 'TODO：', 'lorem ipsum', '待补充'];
@@ -149,7 +160,7 @@ for (const [file, rel, canon] of PAGES) {
     if (!m) continue;
     const [, title, claimed] = m;
     const upto = block.split(/<div class="(?:section-title|md-title)"/)[0];
-    const actual = (upto.match(/class="(?:rec|card)(?:"| )/g) || []).length;
+    const actual = (upto.match(/class="(?:rec|card|prod)(?:"| )/g) || []).length;
     if (actual && Number(claimed) !== actual) {
       fail(file, `「${title.trim()}」计数写着 ${claimed}，实际有 ${actual} 条`);
     }
@@ -210,7 +221,7 @@ if (process.argv.includes('--write-sitemap')) {
   console.log(`已写入 sitemap.xml（${urls.length} 条）`);
 }
 
-/* ---------- 产品横幅必须是 main 的直接子元素 ----------
+/* ---------- 精选区 / 日报条必须是 main 的直接子元素 ----------
    加 № 003 那张卡时在 design 站踩过：卡片插到了 `</section>` 和下一个
    `<section>` 中间，HTML 完全合法，链接和版本号也全过，但版式是坏的 ——
    上面多出一截（前一个块的下外边距没人吃掉），下面又不留间距。
@@ -223,11 +234,11 @@ if (process.argv.includes('--write-sitemap')) {
 
   for (const [file] of PAGES) {
     const html = fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
-    const total = (html.match(/class="[^"]*\bproduct-banner\b/g) || []).length;
+    const total = (html.match(/class="[^"]*(?:showcase|daily-strip)/g) || []).length;
     if (!total) continue;
 
     const open = html.search(/<main[\s>]/);
-    if (open < 0) { fail(file, '有产品横幅却没有 <main>'); continue; }
+    if (open < 0) { fail(file, '有精选区却没有 <main>'); continue; }
     const re = /<(\/?)([a-zA-Z][\w-]*)([^>]*)>/g;
     re.lastIndex = html.indexOf('>', open) + 1;
 
@@ -238,12 +249,12 @@ if (process.argv.includes('--write-sitemap')) {
       if (name === 'main' && slash) break;
       if (VOID.has(name) || /\/\s*$/.test(attrs)) continue;
       if (slash) { depth--; continue; }
-      if (depth === 0 && /class="[^"]*\bproduct-banner\b/.test(attrs)) direct++;
+      if (depth === 0 && /class="[^"]*(?:showcase|daily-strip)/.test(attrs)) direct++;
       depth++;
     }
     if (direct !== total) {
-      fail(file, `${total} 张产品横幅里只有 ${direct} 张是 <main> 的直接子元素`
-        + '（横幅的上下外边距靠这一层撑，套进别的容器里间距就不对了）');
+      fail(file, `${total} 个精选区 / 日报条里只有 ${direct} 个是 <main> 的直接子元素`
+        + '（上下外边距靠这一层撑，套进别的容器里间距就不对了）');
     }
   }
 }
