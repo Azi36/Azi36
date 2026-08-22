@@ -23,7 +23,13 @@ jobs:
         with:
           node-version: '22'
 
+      # 翻译和「今日要点」用任意 OpenAI 兼容接口；三个 Secret 都不设就退回免费机翻 + 按热度挑要点。
+      # 默认指向 DeepSeek（URL 和模型名可以不填），只需 AZI_LLM_KEY。
       - name: 生成两份日报
+        env:
+          AZI_LLM_KEY: ${{ secrets.AZI_LLM_KEY }}
+          AZI_LLM_URL: ${{ secrets.AZI_LLM_URL }}
+          AZI_LLM_MODEL: ${{ secrets.AZI_LLM_MODEL }}
         run: node tools/daily.mjs all
 
       - name: 体检

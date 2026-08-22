@@ -18,12 +18,12 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)">
   <script>try{var t=localStorage.getItem("azi-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-  <link rel="stylesheet" href="assets/style.css?v=36">
+  <link rel="stylesheet" href="assets/style.css?v=37">
   <!-- Twemoji：把全站 emoji 统一渲染成精美 SVG 图标 -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://api.azi36.com" crossorigin>
   <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous" defer></script>
-  <script src="assets/site.js?v=15" defer></script>
+  <script src="assets/site.js?v=16" defer></script>
   <script src="assets/player.js?v=2" defer></script>
   <link rel="icon" href="assets/favicon.svg">
 </head>
@@ -189,6 +189,15 @@
           <li><b>别撞衫</b>量的是离默认色号多远，不是你是不是蓝紫</li>
           <li><b>中文排版体检</b>行高 1.5 是拉丁的数，汉字该给 1.84</li>
         </ul>
+        <div class="lead-code mini-window" aria-hidden="true">
+          <div class="mini-bar"><i></i><i></i><i></i></div>
+          <div class="mini-body">
+            <div class="c-dim">/* 导出：九种框架的写法任选，这是 CSS 变量 */</div>
+            <div><span class="c-k">--brand-500</span>: <i class="c-sw" style="background:#1a9ea7"></i><span class="c-v">#1a9ea7</span>;</div>
+            <div><span class="c-k">--brand-700</span>: <i class="c-sw" style="background:#016c73"></i><span class="c-v">#016c73</span>; <span class="c-dim">/* 白字 6.19:1 ✓ */</span></div>
+            <div><span class="c-k">--danger-600</span>: <i class="c-sw" style="background:#b3261e"></i><span class="c-v">#b3261e</span>; <span class="c-dim">/* 色相锁死 */</span></div>
+          </div>
+        </div>
         <div class="prod-foot">
           <span class="prod-stat" data-site="design" hidden></span>
           <a class="btn btn-ghost" href="products/az-design.html">详情</a>

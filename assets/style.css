@@ -1008,12 +1008,18 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
 .prod-tagline { margin: 0 0 18px; color: var(--text-2); font-size: 14px; line-height: 1.7; }
 .prod.lead .prod-tagline { font-size: 15px; max-width: 520px; }
 /* 大卡中段：脸放大一号，下面再铺四条要点，别让它空着 */
-.prod.lead .face-ramp { height: 60px; }
+.prod.lead .face-ramp { height: 72px; }
 .prod.lead .fr { font-size: 12.5px; }
 .prod.lead .prod-face { margin: 6px 0 18px; }
 .prod-points { list-style: none; margin: 0 0 20px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
 .prod-points li { font-size: 13px; color: var(--text-2); line-height: 1.55; padding-left: 12px; border-left: 2px solid color-mix(in srgb, var(--prod-accent, var(--brand)) 45%, transparent); }
 .prod-points b { display: block; color: var(--text); font-size: 13.5px; }
+/* 大卡第二张脸：导出的 CSS 变量——配色工具的终点就是这几行 */
+.lead-code { margin: auto 0 20px; }
+.lead-code .mini-body { font-size: 12px; }
+.lead-code .c-k { color: #9ae6b4; }
+.lead-code .c-v { color: #fbd38d; }
+.lead-code .c-sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 5px 0 1px; vertical-align: -1px; }
 
 /* 脸放中段，底栏贴底 */
 .prod-face { position: relative; z-index: 1; margin: auto 0 18px; }
@@ -1023,7 +1029,7 @@ h2 { font-size: 22px; letter-spacing: -.01em; margin: 48px 0 18px; }
   margin-right: auto; display: inline-flex; gap: 12px;
   font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums;
 }
-.prod-stat b { color: var(--text-2); font-weight: 600; }
+.prod-stat b { color: var(--text-2); font-weight: 600; margin: 0 1px; }
 
 /* 筹备中的产品：没有脸，扁一些，靠进度线说话 */
 .prod.plan { padding: 18px 20px 16px; border-radius: 16px; }
@@ -2982,6 +2988,27 @@ body { position: relative; }
 .fng-row b { font-size: 26px; font-variant-numeric: tabular-nums; }
 .fng-row span { font-size: 14px; color: var(--text-2); }
 .fng-row small { margin-left: auto; font-size: 12px; color: var(--text-3); }
+
+/* 今日要点：一块底色压住，跟下面的全表区分开 */
+.dl-brief { margin-top: 28px; padding: 18px 22px 8px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-soft); }
+.brief { list-style: none; margin: 0; padding: 0; counter-reset: br; }
+.brief li { position: relative; padding: 10px 0 12px 36px; border-top: 1px solid var(--border-light); counter-increment: br; }
+.brief li:first-child { border-top: 0; }
+.brief li::before { content: counter(br); position: absolute; left: 0; top: 10px; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; color: #fff; background: var(--brand); }
+.brief b { font-size: 15.5px; }
+.brief p { margin: 4px 0 6px; font-size: 14px; line-height: 1.7; color: var(--text-2); }
+.brief small { display: flex; flex-wrap: wrap; gap: 6px; }
+.brief small a { font-size: 12px; color: var(--text-3); text-decoration: none; padding: 1px 8px; border: 1px solid var(--border); border-radius: 999px; }
+.brief small a:hover { color: var(--brand); border-color: var(--brand); }
+/* 原文默认收起，按钮切开；标题的原文是一行小字，摘要的原文是第二段 */
+.daily-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.daily-tools .daily-switch { margin-bottom: 0; }
+.orig-toggle { padding: 6px 12px; border: 1px dashed var(--border); border-radius: 999px; background: none; font: inherit; font-size: 13px; color: var(--text-2); cursor: pointer; transition: border-color .2s, color .2s; }
+.orig-toggle:hover, .orig-toggle[aria-pressed="true"] { border-color: var(--brand); color: var(--brand); border-style: solid; }
+.dl-orig { display: none; }
+.show-orig .dl-orig { display: block; }
+.dl-orig-title { margin-top: 2px; font-size: 13px; color: var(--text-3); }
+.show-orig .dl-sum.dl-orig { color: var(--text-3); }
 
 .daily-arch { display: flex; flex-wrap: wrap; gap: 6px; }
 .daily-arch a {

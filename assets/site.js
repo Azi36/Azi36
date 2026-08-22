@@ -373,11 +373,27 @@
       prodStats.forEach(el => {
         const s = d && d[el.dataset.site];
         if (!s || typeof s.visits !== 'number') return;
-        el.innerHTML = '<span>访问 <b>' + s.visits.toLocaleString() + '</b></span>'
-          + '<span>访客 <b>' + (s.visitors || 0).toLocaleString() + '</b></span>';
+        // 对外的说法：累计 N 人使用 M 次（「访问 / 访客」是后台口径，别露出来）
+        el.innerHTML = '累计 <b>' + (s.visitors || 0).toLocaleString() + '</b> 人使用 <b>' + s.visits.toLocaleString() + '</b> 次';
         el.hidden = false;
       });
     }).catch(() => { /* 后端未就绪时保持隐藏 */ });
+  }
+
+  /* 日报页「显示原文」：整页切一个 class，选择记在本地 */
+  const origBtn = document.querySelector('[data-toggle-orig]');
+  if (origBtn) {
+    const apply = (on) => {
+      document.body.classList.toggle('show-orig', on);
+      origBtn.setAttribute('aria-pressed', String(on));
+      origBtn.textContent = on ? '隐藏原文' : '显示原文';
+    };
+    apply(store.get('azi-daily-orig') === '1');
+    origBtn.addEventListener('click', () => {
+      const on = !document.body.classList.contains('show-orig');
+      store.set('azi-daily-orig', on ? '1' : '0');
+      apply(on);
+    });
   }
 
   /* 日报条上的日期：写访客本地的今天，日报本身按北京时间早上生成 */
