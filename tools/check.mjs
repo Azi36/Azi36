@@ -210,6 +210,44 @@ if (process.argv.includes('--write-sitemap')) {
   console.log(`已写入 sitemap.xml（${urls.length} 条）`);
 }
 
+/* ---------- 产品横幅必须是 main 的直接子元素 ----------
+   加 № 003 那张卡时在 design 站踩过：卡片插到了 `</section>` 和下一个
+   `<section>` 中间，HTML 完全合法，链接和版本号也全过，但版式是坏的 ——
+   上面多出一截（前一个块的下外边距没人吃掉），下面又不留间距。
+   横幅的 `margin: 60px 0 8px` 同样只在它是 main 的直接子元素时才成立。
+   看不见页面的时候，这类错只能靠结构约束兜住。 */
+
+{
+  const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img',
+    'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+
+  for (const [file] of PAGES) {
+    const html = fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+    const total = (html.match(/class="[^"]*\bproduct-banner\b/g) || []).length;
+    if (!total) continue;
+
+    const open = html.search(/<main[\s>]/);
+    if (open < 0) { fail(file, '有产品横幅却没有 <main>'); continue; }
+    const re = /<(\/?)([a-zA-Z][\w-]*)([^>]*)>/g;
+    re.lastIndex = html.indexOf('>', open) + 1;
+
+    let depth = 0, direct = 0, m;
+    while ((m = re.exec(html)) !== null) {
+      const [, slash, tag, attrs] = m;
+      const name = tag.toLowerCase();
+      if (name === 'main' && slash) break;
+      if (VOID.has(name) || /\/\s*$/.test(attrs)) continue;
+      if (slash) { depth--; continue; }
+      if (depth === 0 && /class="[^"]*\bproduct-banner\b/.test(attrs)) direct++;
+      depth++;
+    }
+    if (direct !== total) {
+      fail(file, `${total} 张产品横幅里只有 ${direct} 张是 <main> 的直接子元素`
+        + '（横幅的上下外边距靠这一层撑，套进别的容器里间距就不对了）');
+    }
+  }
+}
+
 /* ---------- 结果 ---------- */
 if (problems.length) {
   console.error(`\n体检不通过，${problems.length} 处问题：\n`);
