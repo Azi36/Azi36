@@ -1,7 +1,8 @@
 # azi36.com 主站
 
-纯静态站，没有构建步骤：改完 HTML/CSS/JS 直接推，GitHub Pages 就是线上。
-所以**每一次提交都是一次发布**，别把半成品推上来。
+纯静态站，没有构建步骤：改完 HTML/CSS/JS 直接推。发布由
+`.github/workflows/deploy.yml` 做——推上 main 后体检通过才上线，大概半分钟。
+**体检不过就不发布**，线上维持上一版。所以推 main 就是发布，别把半成品推上来。
 
 产品各有各的仓库，主站只放站点本身：
 Az-term → `Azi36/Az-terminal-tools`，Az-im → `Azi36/Az-image-tools`。
@@ -18,6 +19,8 @@ node tools/check.mjs
 栏目标题里的计数跟实际条目数对不对得上，以及**深色规则是否成对**。
 
 加了新页面：在 `tools/check.mjs` 的 `PAGES` 里补一行，其余检查自动覆盖。
+
+本地跑的时候日报页会跳过（产物不在 main，见下），CI 里取回日报之后跑的那次才是全量。
 
 ## 两条最容易犯的错
 
@@ -47,5 +50,8 @@ node tools/check.mjs
 `.prod[data-p="xx"]` 里给一组 `--prod-accent` / `--dk-prod-accent`，再给它写一张自己的脸。
 首页只放最新三个（`.showcase`），全部清单和访问量在 `products/`。
 
-日报（`daily/ai`、`daily/crypto`）是 `.github/workflows/daily.yml` 每天 08:30 跑 `tools/daily.mjs`
-生成后直接提交进仓库的，别手改生成物；要改长相改 `style.css` 的「日报页」块，要改内容改脚本。
+日报（`daily/ai`、`daily/crypto`）由 `.github/workflows/daily.yml` 每天 08:30 跑 `tools/daily.mjs`
+生成，**产物不在 main**：它推到 `daily-data` 这个孤立分支，发布时才被取回 `daily/` 合进站点。
+不这么绕的话一天一条提交，main 的历史很快就只剩日报了。
+所以本地 `daily/` 是空的（已 gitignore），想看长什么样自己跑一次 `node tools/daily.mjs all`。
+别手改生成物；要改长相改 `style.css` 的「日报页」块，要改内容改脚本。

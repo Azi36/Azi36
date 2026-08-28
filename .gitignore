@@ -10,6 +10,10 @@ desktop.ini
 .vscode/
 .idea/
 
+# 日报产物不进 main：工作流每天生成，存 daily-data 分支，发布时才合回来。
+# 本地想预览就 node tools/daily.mjs all，生成的东西留在这儿不会被提交。
+daily/
+
 # 顺手跑脚本留下的
 node_modules/
 *.log

@@ -38,14 +38,14 @@ const PAGES = [
   ['products/az-term.html', '../', '/products/az-term.html'],
   ['products/az-design.html', '../', '/products/az-design.html'],
   ['products/az-chain.html', '../', '/products/az-chain.html'],
-  ['daily/ai/index.html', '../../', '/daily/ai/'],
-  ['daily/crypto/index.html', '../../', '/daily/crypto/'],
 ];
-/* 日报归档页由工作流每天生成一张，不手工登记：按目录扫进来（不进 sitemap，索引只认当期） */
-for (const kind of ['ai', 'crypto']) {
-  const dir = path.join(ROOT, 'daily', kind);
-  if (!fs.existsSync(dir)) continue;
-  for (const f of fs.readdirSync(dir)) {
+/* 日报页不在 main：工作流每天生成，存进 daily-data 分支，部署时才合回 daily/。
+   本地因此只体检手写的页面，CI 把日报取回来之后跑的才是全量。
+   归档页每天一张，不手工登记，按目录扫进来（不进 sitemap，索引只认当期）。 */
+const DAILY = fs.existsSync(path.join(ROOT, 'daily', 'ai', 'index.html'));
+if (DAILY) for (const kind of ['ai', 'crypto']) {
+  PAGES.push([`daily/${kind}/index.html`, '../../', `/daily/${kind}/`]);
+  for (const f of fs.readdirSync(path.join(ROOT, 'daily', kind)).sort()) {
     if (/^\d{4}-\d{2}-\d{2}\.html$/.test(f)) PAGES.push([`daily/${kind}/${f}`, '../../', null]);
   }
 }
@@ -146,7 +146,10 @@ for (const [file, rel, canon] of PAGES) {
       if (target.startsWith('/')) continue;
       let abs = path.resolve(path.dirname(fp), target);
       if (target.endsWith('/') || !path.basename(target).includes('.')) abs = path.join(abs, 'index.html');
-      if (!fs.existsSync(abs)) fail(file, `链接指向不存在的文件：${target}`);
+      if (fs.existsSync(abs)) continue;
+      // 本地没取日报产物时，指向日报的链接不算断链——CI 里合进来之后才是真查
+      if (!DAILY && path.relative(ROOT, abs).replace(/\\/g, '/').startsWith('daily/')) continue;
+      fail(file, `链接指向不存在的文件：${target}`);
     }
   }
 
@@ -213,6 +216,10 @@ for (const f of ['robots.txt', 'sitemap.xml', 'assets/favicon.svg', 'assets/img/
 
 /* ---------- sitemap 生成 ---------- */
 if (process.argv.includes('--write-sitemap')) {
+  if (!DAILY) {
+    console.error('本地没有日报产物，这时候写 sitemap 会漏掉两条日报——先 node tools/daily.mjs all');
+    process.exit(1);
+  }
   const urls = PAGES.filter(p => p[2]).map(p => `  <url><loc>${SITE}${p[2]}</loc></url>`);
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<!-- 由 tools/check.mjs --write-sitemap 生成，别手改 -->\n` +
@@ -267,3 +274,4 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(`体检通过：${PAGES.length} 个页面，导航 / 版本号 / 分享卡片 / 站内链接全部一致。`);
+if (!DAILY) console.log('（本地没有日报产物，日报页这轮跳过；部署时 CI 会连日报一起体检）');

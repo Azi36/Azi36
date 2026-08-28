@@ -1,6 +1,8 @@
 name: 日报
 
-# 每天早上生成 AI 日报和币圈日报，产物直接提交进仓库，Pages 随之发布。
+# 每天早上生成 AI 日报和币圈日报。产物不进 main——它每天都变，
+# 一天一条提交会把 main 的历史淹掉；改推 daily-data 这个孤立分支，
+# 发布时由 deploy.yml 合回 daily/ 目录。
 # 只用免费公开接口，没有密钥；任一来源失败只会在页面上写明，不会让工作流红掉。
 on:
   schedule:
@@ -17,8 +19,18 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4        # main：脚本，以及首页里的共享资源版本号
+
+      # 归档要接着往期往下写，先把已有的取回来
+      - name: 取回往期日报
+        uses: actions/checkout@v4
+        with:
+          ref: daily-data
+          path: daily
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -35,14 +47,29 @@ jobs:
       - name: 体检
         run: node tools/check.mjs
 
-      - name: 提交
+      - name: 提交到 daily-data
+        id: commit
+        working-directory: daily
         run: |
           git config user.name 'azi36-daily'
           git config user.email 'daily@azi36.com'
-          git add daily
+          git add -A
           if git diff --cached --quiet; then
             echo '没有变化，不提交'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "docs: 日报 $(TZ=Asia/Shanghai date +%F)"
-          git push
+          git push origin HEAD:daily-data
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+  # 有新内容才重新发布，没变化就别惊动 Pages
+  deploy:
+    needs: build
+    if: needs.build.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit      # 被调用的 workflow 默认拿不到 Secret，刷缓存那步要用
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
