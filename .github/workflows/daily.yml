@@ -22,16 +22,16 @@ jobs:
     outputs:
       changed: ${{ steps.commit.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4        # main：脚本，以及首页里的共享资源版本号
+      - uses: actions/checkout@v7        # main：脚本，以及首页里的共享资源版本号
 
       # 归档要接着往期往下写，先把已有的取回来
       - name: 取回往期日报
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: daily-data
           path: daily
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
 
