@@ -18,6 +18,8 @@ const SITE = 'https://azi36.com';
 const UA = 'azi36-daily/1.0 (+https://azi36.com/daily/)';
 const DAY = 24 * 3600 * 1000;
 const ARCHIVE_KEEP = 30;
+/* 往期区块的边界：滚动删期之后要拿它去刷新留下来的旧页面 */
+const ARCHIVE_RE = /<section class="dl-sec dl-archive">[\s\S]*?<\/section>/;
 
 /* ---------- 参数 ---------- */
 const argv = process.argv.slice(2);
@@ -487,5 +489,25 @@ for (const kind of kinds) {
   const opts = { kind, date: today, secs, briefItems, briefNote, translated, archive: kept };
   fs.writeFileSync(path.join(dir, today + '.html'), page({ ...opts, latest: false }));
   fs.writeFileSync(path.join(dir, 'index.html'), page({ ...opts, latest: true }));
+
+  /* 每一期的「往期」都列着其余各期，所以滚动删掉最老一期之后，留下来的旧页面
+     还链着已经不存在的文件——2026-09-21 的日报就是这么被体检拦停的（那天是第 31 期，
+     归档删除第一次真的触发）。今天这份里的列表是对的，拿它去刷新其余各期，
+     只把高亮挪到对应那一天。 */
+  const fresh = (fs.readFileSync(path.join(dir, today + '.html'), 'utf8').match(ARCHIVE_RE) || [])[0];
+  let refreshed = 0;
+  if (fresh) {
+    const bare = fresh.replace(' class="on"', '');
+    for (const d of kept) {
+      if (d === today) continue;
+      const fp = path.join(dir, d + '.html');
+      if (!fs.existsSync(fp)) continue;
+      const block = bare.replace(`<a href="${d}.html"`, `<a href="${d}.html" class="on"`);
+      const before = fs.readFileSync(fp, 'utf8');
+      const after = before.replace(ARCHIVE_RE, () => block);
+      if (after !== before) { fs.writeFileSync(fp, after); refreshed++; }
+    }
+  }
+  if (refreshed) console.log(`  · 顺手刷新了 ${refreshed} 页的往期列表`);
   console.log(`  → daily/${kind}/${today}.html · index.html（${secs.filter(s => s.ok).length}/${secs.length} 个来源正常${translated ? '，已翻译' : ''}${briefItems ? '，要点 ' + briefItems.length + ' 条' : ''}）`);
 }
